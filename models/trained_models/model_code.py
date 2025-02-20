@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 from stable_baselines3 import PPO
 from stable_baselines3.common.vec_env import DummyVecEnv
+from config import TRADING_PAIR  # Import TRADING_PAIR from config.py
 
 class TradingEnv(gym.Env):
     """Custom RL environment for trading."""
@@ -50,7 +51,26 @@ def train_model(df):
     model.save('models/trained_models/ppo_trading_model')
     return model
 
+def process_data(df):
+    """Clean and engineer features."""
+    df = df.dropna()
+    df['ma_short'] = df['close'].rolling(window=10).mean()  # 10-period MA
+    df['ma_long'] = df['close'].rolling(window=50).mean()   # 50-period MA
+    df['momentum'] = df['ma_short'] - df['ma_long']
+    return df.dropna()
+
 if __name__ == "__main__":
-    df = pd.read_csv(f'data/historical/{TRADING_PAIR.replace("/", "_")}_1h.csv')
-    df = process_data(df)
-    train_model(df)
+    # Load historical data
+    data_path = f'data/historical/{TRADING_PAIR.replace("/", "_")}_1h.csv'
+    try:
+        df = pd.read_csv(data_path)
+        processed_df = process_data(df)
+        print("Data loaded and processed successfully:")
+        print(processed_df.tail())
+        # Train the model
+        train_model(processed_df)
+        print("Model training completed.")
+    except FileNotFoundError:
+        print(f"Error: Historical data file '{data_path}' not found. Please run data_utils.py to fetch data first.")
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")

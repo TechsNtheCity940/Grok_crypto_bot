@@ -2,7 +2,7 @@ import time
 import pandas as pd
 import numpy as np
 from utils.data_utils import fetch_real_time_data, process_data
-from utils.logging import logger
+from utils.log_setup import logger  # Updated import
 from strategies.momentum_strategy import MomentumStrategy
 from execution.trade_executor import TradeExecutor
 from risk_management.risk_manager import RiskManager

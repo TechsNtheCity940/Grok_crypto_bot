@@ -1,7 +1,6 @@
-ccxt==4.1.0
-pandas==2.1.0
-numpy==1.26.0
-stable-baselines3==2.1.0
-torch==2.0.1
-websocket-client==1.6.4
-python-dotenv==1.0.0
+ccxt
+numpy
+stable-baselines3
+torch
+websocket-client
+python-dotenv
