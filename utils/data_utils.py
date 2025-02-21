@@ -25,11 +25,15 @@ coinbase = ccxt.coinbase({
 exchange = kraken if ACTIVE_EXCHANGE == 'kraken' else coinbase
 
 def fetch_historical_data(symbol, timeframe='1h', limit=1000):
-    ohlcv = exchange.fetch_ohlcv(symbol, timeframe, limit=limit)
-    df = pd.DataFrame(ohlcv, columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
-    df['timestamp'] = pd.to_datetime(df['timestamp'], unit='ms')
-    df.to_csv(f'data/historical/{symbol.replace("/", "_")}_{timeframe}.csv', index=False)
-    return df
+    try:
+        ohlcv = exchange.fetch_ohlcv(symbol, timeframe, limit=limit)
+        df = pd.DataFrame(ohlcv, columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
+        df['timestamp'] = pd.to_datetime(df['timestamp'], unit='ms')
+        df.to_csv(f'data/historical/{symbol.replace("/", "_")}_{timeframe}.csv', index=False)
+        return df
+    except Exception as e:
+        print(f"Failed to fetch historical data for {symbol}: {e}")
+        return pd.DataFrame(columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
 
 def process_data(df):
     df = df.copy()
@@ -40,7 +44,7 @@ def process_data(df):
     return df
 
 def fetch_real_time_data(symbol):
-    timeout = 60  # Increased timeout
+    timeout = 60
     start_time = time.time()
     if ACTIVE_EXCHANGE == 'kraken':
         ws = create_connection('wss://ws.kraken.com')
@@ -57,8 +61,7 @@ def fetch_real_time_data(symbol):
                 price = float(data[1][0][0])
                 timestamp = pd.to_datetime(float(data[1][0][2]), unit='s')
                 ws.close()
-                print(f"Kraken trade detected: price={price}, timestamp={timestamp}")
+                print(f"Kraken trade detected for {symbol}: price={price}, timestamp={timestamp}")
                 return pd.DataFrame([[timestamp, price]], columns=['timestamp', 'close'])
         ws.close()
         raise TimeoutError(f"No trade data received from Kraken within {timeout} seconds")
-    # Coinbase logic omitted for brevity, add if needed

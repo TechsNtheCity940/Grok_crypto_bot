@@ -34,39 +34,45 @@ def main():
     while True:
         for symbol in TRADING_PAIRS:
             print(f"Fetching real-time data for {symbol}...")
-            new_data = fetch_real_time_data(symbol)
-            print(f"New data for {symbol}: {new_data}")
-            
-            # Append and process data
-            df = pd.concat([dataframes[symbol], new_data]).tail(50)
-            dataframes[symbol] = df
-            print(f"Current DataFrame size for {symbol}: {len(df)} rows")
-            
-            processed_df = process_data(df)
-            if len(processed_df) == 0:
-                print(f"Not enough data for momentum yet for {symbol}, using raw close price")
-                latest = df.iloc[-1]
-                momentum = 0.0
-            else:
-                latest = processed_df.iloc[-1]
-                momentum = latest['momentum']
-            
-            # Get balance and execute trades
-            balance_usd, balance_asset = executor.get_balance(symbol)
-            current_price = latest['close']
-            obs = np.array([momentum, balance_usd, balance_asset])
-            print(f"Observation for {symbol}: momentum={momentum}, balance_usd={balance_usd}, balance_{symbol.split('/')[0]}={balance_asset}")
-            
-            action = strategy.get_action(obs)
-            print(f"Action chosen for {symbol}: {action} (0=hold, 1=buy, 2=sell)")
-            logger.info(f"Action for {symbol}: {action}, Balance USD: {balance_usd}, Balance {symbol.split('/')[0]}: {balance_asset}")
-            
-            if risk_manager.is_safe(action, balance_usd, balance_asset, current_price):
-                order = executor.execute(action, symbol)
-                if order:
-                    logger.info(f"Executed order for {symbol}: {order}")
-            else:
-                print(f"Trade skipped for {symbol} due to risk management")
+            try:
+                new_data = fetch_real_time_data(symbol)
+                print(f"New data for {symbol}: {new_data}")
+                
+                # Append and process data
+                df = pd.concat([dataframes[symbol], new_data]).tail(50)
+                dataframes[symbol] = df
+                print(f"Current DataFrame size for {symbol}: {len(df)} rows")
+                
+                processed_df = process_data(df)
+                if len(processed_df) == 0:
+                    print(f"Not enough data for momentum yet for {symbol}, using raw close price")
+                    latest = df.iloc[-1]
+                    momentum = 0.0
+                else:
+                    latest = processed_df.iloc[-1]
+                    momentum = latest['momentum']
+                
+                # Get balance and execute trades
+                balance_usd, balance_asset = executor.get_balance(symbol)
+                current_price = latest['close']
+                obs = np.array([momentum, balance_usd, balance_asset])
+                asset_name = symbol.split('/')[0]
+                print(f"Observation for {symbol}: momentum={momentum}, balance_usd={balance_usd}, balance_{asset_name}={balance_asset}")
+                
+                action = strategy.get_action(obs)
+                print(f"Action chosen for {symbol}: {action} (0=hold, 1=buy, 2=sell)")
+                logger.info(f"Action for {symbol}: {action}, Balance USD: {balance_usd}, Balance {asset_name}: {balance_asset}")
+                
+                if risk_manager.is_safe(action, symbol, balance_usd, balance_asset, current_price):
+                    order = executor.execute(action, symbol)
+                    if order:
+                        logger.info(f"Executed order for {symbol}: {order}")
+                else:
+                    print(f"Trade skipped for {symbol} due to risk management")
+            except Exception as e:
+                print(f"Error processing {symbol}: {e}")
+                logger.error(f"Error processing {symbol}: {e}")
+                continue
         
         print("Waiting 60 seconds...")
         time.sleep(60)

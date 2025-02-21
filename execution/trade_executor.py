@@ -9,7 +9,7 @@ class TradeExecutor:
                 'secret': KRAKEN_API_SECRET,
                 'enableRateLimit': True,
             })
-        else:  # Coinbase
+        else:
             self.exchange = ccxt.coinbase({
                 'apiKey': COINBASE_API_KEY,
                 'secret': COINBASE_API_SECRET,
@@ -49,13 +49,13 @@ class TradeExecutor:
             balance = self.exchange.fetch_balance()
             print(f"Raw balance response: {balance}")
             if ACTIVE_EXCHANGE == 'kraken':
-                usd = balance['total'].get('ZUSD', 0.0)
-                asset = symbol.split('/')[0]  # e.g., 'XBT' from 'XBT/USD'
-                asset = 'XXBT' if asset == 'XBT' else asset  # Kraken uses 'XXBT'
+                usd = balance['total'].get('ZUSD', 0.0)  # Kraken USD
+                asset = symbol.split('/')[0]
+                asset = 'XXBT' if asset == 'XBT' else asset  # Normalize XBT to XXBT
                 asset_balance = balance['total'].get(asset, 0.0)
                 print(f"Kraken balance for {symbol}: USD={usd}, {asset}={asset_balance}")
                 return usd, asset_balance
-            else:  # Coinbase
+            else:
                 usd = balance['total'].get('USD', 0.0)
                 asset = symbol.split('/')[0]
                 asset_balance = balance['total'].get(asset, 0.0)
@@ -71,4 +71,4 @@ class TradeExecutor:
             return ticker['last']
         except Exception as e:
             print(f"Failed to fetch price for {symbol}: {e}")
-            return 98700  # Fallback price
+            return 98700  # Fallback
