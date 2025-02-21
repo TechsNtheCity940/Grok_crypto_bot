@@ -54,7 +54,7 @@ def train_model(df):
     model = PPO('MlpPolicy', env, verbose=1)
     model.learn(total_timesteps=10000)
     # Save to the same directory as model_code.py
-    model.save('ppo_trading_model')  # Adjusted to relative path
+    model.save('F:/newrepos/Grok_crypto_bot/models/trained_models/ppo_trading_model')  # Adjusted to relative path
     return model
 
 def process_data(df):
