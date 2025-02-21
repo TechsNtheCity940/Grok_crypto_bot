@@ -54,9 +54,10 @@ def fetch_real_time_data(symbol=TRADING_PAIR):
         while True:
             message = ws.recv()
             data = json.loads(message)
-            if isinstance(data, list) and len(data) > 0:
-                price = float(data[0][0])  # Kraken trade price
-                timestamp = pd.to_datetime(float(data[0][2]), unit='s')  # Trade timestamp
+            # Check if it's a trade message (list with "trade" as second element)
+            if isinstance(data, list) and len(data) > 1 and data[1] == "trade":
+                price = float(data[0][0])  # First element of trade data is price
+                timestamp = pd.to_datetime(float(data[0][2]), unit='s')  # Third element is timestamp
                 ws.close()
                 return pd.DataFrame([[timestamp, price]], columns=['timestamp', 'close'])
     else:  # Coinbase

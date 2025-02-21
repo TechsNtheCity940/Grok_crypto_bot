@@ -67,7 +67,7 @@ def process_data(df):
 
 if __name__ == "__main__":
     # Load historical data
-    data_path = f'../../data/historical/{TRADING_PAIR.replace("/", "_")}_1h.csv'  # Adjusted for directory structure
+    data_path = 'f:/newrepos/Grok_crypto_bot/data/historical/BTC_USD_1h.csv'  # Adjusted for directory structure
     try:
         df = pd.read_csv(data_path)
         processed_df = process_data(df)
