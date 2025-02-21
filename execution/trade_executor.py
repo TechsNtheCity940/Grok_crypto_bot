@@ -16,18 +16,10 @@ class TradeExecutor:
                 'enableRateLimit': True,
             })
         self.symbol = TRADING_PAIR
-        
-    def fetch_current_price(self):
-        ticker = self.exchange.fetch_ticker(self.symbol)
-        return ticker['last']
 
     def execute(self, action, amount=0.0001):  # Micro-trading: 0.0001 BTC
         balance_usd, balance_btc = self.get_balance()
-        current_price = self.fetch_current_price()  # Add this method
-        amount = min(base_amount, balance_btc if action == 2 else balance_usd / current_price * 0.99)
-        if amount <= 0:
-            print(f"Insufficient funds for action {action}")
-            return None
+        current_price = self.fetch_current_price()  # Fetch real-time price
         if action == 1:  # Buy
             if balance_usd < amount * current_price:
                 print(f"Insufficient USD: need {amount * current_price}, have {balance_usd}")
@@ -69,3 +61,11 @@ class TradeExecutor:
         except Exception as e:
             print(f"Balance fetch failed: {e}")
             return 0.0, 0.0
+
+    def fetch_current_price(self):
+        try:
+            ticker = self.exchange.fetch_ticker(self.symbol)
+            return ticker['last']
+        except Exception as e:
+            print(f"Failed to fetch current price: {e}")
+            return 98290  # Fallback price if fetch fails

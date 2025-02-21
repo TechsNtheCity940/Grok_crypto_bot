@@ -1,7 +1,7 @@
 import time
 import pandas as pd
 import numpy as np
-from utils.data_utils import fetch_real_time_data, process_data, fetch_historical_data  # Added fetch_historical_data
+from utils.data_utils import fetch_real_time_data, process_data, fetch_historical_data
 from utils.log_setup import logger
 from strategies.momentum_strategy import MomentumStrategy
 from execution.trade_executor import TradeExecutor
@@ -15,7 +15,7 @@ def main():
     # Fetch initial historical data (50 rows)
     df = fetch_historical_data(limit=50)
     print(f"Initial historical data fetched: {len(df)} rows")
-    print(df.tail())  # Optional: View the last few rows for verification
+    print(df.tail())
     
     # Initialize components
     executor = TradeExecutor()
@@ -38,18 +38,19 @@ def main():
         df = pd.concat([df, new_data]).tail(50)
         print(f"Current DataFrame size: {len(df)} rows")
         
-        # Process data (e.g., calculate moving averages, momentum)
+        # Process data
         processed_df = process_data(df)
         if len(processed_df) == 0:
             print("Not enough data for momentum yet, using raw close price")
-            latest = df.iloc[-1]  # Use raw data until enough for processing
-            momentum = 0.0  # Default momentum until calculated
+            latest = df.iloc[-1]
+            momentum = 0.0
         else:
             latest = processed_df.iloc[-1]
             momentum = latest['momentum']
         
         # Get current balance and position
         balance_usd, balance_btc = executor.get_balance()
+        current_price = latest['close']  # Use latest close as current price
         obs = np.array([momentum, balance_usd, balance_btc])
         print(f"Observation: momentum={momentum}, balance_usd={balance_usd}, balance_btc={balance_btc}")
         
@@ -58,12 +59,11 @@ def main():
         print(f"Action chosen: {action} (0=hold, 1=buy, 2=sell)")
         logger.info(f"Action: {action}, Balance USD: {balance_usd}, Balance BTC: {balance_btc}")
         
-        # Calculate position value (BTC * current price)
-        current_price = latest['close']
+        # Calculate position value
         position_value = balance_btc * current_price
         
         # Execute trade if safe
-        if risk_manager.is_safe(action, balance_usd, position_value):
+        if risk_manager.is_safe(action, balance_usd, balance_btc, current_price):
             order = executor.execute(action)
             if order:
                 logger.info(f"Executed order: {order}")
