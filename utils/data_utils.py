@@ -17,7 +17,7 @@ kraken = ccxt.kraken({
     'enableRateLimit': True,
 })
 
-coinbase = ccxt.coinbasepro({
+coinbase = ccxt.coinbase({
     'apiKey': COINBASE_API_KEY,
     'secret': COINBASE_API_SECRET,
     'enableRateLimit': True,
