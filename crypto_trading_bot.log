@@ -46,3 +46,384 @@
 2025-02-21 05:50:28,663 - INFO - Action: 0, Balance USD: 0.0, Balance BTC: 0.0
 2025-02-21 05:51:32,573 - INFO - Action: 2, Balance USD: 0.0, Balance BTC: 0.0
 2025-02-21 05:52:34,650 - INFO - Starting AI Crypto Trading Bot on kraken
+2025-02-21 05:58:28,505 - INFO - Starting AI Crypto Trading Bot on kraken
+2025-02-21 05:58:47,453 - INFO - Action for XBT/USD: 0, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 05:59:08,742 - INFO - Action for STX/USD: 1, Balance USD: 0.0, Balance STX: 0.00097
+2025-02-21 05:59:44,795 - INFO - Action for AVAX/USD: 2, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 06:00:52,494 - INFO - Action for XBT/USD: 1, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 06:01:55,751 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 06:02:48,920 - INFO - Action for AVAX/USD: 1, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 06:03:55,251 - INFO - Action for XBT/USD: 2, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 06:04:12,075 - INFO - Action for STX/USD: 1, Balance USD: 0.0, Balance STX: 0.00097
+2025-02-21 06:04:46,377 - INFO - Action for AVAX/USD: 2, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 06:05:57,564 - INFO - Action for XBT/USD: 2, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 06:07:01,678 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 06:08:02,375 - ERROR - Error processing AVAX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 06:09:04,933 - INFO - Action for XBT/USD: 1, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 06:10:08,382 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 06:10:27,679 - INFO - Action for AVAX/USD: 0, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 06:11:49,990 - INFO - Action for XBT/USD: 1, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 06:12:53,582 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 06:13:15,463 - INFO - Action for AVAX/USD: 0, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 06:14:22,587 - INFO - Action for XBT/USD: 0, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 06:15:05,788 - INFO - Action for STX/USD: 2, Balance USD: 0.0, Balance STX: 0.00097
+2025-02-21 06:15:16,423 - INFO - Action for AVAX/USD: 1, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 06:16:30,762 - INFO - Action for XBT/USD: 0, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 06:17:34,544 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 06:17:50,110 - INFO - Action for AVAX/USD: 2, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 06:19:01,927 - INFO - Action for XBT/USD: 1, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 06:20:05,486 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 06:20:23,179 - INFO - Action for AVAX/USD: 2, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 06:21:34,434 - INFO - Action for XBT/USD: 0, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 06:22:38,065 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 06:22:55,564 - INFO - Action for AVAX/USD: 0, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 06:24:17,654 - INFO - Action for XBT/USD: 1, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 06:25:21,565 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 06:25:33,056 - INFO - Action for AVAX/USD: 0, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 06:27:06,011 - INFO - Action for XBT/USD: 2, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 06:28:09,807 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 06:28:29,809 - INFO - Action for AVAX/USD: 2, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 06:29:37,142 - INFO - Action for XBT/USD: 0, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 06:30:40,227 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 06:31:10,590 - INFO - Action for AVAX/USD: 2, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 06:32:16,939 - INFO - Action for XBT/USD: 2, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 06:33:20,535 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 06:33:30,876 - INFO - Action for AVAX/USD: 2, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 06:34:40,672 - INFO - Action for XBT/USD: 1, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 06:35:27,390 - INFO - Action for STX/USD: 1, Balance USD: 0.0, Balance STX: 0.00097
+2025-02-21 06:36:32,055 - ERROR - Error processing AVAX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 06:37:59,449 - INFO - Action for XBT/USD: 2, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 06:39:02,818 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 06:39:15,507 - INFO - Action for AVAX/USD: 1, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 06:40:22,664 - INFO - Action for XBT/USD: 1, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 06:41:26,616 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 06:42:27,448 - ERROR - Error processing AVAX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 06:43:33,159 - INFO - Action for XBT/USD: 2, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 06:44:36,356 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 06:45:37,095 - ERROR - Error processing AVAX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 06:46:44,108 - INFO - Action for XBT/USD: 0, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 06:47:47,756 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 06:48:48,322 - ERROR - Error processing AVAX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 06:49:59,863 - INFO - Action for XBT/USD: 2, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 06:51:03,094 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 06:52:03,496 - ERROR - Error processing AVAX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 06:53:06,744 - INFO - Action for XBT/USD: 2, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 06:54:10,719 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 06:54:33,729 - INFO - Action for AVAX/USD: 0, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 06:55:42,133 - INFO - Action for XBT/USD: 2, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 06:56:45,844 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 06:57:46,769 - ERROR - Error processing AVAX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 06:58:49,329 - INFO - Action for XBT/USD: 2, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 06:59:53,315 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 07:00:07,848 - INFO - Action for AVAX/USD: 0, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 07:01:16,045 - INFO - Action for XBT/USD: 2, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 07:02:19,365 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 07:02:58,707 - INFO - Action for AVAX/USD: 0, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 07:04:05,889 - INFO - Action for XBT/USD: 0, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 07:04:56,319 - INFO - Action for STX/USD: 0, Balance USD: 0.0, Balance STX: 0.00097
+2025-02-21 07:05:28,919 - INFO - Action for AVAX/USD: 2, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 07:06:37,725 - INFO - Action for XBT/USD: 1, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 07:07:41,023 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 07:08:41,650 - ERROR - Error processing AVAX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 07:09:44,864 - INFO - Action for XBT/USD: 0, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 07:10:46,394 - INFO - Action for STX/USD: 0, Balance USD: 0.0, Balance STX: 0.00097
+2025-02-21 07:11:17,389 - INFO - Action for AVAX/USD: 0, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 07:12:24,261 - INFO - Action for XBT/USD: 2, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 07:12:30,579 - INFO - Action for STX/USD: 1, Balance USD: 0.0, Balance STX: 0.00097
+2025-02-21 07:13:22,498 - INFO - Action for AVAX/USD: 0, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 07:14:36,990 - INFO - Action for XBT/USD: 0, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 07:15:30,545 - INFO - Action for STX/USD: 0, Balance USD: 0.0, Balance STX: 0.00097
+2025-02-21 07:16:32,973 - INFO - Action for AVAX/USD: 0, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 07:17:40,885 - INFO - Action for XBT/USD: 2, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 07:18:44,389 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 07:18:59,498 - INFO - Action for AVAX/USD: 1, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 07:20:07,866 - INFO - Action for XBT/USD: 1, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 07:21:11,929 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 07:21:17,748 - INFO - Action for AVAX/USD: 1, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 07:22:33,525 - INFO - Action for XBT/USD: 2, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 07:23:37,157 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 07:24:38,011 - ERROR - Error processing AVAX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 07:25:47,975 - INFO - Action for XBT/USD: 0, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 07:26:51,563 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 07:27:50,804 - INFO - Action for AVAX/USD: 0, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 07:29:13,250 - INFO - Action for XBT/USD: 0, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 07:30:17,018 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 07:30:25,901 - INFO - Action for AVAX/USD: 2, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 07:31:32,193 - INFO - Action for XBT/USD: 0, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 07:32:36,041 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 07:32:39,016 - INFO - Action for AVAX/USD: 0, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 07:34:07,601 - INFO - Action for XBT/USD: 0, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 07:34:35,058 - INFO - Action for STX/USD: 2, Balance USD: 0.0, Balance STX: 0.00097
+2025-02-21 07:35:03,618 - INFO - Action for AVAX/USD: 1, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 07:36:15,763 - INFO - Action for XBT/USD: 1, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 07:37:19,690 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 07:37:23,373 - INFO - Action for AVAX/USD: 1, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 07:38:32,896 - INFO - Action for XBT/USD: 2, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 07:39:36,402 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 07:40:00,383 - INFO - Action for AVAX/USD: 0, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 07:41:07,299 - INFO - Action for XBT/USD: 2, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 07:42:10,739 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 07:42:14,630 - INFO - Action for AVAX/USD: 1, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 07:43:26,607 - INFO - Action for XBT/USD: 1, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 07:44:30,161 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 07:44:55,456 - INFO - Action for AVAX/USD: 0, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 07:46:08,755 - INFO - Action for XBT/USD: 0, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 07:47:12,375 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 07:48:04,477 - INFO - Action for AVAX/USD: 1, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 07:49:21,510 - INFO - Action for XBT/USD: 2, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 07:50:25,227 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 07:50:46,500 - INFO - Action for AVAX/USD: 1, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 07:51:56,977 - INFO - Action for XBT/USD: 2, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 07:53:00,564 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 07:53:11,955 - INFO - Action for AVAX/USD: 2, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 07:54:19,082 - INFO - Action for XBT/USD: 1, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 07:55:23,067 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 07:55:36,640 - INFO - Action for AVAX/USD: 0, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 07:56:49,681 - INFO - Action for XBT/USD: 0, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 07:57:53,799 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 07:57:56,401 - INFO - Action for AVAX/USD: 1, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 07:59:29,332 - INFO - Action for XBT/USD: 2, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 08:00:00,831 - INFO - Action for STX/USD: 1, Balance USD: 0.0, Balance STX: 0.00097
+2025-02-21 08:00:10,780 - INFO - Action for AVAX/USD: 1, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 08:01:33,754 - INFO - Action for XBT/USD: 1, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 08:02:36,953 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 08:02:49,607 - INFO - Action for AVAX/USD: 1, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 08:04:05,567 - INFO - Action for XBT/USD: 0, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 08:05:09,340 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 08:05:48,617 - INFO - Action for AVAX/USD: 0, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 08:06:54,922 - INFO - Action for XBT/USD: 0, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 08:07:58,979 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 08:08:59,946 - ERROR - Error processing AVAX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 08:10:08,179 - INFO - Action for XBT/USD: 0, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 08:10:50,261 - INFO - Action for STX/USD: 0, Balance USD: 0.0, Balance STX: 0.00097
+2025-02-21 08:11:24,696 - INFO - Action for AVAX/USD: 1, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 08:12:36,033 - INFO - Action for XBT/USD: 2, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 08:13:39,692 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 08:13:48,251 - INFO - Action for AVAX/USD: 1, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 08:15:01,323 - INFO - Action for XBT/USD: 0, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 08:16:04,561 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 08:16:34,529 - INFO - Action for AVAX/USD: 2, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 08:17:45,053 - INFO - Action for XBT/USD: 2, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 08:18:48,761 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 08:18:59,523 - INFO - Action for AVAX/USD: 2, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 08:20:10,598 - INFO - Action for XBT/USD: 2, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 08:21:14,551 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 08:21:24,724 - INFO - Action for AVAX/USD: 0, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 08:22:41,898 - INFO - Action for XBT/USD: 0, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 08:23:45,140 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 08:24:14,226 - INFO - Action for AVAX/USD: 0, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 08:25:29,841 - INFO - Action for XBT/USD: 2, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 08:26:33,461 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 08:27:34,119 - ERROR - Error processing AVAX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 08:28:40,603 - INFO - Action for XBT/USD: 1, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 08:29:44,182 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 08:29:51,136 - INFO - Action for AVAX/USD: 0, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 08:30:58,266 - INFO - Action for XBT/USD: 2, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 08:32:01,361 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 08:32:04,813 - INFO - Action for AVAX/USD: 1, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 08:33:14,274 - INFO - Action for XBT/USD: 1, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 08:34:17,404 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 08:34:20,961 - INFO - Action for AVAX/USD: 0, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 08:35:32,827 - INFO - Action for XBT/USD: 2, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 08:36:36,522 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 08:36:42,062 - INFO - Action for AVAX/USD: 1, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 08:37:50,787 - INFO - Action for XBT/USD: 0, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 08:38:54,782 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 08:39:02,360 - INFO - Action for AVAX/USD: 0, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 08:40:11,647 - INFO - Action for XBT/USD: 2, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 08:40:36,261 - INFO - Action for STX/USD: 1, Balance USD: 0.0, Balance STX: 0.00097
+2025-02-21 08:40:50,377 - INFO - Action for AVAX/USD: 2, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 08:41:56,970 - INFO - Action for XBT/USD: 0, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 08:43:00,958 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 08:43:15,859 - INFO - Action for AVAX/USD: 1, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 08:44:27,669 - INFO - Action for XBT/USD: 0, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 08:45:31,279 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 08:46:18,555 - INFO - Action for AVAX/USD: 0, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 08:47:25,452 - INFO - Action for XBT/USD: 0, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 08:48:00,325 - INFO - Action for STX/USD: 0, Balance USD: 0.0, Balance STX: 0.00097
+2025-02-21 08:48:29,750 - INFO - Action for AVAX/USD: 1, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 08:49:41,022 - INFO - Action for XBT/USD: 0, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 08:50:44,616 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 08:50:49,844 - INFO - Action for AVAX/USD: 1, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 08:51:57,901 - INFO - Action for XBT/USD: 1, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 08:52:30,426 - INFO - Action for STX/USD: 2, Balance USD: 0.0, Balance STX: 0.00097
+2025-02-21 08:52:39,838 - INFO - Action for AVAX/USD: 1, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 08:53:54,861 - INFO - Action for XBT/USD: 2, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 08:54:58,749 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 08:55:59,307 - ERROR - Error processing AVAX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 08:57:04,246 - INFO - Action for XBT/USD: 1, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 08:58:08,059 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 08:59:06,854 - INFO - Action for AVAX/USD: 1, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 09:00:17,672 - INFO - Action for XBT/USD: 1, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 09:01:12,096 - INFO - Action for STX/USD: 1, Balance USD: 0.0, Balance STX: 0.00097
+2025-02-21 09:02:01,339 - INFO - Action for AVAX/USD: 0, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 09:03:07,720 - INFO - Action for XBT/USD: 1, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 09:04:10,993 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 09:04:20,310 - INFO - Action for AVAX/USD: 1, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 09:05:27,075 - INFO - Action for XBT/USD: 0, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 09:06:31,072 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 09:06:43,246 - INFO - Action for AVAX/USD: 1, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 09:07:49,151 - INFO - Action for XBT/USD: 2, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 09:08:52,750 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 09:09:53,473 - ERROR - Error processing AVAX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 09:11:03,595 - INFO - Action for XBT/USD: 1, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 09:12:06,259 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 09:12:17,790 - INFO - Action for AVAX/USD: 0, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 09:13:24,989 - INFO - Action for XBT/USD: 2, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 09:14:29,329 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 09:14:32,131 - INFO - Action for AVAX/USD: 1, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 09:15:44,319 - INFO - Action for XBT/USD: 0, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 09:16:00,336 - INFO - Action for STX/USD: 1, Balance USD: 0.0, Balance STX: 0.00097
+2025-02-21 09:17:05,382 - ERROR - Error processing AVAX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 09:18:11,694 - INFO - Action for XBT/USD: 0, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 09:19:01,411 - INFO - Action for STX/USD: 0, Balance USD: 0.0, Balance STX: 0.00097
+2025-02-21 09:19:25,323 - INFO - Action for AVAX/USD: 1, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 09:20:35,483 - INFO - Action for XBT/USD: 2, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 09:21:39,575 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 09:21:52,497 - INFO - Action for AVAX/USD: 2, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 09:23:02,438 - INFO - Action for XBT/USD: 0, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 09:23:43,967 - INFO - Action for STX/USD: 2, Balance USD: 0.0, Balance STX: 0.00097
+2025-02-21 09:24:14,139 - INFO - Action for AVAX/USD: 2, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 09:25:21,820 - INFO - Action for XBT/USD: 1, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 09:26:03,284 - INFO - Action for STX/USD: 2, Balance USD: 0.0, Balance STX: 0.00097
+2025-02-21 09:26:11,006 - INFO - Action for AVAX/USD: 0, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 09:27:18,258 - INFO - Action for XBT/USD: 2, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 09:28:22,185 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 09:29:22,477 - ERROR - Error processing AVAX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 09:30:29,057 - INFO - Action for XBT/USD: 2, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 09:31:32,497 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 09:32:33,496 - ERROR - Error processing AVAX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 09:33:37,063 - INFO - Action for XBT/USD: 1, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 09:33:46,594 - INFO - Action for STX/USD: 2, Balance USD: 0.0, Balance STX: 0.00097
+2025-02-21 09:34:27,097 - INFO - Action for AVAX/USD: 1, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 09:35:40,488 - INFO - Action for XBT/USD: 1, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 09:36:17,250 - INFO - Action for STX/USD: 1, Balance USD: 0.0, Balance STX: 0.00097
+2025-02-21 09:36:49,025 - INFO - Action for AVAX/USD: 1, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 09:37:59,312 - INFO - Action for XBT/USD: 2, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 09:39:03,151 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 09:39:08,603 - INFO - Action for AVAX/USD: 1, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 09:40:15,927 - INFO - Action for XBT/USD: 1, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 09:40:49,454 - INFO - Action for STX/USD: 1, Balance USD: 0.0, Balance STX: 0.00097
+2025-02-21 09:41:12,639 - INFO - Action for AVAX/USD: 1, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 09:42:18,769 - INFO - Action for XBT/USD: 2, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 09:43:05,329 - INFO - Action for STX/USD: 0, Balance USD: 0.0, Balance STX: 0.00097
+2025-02-21 09:43:49,767 - INFO - Action for AVAX/USD: 0, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 09:44:59,844 - INFO - Action for XBT/USD: 0, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 09:46:03,546 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 09:46:09,057 - INFO - Action for AVAX/USD: 0, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 09:47:14,608 - INFO - Action for XBT/USD: 0, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 09:47:22,436 - INFO - Action for STX/USD: 0, Balance USD: 0.0, Balance STX: 0.00097
+2025-02-21 09:47:30,754 - INFO - Action for AVAX/USD: 1, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 09:48:44,152 - INFO - Action for XBT/USD: 1, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 09:49:47,545 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 09:49:59,231 - INFO - Action for AVAX/USD: 2, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 09:51:06,218 - INFO - Action for XBT/USD: 1, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 09:52:09,537 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 09:53:01,085 - INFO - Action for AVAX/USD: 2, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 09:54:09,079 - INFO - Action for XBT/USD: 1, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 09:54:26,081 - INFO - Action for STX/USD: 1, Balance USD: 0.0, Balance STX: 0.00097
+2025-02-21 09:55:30,677 - ERROR - Error processing AVAX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 09:56:38,738 - INFO - Action for XBT/USD: 2, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 09:57:42,057 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 09:58:42,577 - ERROR - Error processing AVAX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 09:59:49,131 - INFO - Action for XBT/USD: 2, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 10:00:52,569 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 10:01:18,748 - INFO - Action for AVAX/USD: 2, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 10:02:26,397 - INFO - Action for XBT/USD: 0, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 10:02:36,967 - INFO - Action for STX/USD: 2, Balance USD: 0.0, Balance STX: 0.00097
+2025-02-21 10:03:00,336 - INFO - Action for AVAX/USD: 2, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 10:04:07,366 - INFO - Action for XBT/USD: 1, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 10:05:11,420 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 10:06:11,762 - ERROR - Error processing AVAX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 10:07:15,093 - INFO - Action for XBT/USD: 0, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 10:08:18,877 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 10:09:09,863 - INFO - Action for AVAX/USD: 2, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 10:10:17,808 - INFO - Action for XBT/USD: 2, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 10:11:21,254 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 10:11:32,825 - INFO - Action for AVAX/USD: 2, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 10:12:48,045 - INFO - Action for XBT/USD: 2, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 10:13:06,111 - INFO - Action for STX/USD: 2, Balance USD: 0.0, Balance STX: 0.00097
+2025-02-21 10:13:18,742 - INFO - Action for AVAX/USD: 0, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 10:14:25,127 - INFO - Action for XBT/USD: 0, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 10:14:50,848 - INFO - Action for STX/USD: 2, Balance USD: 0.0, Balance STX: 0.00097
+2025-02-21 10:15:03,135 - INFO - Action for AVAX/USD: 0, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 10:16:10,590 - INFO - Action for XBT/USD: 1, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 10:17:14,353 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 10:18:14,856 - ERROR - Error processing AVAX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 10:19:17,450 - INFO - Action for XBT/USD: 1, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 10:20:21,579 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 10:20:28,292 - INFO - Action for AVAX/USD: 0, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 10:21:34,505 - INFO - Action for XBT/USD: 1, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 10:22:38,400 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 10:22:48,363 - INFO - Action for AVAX/USD: 0, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 10:23:54,691 - INFO - Action for XBT/USD: 2, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 10:24:05,741 - INFO - Action for STX/USD: 2, Balance USD: 0.0, Balance STX: 0.00097
+2025-02-21 10:24:20,357 - INFO - Action for AVAX/USD: 1, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 10:25:28,569 - INFO - Action for XBT/USD: 2, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 10:26:32,626 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 10:26:54,405 - INFO - Action for AVAX/USD: 2, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 10:27:59,929 - INFO - Action for XBT/USD: 1, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 10:29:04,009 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 10:29:13,033 - INFO - Action for AVAX/USD: 1, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 10:30:32,855 - INFO - Action for XBT/USD: 1, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 10:31:36,853 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 10:32:37,365 - ERROR - Error processing AVAX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 10:33:42,323 - INFO - Action for XBT/USD: 0, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 10:34:45,647 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 10:35:07,829 - INFO - Action for AVAX/USD: 0, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 10:36:34,092 - INFO - Action for XBT/USD: 0, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 10:37:37,992 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 10:37:42,066 - INFO - Action for AVAX/USD: 2, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 10:38:49,859 - INFO - Action for XBT/USD: 0, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 10:39:53,498 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 10:40:26,339 - INFO - Action for AVAX/USD: 1, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 10:41:32,718 - INFO - Action for XBT/USD: 0, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 10:42:36,620 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 10:43:25,054 - INFO - Action for AVAX/USD: 1, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 10:44:34,432 - INFO - Action for XBT/USD: 0, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 10:44:44,477 - INFO - Action for STX/USD: 0, Balance USD: 0.0, Balance STX: 0.00097
+2025-02-21 10:45:48,929 - ERROR - Error processing AVAX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 10:46:59,274 - INFO - Action for XBT/USD: 1, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 10:48:02,475 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 10:48:33,195 - INFO - Action for AVAX/USD: 0, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 10:49:43,433 - INFO - Action for XBT/USD: 2, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 10:50:47,313 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 10:51:47,493 - ERROR - Error processing AVAX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 10:52:50,673 - INFO - Action for XBT/USD: 2, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 10:53:54,603 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 10:54:55,470 - ERROR - Error processing AVAX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 10:55:59,132 - INFO - Action for XBT/USD: 0, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 10:57:03,042 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 10:57:41,113 - INFO - Action for AVAX/USD: 0, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 10:58:47,954 - INFO - Action for XBT/USD: 2, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 10:59:51,552 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 11:00:33,589 - INFO - Action for AVAX/USD: 1, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 11:01:47,031 - INFO - Action for XBT/USD: 2, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 11:02:50,881 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 11:03:51,785 - ERROR - Error processing AVAX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 11:04:58,975 - INFO - Action for XBT/USD: 0, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 11:06:02,881 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 11:06:29,636 - INFO - Action for AVAX/USD: 0, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 11:07:53,531 - INFO - Action for XBT/USD: 2, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 11:08:56,626 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 11:09:25,027 - INFO - Action for AVAX/USD: 0, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 11:10:32,062 - INFO - Action for XBT/USD: 1, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 11:11:35,758 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 11:12:36,231 - ERROR - Error processing AVAX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 11:13:41,525 - INFO - Action for XBT/USD: 0, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 11:14:44,627 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 11:15:04,344 - INFO - Action for AVAX/USD: 0, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 11:16:13,708 - INFO - Action for XBT/USD: 1, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 11:17:17,144 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 11:18:17,713 - ERROR - Error processing AVAX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 11:19:23,354 - INFO - Action for XBT/USD: 1, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 11:20:24,025 - INFO - Action for STX/USD: 1, Balance USD: 0.0, Balance STX: 0.00097
+2025-02-21 11:20:36,851 - INFO - Action for AVAX/USD: 1, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 11:21:44,498 - INFO - Action for XBT/USD: 0, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 11:22:47,800 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 11:23:33,519 - INFO - Action for AVAX/USD: 1, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 11:24:49,497 - INFO - Action for XBT/USD: 1, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 11:25:52,949 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
+2025-02-21 11:26:31,317 - INFO - Action for AVAX/USD: 0, Balance USD: 0.0, Balance AVAX: 6.44e-06
+2025-02-21 11:27:38,309 - INFO - Action for XBT/USD: 1, Balance USD: 0.0, Balance XBT: 0.0
+2025-02-21 11:28:42,091 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds

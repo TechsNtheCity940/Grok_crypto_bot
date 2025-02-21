@@ -1,7 +1,7 @@
 from stable_baselines3 import PPO
 
 class MomentumStrategy:
-    def __init__(self, model_path='models/trained_models/ppo_trading_model'):  # Kept as is assuming absolute path
+    def __init__(self, model_path='models/trained_models/ppo_trading_model'):
         self.model = PPO.load(model_path)
         
     def add_indicators(df):

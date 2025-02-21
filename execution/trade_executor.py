@@ -3,21 +3,25 @@ from config import KRAKEN_API_KEY, KRAKEN_API_SECRET, COINBASE_API_KEY, COINBASE
 
 class TradeExecutor:
     def __init__(self):
-        if ACTIVE_EXCHANGE == 'kraken':
-            self.exchange = ccxt.kraken({
-                'apiKey': KRAKEN_API_KEY,
-                'secret': KRAKEN_API_SECRET,
-                'enableRateLimit': True,
-            })
-        else:
-            self.exchange = ccxt.coinbase({
-                'apiKey': COINBASE_API_KEY,
-                'secret': COINBASE_API_SECRET,
-                'enableRateLimit': True,
-            })
+        self.exchange = ccxt.kraken({
+            'apiKey': KRAKEN_API_KEY,
+            'secret': KRAKEN_API_SECRET,
+            'enableRateLimit': True,
+        }) if ACTIVE_EXCHANGE == 'kraken' else ccxt.coinbasepro({
+            'apiKey': COINBASE_API_KEY,
+            'secret': COINBASE_API_SECRET,
+            'enableRateLimit': True,
+        })
         self.trading_pairs = TRADING_PAIRS
+        self.update_trading_pairs()
 
-    def execute(self, action, symbol, amount=0.0001):
+    def update_trading_pairs(self):
+        balance = self.get_total_balance()
+        markets = self.exchange.load_markets()
+        self.trading_pairs = [pair for pair in markets if pair.endswith('/USD') and balance.get(pair.split('/')[0], 0) > 0]
+        print(f"Updated trading pairs: {self.trading_pairs}")
+
+    def execute(self, action, symbol, amount):
         balance_usd, balance_asset = self.get_balance(symbol)
         current_price = self.fetch_current_price(symbol)
         if action == 1:  # Buy
@@ -48,22 +52,22 @@ class TradeExecutor:
         try:
             balance = self.exchange.fetch_balance()
             print(f"Raw balance response: {balance}")
-            if ACTIVE_EXCHANGE == 'kraken':
-                usd = balance['total'].get('ZUSD', 0.0)  # Kraken USD
-                asset = symbol.split('/')[0]
-                asset = 'XXBT' if asset == 'XBT' else asset  # Normalize XBT to XXBT
-                asset_balance = balance['total'].get(asset, 0.0)
-                print(f"Kraken balance for {symbol}: USD={usd}, {asset}={asset_balance}")
-                return usd, asset_balance
-            else:
-                usd = balance['total'].get('USD', 0.0)
-                asset = symbol.split('/')[0]
-                asset_balance = balance['total'].get(asset, 0.0)
-                print(f"Coinbase balance for {symbol}: USD={usd}, {asset}={asset_balance}")
-                return usd, asset_balance
+            usd = balance['total'].get('ZUSD', 0.0)
+            asset = symbol.split('/')[0]
+            asset = 'XXBT' if asset == 'XBT' else asset
+            asset_balance = balance['total'].get(asset, 0.0)
+            print(f"Balance for {symbol}: USD={usd}, {asset}={asset_balance}")
+            return usd, asset_balance
         except Exception as e:
             print(f"Balance fetch failed: {e}")
             return 0.0, 0.0
+
+    def get_total_balance(self):
+        try:
+            return self.exchange.fetch_balance()['total']
+        except Exception as e:
+            print(f"Total balance fetch failed: {e}")
+            return {}
 
     def fetch_current_price(self, symbol):
         try:
@@ -71,4 +75,4 @@ class TradeExecutor:
             return ticker['last']
         except Exception as e:
             print(f"Failed to fetch price for {symbol}: {e}")
-            return 98700  # Fallback
+            return 98700

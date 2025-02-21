@@ -8,7 +8,7 @@ import pandas as pd
 import numpy as np
 from websocket import create_connection
 import json
-from config import KRAKEN_API_KEY, KRAKEN_API_SECRET, COINBASE_API_KEY, COINBASE_API_SECRET, TRADING_PAIRS, ACTIVE_EXCHANGE
+from config import KRAKEN_API_KEY, KRAKEN_API_SECRET, TRADING_PAIRS, ACTIVE_EXCHANGE
 
 kraken = ccxt.kraken({
     'apiKey': KRAKEN_API_KEY,
@@ -16,29 +16,26 @@ kraken = ccxt.kraken({
     'enableRateLimit': True,
 })
 
-coinbase = ccxt.coinbase({
-    'apiKey': COINBASE_API_KEY,
-    'secret': COINBASE_API_SECRET,
-    'enableRateLimit': True,
-})
+exchange = kraken if ACTIVE_EXCHANGE == 'kraken' else ccxt.coinbasepro()
 
-exchange = kraken if ACTIVE_EXCHANGE == 'kraken' else coinbase
-
-def fetch_historical_data(symbol, timeframe='1h', limit=1000):
-    try:
-        ohlcv = exchange.fetch_ohlcv(symbol, timeframe, limit=limit)
-        df = pd.DataFrame(ohlcv, columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
-        df['timestamp'] = pd.to_datetime(df['timestamp'], unit='ms')
-        df.to_csv(f'data/historical/{symbol.replace("/", "_")}_{timeframe}.csv', index=False)
-        return df
-    except Exception as e:
-        print(f"Failed to fetch historical data for {symbol}: {e}")
-        return pd.DataFrame(columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
+def fetch_historical_data(symbol, timeframe='1h', limit=50):
+    retries = 3
+    for _ in range(retries):
+        try:
+            ohlcv = exchange.fetch_ohlcv(symbol, timeframe, limit=limit)
+            df = pd.DataFrame(ohlcv, columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
+            df['timestamp'] = pd.to_datetime(df['timestamp'], unit='ms')
+            df.to_csv(f'data/historical/{symbol.replace("/", "_")}_{timeframe}.csv', index=False)
+            return df
+        except Exception as e:
+            print(f"Failed to fetch historical data for {symbol}: {e}")
+            time.sleep(5)
+    return pd.DataFrame(columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
 
 def process_data(df):
     df = df.copy()
-    df['ma_short'] = df['close'].rolling(window=min(10, len(df))).mean()
-    df['ma_long'] = df['close'].rolling(window=min(50, len(df))).mean()
+    df['ma_short'] = df['close'].rolling(window=min(5, len(df))).mean()  # Reduced for faster reaction
+    df['ma_long'] = df['close'].rolling(window=min(20, len(df))).mean()
     df['momentum'] = df['ma_short'] - df['ma_long']
     df['momentum'] = df['momentum'].fillna(0)
     return df
@@ -46,14 +43,14 @@ def process_data(df):
 def fetch_real_time_data(symbol):
     timeout = 60
     start_time = time.time()
-    if ACTIVE_EXCHANGE == 'kraken':
-        ws = create_connection('wss://ws.kraken.com')
-        ws.send(json.dumps({
-            "event": "subscribe",
-            "pair": [symbol],
-            "subscription": {"name": "trade"}
-        }))
-        while time.time() - start_time < timeout:
+    ws = create_connection('wss://ws.kraken.com')
+    ws.send(json.dumps({
+        "event": "subscribe",
+        "pair": [symbol],
+        "subscription": {"name": "trade"}
+    }))
+    while time.time() - start_time < timeout:
+        try:
             message = ws.recv()
             print(f"Kraken WebSocket message: {message}")
             data = json.loads(message)
@@ -63,5 +60,8 @@ def fetch_real_time_data(symbol):
                 ws.close()
                 print(f"Kraken trade detected for {symbol}: price={price}, timestamp={timestamp}")
                 return pd.DataFrame([[timestamp, price]], columns=['timestamp', 'close'])
-        ws.close()
-        raise TimeoutError(f"No trade data received from Kraken within {timeout} seconds")
+        except Exception as e:
+            print(f"WebSocket error for {symbol}: {e}")
+            break
+    ws.close()
+    raise TimeoutError(f"No trade data received from Kraken within {timeout} seconds")

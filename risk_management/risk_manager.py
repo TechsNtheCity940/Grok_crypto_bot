@@ -1,7 +1,7 @@
 class RiskManager:
-    def __init__(self, max_loss=0.1):
+    def __init__(self, max_loss=0.3):  # Increased to 30% for aggression
         self.max_loss = max_loss
-        self.initial_balances = {}  # Per trading pair
+        self.initial_balances = {}
 
     def set_initial_balance(self, symbol, balance_usd, balance_asset, current_price):
         self.initial_balances[symbol] = balance_usd + (balance_asset * current_price)
