@@ -12,7 +12,7 @@ COINBASE_API_KEY = os.getenv('COINBASE_API_KEY')
 COINBASE_API_SECRET = os.getenv('COINBASE_API_SECRET')
 
 # Trading pair (BTC/USD is supported by both)
-TRADING_PAIR = 'BTC/USD'
+TRADING_PAIRS = ['XBT/USD', 'STX/USD', 'AVAX/USD']
 
 # Choose exchange (toggle between 'kraken' and 'coinbase')
 ACTIVE_EXCHANGE = 'kraken'  # Change to 'coinbase' as needed
