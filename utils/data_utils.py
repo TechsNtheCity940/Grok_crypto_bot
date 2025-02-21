@@ -41,11 +41,24 @@ def process_data(df):
     df['momentum'] = df['momentum'].fillna(0)  # Default to 0 if insufficient data
     return df
 
-def fetch_real_time_data(symbol=TRADING_PAIR):
-    """Fetch real-time price via WebSocket with timeout."""
-    timeout = 30  # seconds
-    start_time = time.time()
-    
+def fetch_real_time_data(symbol=TRADING_PAIR, retries=3):
+    for _ in range(retries):
+        timeout = 60
+        start_time = time.time()
+        ws = create_connection('wss://ws.kraken.com')
+        ws.send(json.dumps({"event": "subscribe", "pair": [symbol], "subscription": {"name": "trade"}}))
+        while time.time() - start_time < timeout:
+            message = ws.recv()
+            print(f"Kraken WebSocket message: {message}")
+            data = json.loads(message)
+            if isinstance(data, list) and len(data) > 2 and data[2] == "trade":
+                price = float(data[1][0][0])
+                timestamp = pd.to_datetime(float(data[1][0][2]), unit='s')
+                ws.close()
+                return pd.DataFrame([[timestamp, price]], columns=['timestamp', 'close'])
+        ws.close()
+        time.sleep(10)  # Wait before retry
+        raise TimeoutError(f"No trade data after {retries} retries")
 
     if ACTIVE_EXCHANGE == 'kraken':
         ws = create_connection('wss://ws.kraken.com')
@@ -57,8 +70,6 @@ def fetch_real_time_data(symbol=TRADING_PAIR):
         while time.time() - start_time < timeout:
             message = ws.recv()
             print(f"Kraken WebSocket message: {message}")
-            if trade_data_received:
-                return process_trade_data()
             data = json.loads(message)
             if isinstance(data, list) and len(data) > 2 and data[2] == "trade":
                 price = float(data[1][0][0])  # First trade’s price

@@ -16,34 +16,56 @@ class TradeExecutor:
                 'enableRateLimit': True,
             })
         self.symbol = TRADING_PAIR
+        
+    def fetch_current_price(self):
+        ticker = self.exchange.fetch_ticker(self.symbol)
+        return ticker['last']
 
-    def execute(self, action, amount=0.0001):
+    def execute(self, action, amount=0.0001):  # Micro-trading: 0.0001 BTC
         balance_usd, balance_btc = self.get_balance()
-        current_price = 98290  # Replace with real-time price fetch
+        current_price = self.fetch_current_price()  # Add this method
+        amount = min(base_amount, balance_btc if action == 2 else balance_usd / current_price * 0.99)
+        if amount <= 0:
+            print(f"Insufficient funds for action {action}")
+            return None
         if action == 1:  # Buy
-            max_buy_amount = balance_usd / current_price
-            if max_buy_amount < amount:
-                amount = max_buy_amount * 0.99  # 1% buffer
-            if amount <= 0:
-                print("Insufficient USD to buy")
+            if balance_usd < amount * current_price:
+                print(f"Insufficient USD: need {amount * current_price}, have {balance_usd}")
                 return None
-            # Execute buy order
+            try:
+                order = self.exchange.create_market_buy_order(self.symbol, amount)
+                print(f"Buy order executed: {order}")
+                return order
+            except Exception as e:
+                print(f"Buy order failed: {e}")
+                return None
         elif action == 2:  # Sell
             if balance_btc < amount:
-                amount = balance_btc * 0.99  # 1% buffer
-            if amount <= 0:
-                print("Insufficient BTC to sell")
+                print(f"Insufficient BTC: need {amount}, have {balance_btc}")
                 return None
-            # Execute sell order
+            try:
+                order = self.exchange.create_market_sell_order(self.symbol, amount)
+                print(f"Sell order executed: {order}")
+                return order
+            except Exception as e:
+                print(f"Sell order failed: {e}")
+                return None
+        return None
 
     def get_balance(self):
         try:
             balance = self.exchange.fetch_balance()
             print(f"Raw balance response: {balance}")
-            usd = balance['total'].get('ZUSD', 0.0)  # Kraken uses 'ZUSD' for USD
-            xbt = balance['total'].get('XXBT', 0.0)  # Use 'XXBT' for BTC on Kraken
-            print(f"Kraken balance: USD={usd}, XBT={xbt}")
-            return usd, xbt
+            if ACTIVE_EXCHANGE == 'kraken':
+                usd = balance['total'].get('ZUSD', 0.0)  # Kraken uses 'ZUSD' for USD
+                xbt = balance['total'].get('XXBT', 0.0)  # Kraken uses 'XXBT' for BTC
+                print(f"Kraken balance: USD={usd}, XBT={xbt}")
+                return usd, xbt
+            else:  # Coinbase
+                usd = balance['total'].get('USD', 0.0)
+                btc = balance['total'].get('BTC', 0.0)
+                print(f"Coinbase balance: USD={usd}, BTC={btc}")
+                return usd, btc
         except Exception as e:
             print(f"Balance fetch failed: {e}")
             return 0.0, 0.0
