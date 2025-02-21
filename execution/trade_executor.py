@@ -17,47 +17,33 @@ class TradeExecutor:
             })
         self.symbol = TRADING_PAIR
 
-    def execute(self, action, amount=0.0001):  # Micro-trading: 0.0001 BTC
+    def execute(self, action, amount=0.0001):
         balance_usd, balance_btc = self.get_balance()
-        current_price = 98290  # Approx price; should fetch real-time ideally
+        current_price = 98290  # Replace with real-time price fetch
         if action == 1:  # Buy
-            if balance_usd < amount * current_price:
-                print(f"Insufficient USD: need {amount * current_price}, have {balance_usd}")
+            max_buy_amount = balance_usd / current_price
+            if max_buy_amount < amount:
+                amount = max_buy_amount * 0.99  # 1% buffer
+            if amount <= 0:
+                print("Insufficient USD to buy")
                 return None
-            try:
-                order = self.exchange.create_market_buy_order(self.symbol, amount)
-                print(f"Buy order executed: {order}")
-                return order
-            except Exception as e:
-                print(f"Buy order failed: {e}")
-                return None
+            # Execute buy order
         elif action == 2:  # Sell
             if balance_btc < amount:
-                print(f"Insufficient BTC: need {amount}, have {balance_btc}")
+                amount = balance_btc * 0.99  # 1% buffer
+            if amount <= 0:
+                print("Insufficient BTC to sell")
                 return None
-            try:
-                order = self.exchange.create_market_sell_order(self.symbol, amount)
-                print(f"Sell order executed: {order}")
-                return order
-            except Exception as e:
-                print(f"Sell order failed: {e}")
-                return None
-        return None
+            # Execute sell order
 
     def get_balance(self):
         try:
             balance = self.exchange.fetch_balance()
-            print(f"Raw balance response: {balance}")  # Debug full response
-            if ACTIVE_EXCHANGE == 'kraken':
-                usd = balance['total'].get('USD', 0.0)  # Default to 0 if not present
-                xbt = balance['total'].get('XBT', 0.0)  # Default to 0 if not present
-                print(f"Kraken balance: USD={usd}, XBT={xbt}")
-                return usd, xbt
-            else:  # Coinbase
-                usd = balance['total'].get('USD', 0.0)
-                btc = balance['total'].get('BTC', 0.0)
-                print(f"Coinbase balance: USD={usd}, BTC={btc}")
-                return usd, btc
+            print(f"Raw balance response: {balance}")
+            usd = balance['total'].get('ZUSD', 0.0)  # Kraken uses 'ZUSD' for USD
+            xbt = balance['total'].get('XXBT', 0.0)  # Use 'XXBT' for BTC on Kraken
+            print(f"Kraken balance: USD={usd}, XBT={xbt}")
+            return usd, xbt
         except Exception as e:
             print(f"Balance fetch failed: {e}")
             return 0.0, 0.0

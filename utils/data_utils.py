@@ -34,17 +34,18 @@ def fetch_historical_data(symbol=TRADING_PAIR, timeframe='1h', limit=1000):
     return df
 
 def process_data(df):
-    """Clean and engineer features."""
-    df = df.dropna()
-    df['ma_short'] = df['close'].rolling(window=10).mean()
-    df['ma_long'] = df['close'].rolling(window=50).mean()
+    df = df.copy()
+    df['ma_short'] = df['close'].rolling(window=min(10, len(df))).mean()
+    df['ma_long'] = df['close'].rolling(window=min(50, len(df))).mean()
     df['momentum'] = df['ma_short'] - df['ma_long']
-    return df.dropna()
+    df['momentum'] = df['momentum'].fillna(0)  # Default to 0 if insufficient data
+    return df
 
 def fetch_real_time_data(symbol=TRADING_PAIR):
     """Fetch real-time price via WebSocket with timeout."""
     timeout = 30  # seconds
     start_time = time.time()
+    
 
     if ACTIVE_EXCHANGE == 'kraken':
         ws = create_connection('wss://ws.kraken.com')
@@ -56,6 +57,8 @@ def fetch_real_time_data(symbol=TRADING_PAIR):
         while time.time() - start_time < timeout:
             message = ws.recv()
             print(f"Kraken WebSocket message: {message}")
+            if trade_data_received:
+                return process_trade_data()
             data = json.loads(message)
             if isinstance(data, list) and len(data) > 2 and data[2] == "trade":
                 price = float(data[1][0][0])  # First trade’s price
