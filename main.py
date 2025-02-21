@@ -31,6 +31,11 @@ def main():
 
         action = strategy.get_action(obs)
         print(f"Action chosen: {action} (0=hold, 1=buy, 2=sell)")
+        # In main.py, after strategy initialization
+        balance_usd, balance_btc = executor.get_balance()
+        if balance_usd == 0 and balance_btc > 0:
+            print("No USD, selling 0.0001 BTC to start")
+            executor.execute(2)  # Sell to get USD
         logger.info(f"Action: {action}, Balance: {balance}, Position: {position}")
 
         position_value = position * latest['close']
