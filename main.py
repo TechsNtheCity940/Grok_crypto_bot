@@ -16,6 +16,12 @@ def main():
     strategy = MomentumStrategy()
     df = pd.DataFrame(columns=['timestamp', 'close', 'ma_short', 'ma_long', 'momentum'])
 
+    # Initial balance check and sell BTC if no USD
+    balance_usd, balance_btc = executor.get_balance()
+    if balance_usd == 0 and balance_btc > 0:
+        print(f"No USD, selling 0.0001 BTC to start (BTC balance: {balance_btc})")
+        executor.execute(2)  # Sell 0.0001 BTC to get USD
+
     while True:
         print("Fetching real-time data...")
         new_data = fetch_real_time_data()
@@ -31,11 +37,6 @@ def main():
 
         action = strategy.get_action(obs)
         print(f"Action chosen: {action} (0=hold, 1=buy, 2=sell)")
-        # In main.py, after strategy initialization
-        balance_usd, balance_btc = executor.get_balance()
-        if balance_usd == 0 and balance_btc > 0:
-            print("No USD, selling 0.0001 BTC to start")
-            executor.execute(2)  # Sell to get USD
         logger.info(f"Action: {action}, Balance: {balance}, Position: {position}")
 
         position_value = position * latest['close']
