@@ -1,7 +1,7 @@
 class RiskManager:
     def __init__(self, max_loss=0.1):  # 10% max loss
         self.max_loss = max_loss
-        self.initial_balance = 17
+        self.initial_balance = 9.83
 
     def is_safe(self, action, balance, position_value):
         total_value = balance + position_value

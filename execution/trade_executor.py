@@ -10,7 +10,7 @@ class TradeExecutor:
                 'enableRateLimit': True,
             })
         else:  # Coinbase
-            self.exchange = ccxt.coinbasepro({
+            self.exchange = ccxt.coinbase({
                 'apiKey': COINBASE_API_KEY,
                 'secret': COINBASE_API_SECRET,
                 'enableRateLimit': True,
@@ -18,7 +18,12 @@ class TradeExecutor:
         self.symbol = TRADING_PAIR
 
     def execute(self, action, amount=0.0001):  # Micro-trading: 0.0001 BTC
+        balance_usd, balance_btc = self.get_balance()
+        current_price = 98290  # Approx price from your data; ideally fetch real-time
         if action == 1:  # Buy
+            if balance_usd < amount * current_price:
+                print(f"Insufficient USD: need {amount * current_price}, have {balance_usd}")
+                return None
             try:
                 order = self.exchange.create_market_buy_order(self.symbol, amount)
                 print(f"Buy order executed: {order}")
@@ -27,6 +32,9 @@ class TradeExecutor:
                 print(f"Buy order failed: {e}")
                 return None
         elif action == 2:  # Sell
+            if balance_btc < amount:
+                print(f"Insufficient BTC: need {amount}, have {balance_btc}")
+                return None
             try:
                 order = self.exchange.create_market_sell_order(self.symbol, amount)
                 print(f"Sell order executed: {order}")
