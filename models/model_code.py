@@ -1,3 +1,8 @@
+import sys
+import os
+# Ensure the project directory is in sys.path
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__) + '/..'))
+
 import gym
 import numpy as np
 import pandas as pd
@@ -48,7 +53,8 @@ def train_model(df):
     env = DummyVecEnv([lambda: TradingEnv(df)])
     model = PPO('MlpPolicy', env, verbose=1)
     model.learn(total_timesteps=10000)
-    model.save('models/trained_models/ppo_trading_model')
+    # Save to the same directory as model_code.py
+    model.save('ppo_trading_model')  # Adjusted to relative path
     return model
 
 def process_data(df):
@@ -61,7 +67,7 @@ def process_data(df):
 
 if __name__ == "__main__":
     # Load historical data
-    data_path = f'data/historical/{TRADING_PAIR.replace("/", "_")}_1h.csv'
+    data_path = f'../../data/historical/{TRADING_PAIR.replace("/", "_")}_1h.csv'  # Adjusted for directory structure
     try:
         df = pd.read_csv(data_path)
         processed_df = process_data(df)

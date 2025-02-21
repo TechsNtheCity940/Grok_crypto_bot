@@ -1,9 +1,13 @@
+import sys
+import os
+# Ensure the project directory is in sys.path
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__) + '/..'))
+
 import ccxt
 import pandas as pd
 import numpy as np
 from websocket import create_connection
 import json
-import os
 from config import KRAKEN_API_KEY, KRAKEN_API_SECRET, COINBASE_API_KEY, COINBASE_API_SECRET, TRADING_PAIR, ACTIVE_EXCHANGE
 
 # Initialize exchanges
