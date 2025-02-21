@@ -27,13 +27,20 @@ def main():
         new_data = fetch_real_time_data()
         print(f"New data: {new_data}")
         df = pd.concat([df, new_data]).tail(50)
+        print(f"Current DataFrame size: {len(df)} rows")
+
         processed_df = process_data(df)
-        latest = processed_df.iloc[-1]
-        print(f"Processed data: {latest}")
+        if len(processed_df) == 0:
+            print("Not enough data for momentum yet, using raw close price")
+            latest = df.iloc[-1]  # Use raw data until enough for processing
+            momentum = 0.0  # Default momentum until calculated
+        else:
+            latest = processed_df.iloc[-1]
+            momentum = latest['momentum']
 
         balance, position = executor.get_balance()
-        obs = np.array([latest['momentum'], balance, position])
-        print(f"Observation: momentum={latest['momentum']}, balance={balance}, position={position}")
+        obs = np.array([momentum, balance, position])
+        print(f"Observation: momentum={momentum}, balance={balance}, position={position}")
 
         action = strategy.get_action(obs)
         print(f"Action chosen: {action} (0=hold, 1=buy, 2=sell)")

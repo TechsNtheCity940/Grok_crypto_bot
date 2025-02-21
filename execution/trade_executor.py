@@ -19,7 +19,7 @@ class TradeExecutor:
 
     def execute(self, action, amount=0.0001):  # Micro-trading: 0.0001 BTC
         balance_usd, balance_btc = self.get_balance()
-        current_price = 98290  # Approx price from your data; ideally fetch real-time
+        current_price = 98290  # Approx price; should fetch real-time ideally
         if action == 1:  # Buy
             if balance_usd < amount * current_price:
                 print(f"Insufficient USD: need {amount * current_price}, have {balance_usd}")
@@ -47,10 +47,17 @@ class TradeExecutor:
     def get_balance(self):
         try:
             balance = self.exchange.fetch_balance()
+            print(f"Raw balance response: {balance}")  # Debug full response
             if ACTIVE_EXCHANGE == 'kraken':
-                return balance['total']['USD'], balance['total']['XBT']
+                usd = balance['total'].get('USD', 0.0)  # Default to 0 if not present
+                xbt = balance['total'].get('XBT', 0.0)  # Default to 0 if not present
+                print(f"Kraken balance: USD={usd}, XBT={xbt}")
+                return usd, xbt
             else:  # Coinbase
-                return balance['total']['USD'], balance['total']['BTC']
+                usd = balance['total'].get('USD', 0.0)
+                btc = balance['total'].get('BTC', 0.0)
+                print(f"Coinbase balance: USD={usd}, BTC={btc}")
+                return usd, btc
         except Exception as e:
             print(f"Balance fetch failed: {e}")
             return 0.0, 0.0
