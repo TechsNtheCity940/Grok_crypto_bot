@@ -17,18 +17,32 @@ class TradeExecutor:
             })
         self.symbol = TRADING_PAIR
 
-    def execute(self, action, amount=0.001):  # Default 0.001 BTC
+    def execute(self, action, amount=0.0001):  # Micro-trading: 0.0001 BTC
         if action == 1:  # Buy
-            order = self.exchange.create_market_buy_order(self.symbol, amount)
-            return order
+            try:
+                order = self.exchange.create_market_buy_order(self.symbol, amount)
+                print(f"Buy order executed: {order}")
+                return order
+            except Exception as e:
+                print(f"Buy order failed: {e}")
+                return None
         elif action == 2:  # Sell
-            order = self.exchange.create_market_sell_order(self.symbol, amount)
-            return order
+            try:
+                order = self.exchange.create_market_sell_order(self.symbol, amount)
+                print(f"Sell order executed: {order}")
+                return order
+            except Exception as e:
+                print(f"Sell order failed: {e}")
+                return None
         return None
 
     def get_balance(self):
-        balance = self.exchange.fetch_balance()
-        if ACTIVE_EXCHANGE == 'kraken':
-            return balance['total']['USD'], balance['total']['XBT']
-        else:  # Coinbase
-            return balance['total']['USD'], balance['total']['BTC']
+        try:
+            balance = self.exchange.fetch_balance()
+            if ACTIVE_EXCHANGE == 'kraken':
+                return balance['total']['USD'], balance['total']['XBT']
+            else:  # Coinbase
+                return balance['total']['USD'], balance['total']['BTC']
+        except Exception as e:
+            print(f"Balance fetch failed: {e}")
+            return 0.0, 0.0
