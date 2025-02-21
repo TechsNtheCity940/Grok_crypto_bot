@@ -55,11 +55,11 @@ def fetch_real_time_data(symbol=TRADING_PAIR):
         }))
         while time.time() - start_time < timeout:
             message = ws.recv()
-            print(f"Kraken WebSocket message: {message}")  # Debug print
+            print(f"Kraken WebSocket message: {message}")
             data = json.loads(message)
-            if isinstance(data, list) and len(data) > 1 and data[1] == "trade":
-                price = float(data[0][0])
-                timestamp = pd.to_datetime(float(data[0][2]), unit='s')
+            if isinstance(data, list) and len(data) > 2 and data[2] == "trade":
+                price = float(data[1][0][0])  # First trade’s price
+                timestamp = pd.to_datetime(float(data[1][0][2]), unit='s')
                 ws.close()
                 print(f"Kraken trade detected: price={price}, timestamp={timestamp}")
                 return pd.DataFrame([[timestamp, price]], columns=['timestamp', 'close'])
@@ -74,7 +74,7 @@ def fetch_real_time_data(symbol=TRADING_PAIR):
         }))
         while time.time() - start_time < timeout:
             message = ws.recv()
-            print(f"Coinbase WebSocket message: {message}")  # Debug print
+            print(f"Coinbase WebSocket message: {message}")
             data = json.loads(message)
             if data.get('type') == 'match':
                 price = float(data['price'])
