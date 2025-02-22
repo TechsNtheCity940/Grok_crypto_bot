@@ -8,9 +8,9 @@ import pandas as pd
 import numpy as np
 from websocket import create_connection
 import json
+import talib
 from sentiment_analyzer import SentimentAnalyzer
 from config import KRAKEN_API_KEY, KRAKEN_API_SECRET, ACTIVE_EXCHANGE
-import talib
 
 kraken = ccxt.kraken({
     'apiKey': KRAKEN_API_KEY,
@@ -18,7 +18,7 @@ kraken = ccxt.kraken({
     'enableRateLimit': True,
 })
 
-exchange = kraken if ACTIVE_EXCHANGE == 'kraken' else ccxt.coinbase()
+exchange = kraken if ACTIVE_EXCHANGE == 'kraken' else ccxt.coinbasepro()
 sentiment_analyzer = SentimentAnalyzer()
 
 def fetch_historical_data(symbol, timeframe='1h', limit=50):
@@ -52,8 +52,9 @@ def process_data(df, symbol):
     df['sentiment'] = sentiment_result['sentiment_score']
     # Fill NaNs
     df = df.fillna(0)
-    selected_features = ['momentum', 'rsi', 'macd', 'atr', 'sentiment']
-    return df[selected_features]
+    # Keep 'close' alongside features for TradingEnv
+    selected_columns = ['close', 'momentum', 'rsi', 'macd', 'atr', 'sentiment']
+    return df[selected_columns]
 
 def fetch_real_time_data(symbol):
     timeout = 60

@@ -11,8 +11,8 @@ from stable_baselines3 import PPO
 from stable_baselines3.common.vec_env import DummyVecEnv
 from gymnasium import Env, spaces
 import sys
-sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))  # Ensure root directory is in sys.path
-from sentiment_analyzer import SentimentAnalyzer  # Corrected import from root
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
+from sentiment_analyzer import SentimentAnalyzer
 
 class TradingEnv(Env):
     def __init__(self, df, symbol, executor):
@@ -31,7 +31,7 @@ class TradingEnv(Env):
         return self._get_observation(), {}
 
     def step(self, action):
-        price = self.df.iloc[self.current_step]['close']
+        price = self.df.iloc[self.current_step]['close']  # 'close' is now retained
         reward = 0
         
         if action == 1 and self.balance_usd > 0:
