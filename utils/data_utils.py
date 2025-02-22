@@ -8,7 +8,6 @@ import pandas as pd
 import numpy as np
 from websocket import create_connection
 import json
-import talib
 from sentiment_analyzer import SentimentAnalyzer
 from config import KRAKEN_API_KEY, KRAKEN_API_SECRET, ACTIVE_EXCHANGE
 
