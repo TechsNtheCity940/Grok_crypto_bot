@@ -10,6 +10,7 @@ from websocket import create_connection
 import json
 from sentiment_analyzer import SentimentAnalyzer
 from config import KRAKEN_API_KEY, KRAKEN_API_SECRET, ACTIVE_EXCHANGE
+import talib
 
 kraken = ccxt.kraken({
     'apiKey': KRAKEN_API_KEY,
