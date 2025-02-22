@@ -4,11 +4,11 @@ import numpy as np
 import os
 from utils.data_utils import fetch_real_time_data, process_data, fetch_historical_data
 from utils.log_setup import logger
-from strategies.momentum_strategy import MomentumStrategy
 from execution.trade_executor import TradeExecutor
 from risk_management.risk_manager import RiskManager
 from config import TRADING_PAIRS, ACTIVE_EXCHANGE
 from stable_baselines3 import PPO
+from stable_baselines3.common.vec_env import DummyVecEnv
 from gymnasium import Env, spaces
 
 class TradingEnv(Env):
@@ -18,7 +18,7 @@ class TradingEnv(Env):
         self.symbol = symbol
         self.executor = executor
         self.current_step = 0
-        self.balance_usd, self.balance_asset = self.executor.get_balance(symbol)
+        self.balance_usd, self.balance_asset = self.executor.get_balance(self.symbol)
         self.action_space = spaces.Discrete(3)  # 0=hold, 1=buy, 2=sell
         self.observation_space = spaces.Box(low=-np.inf, high=np.inf, shape=(3,), dtype=np.float32)
 
@@ -32,17 +32,19 @@ class TradingEnv(Env):
         reward = 0
         
         if action == 1 and self.balance_usd > 0:
-            amount = self.balance_usd / price * 0.5  # 50% of USD
+            amount = self.balance_usd / price * 0.5  # Aggressive: 50% of USD
             self.executor.execute(1, self.symbol, amount)
             self.balance_usd, self.balance_asset = self.executor.get_balance(self.symbol)
         elif action == 2 and self.balance_asset > 0:
-            amount = self.balance_asset * 0.5  # 50% of asset
+            amount = self.balance_asset * 0.5  # Aggressive: 50% of asset
             self.executor.execute(2, self.symbol, amount)
             self.balance_usd, self.balance_asset = self.executor.get_balance(self.symbol)
-            reward = self.balance_usd - 7.4729  # Profit/loss
+            reward = self.balance_usd - 7.4729  # Profit/loss based on initial USD
         
         self.current_step += 1
         done = self.current_step >= len(self.df) - 1
+        if done:
+            self.current_step = 0  # Reset to loop data
         obs = self._get_observation()
         return obs, reward, done, False, {}
 
@@ -50,18 +52,14 @@ class TradingEnv(Env):
         row = self.df.iloc[self.current_step]
         return np.array([row.get('momentum', 0.0), self.balance_usd, self.balance_asset], dtype=np.float32)
 
-from stable_baselines3.common.vec_env import DummyVecEnv
-
 def main():
     print(f"Starting AI Crypto Trading Bot on {ACTIVE_EXCHANGE}")
     logger.info(f"Starting AI Crypto Trading Bot on {ACTIVE_EXCHANGE}")
     
-    # Ensure directory exists
     os.makedirs('models/trained_models', exist_ok=True)
     
     executor = TradeExecutor()
     risk_manager = RiskManager(max_loss=0.5)
-    strategy = MomentumStrategy()
     
     dataframes = {}
     models = {}
