@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 from stable_baselines3 import PPO
 from stable_baselines3.common.vec_env import DummyVecEnv
-from config import TRADING_PAIR  # Import TRADING_PAIR from config.py
+from config import TRADING_PAIRS  # Import TRADING_PAIR from config.py
 
 class TradingEnv(gym.Env):
     """Custom RL environment for trading."""
@@ -16,14 +16,14 @@ class TradingEnv(gym.Env):
         super(TradingEnv, self).__init__()
         self.df = df
         self.current_step = 0
-        self.balance = 10000  # Starting balance in USD
-        self.position = 0     # Crypto held
+        self.balance = 20  # Starting balance in USD
+        self.position = 1     # Crypto held
         self.action_space = gym.spaces.Discrete(3)  # 0: hold, 1: buy, 2: sell
         self.observation_space = gym.spaces.Box(low=-np.inf, high=np.inf, shape=(3,), dtype=np.float32)
 
     def reset(self):
         self.current_step = 0
-        self.balance = 10000
+        self.balance = 20
         self.position = 0
         return self._get_observation()
 
