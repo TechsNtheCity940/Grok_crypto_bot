@@ -20,7 +20,7 @@ class TradingEnv(Env):
         self.current_step = 0
         self.balance_usd, self.balance_asset = self.executor.get_balance(self.symbol)
         self.action_space = spaces.Discrete(3)  # 0=hold, 1=buy, 2=sell
-        self.observation_space = spaces.Box(low=-np.inf, high=np.inf, shape=(3,), dtype=np.float32)
+        self.observation_space = spaces.Box(low=-np.inf, high=np.inf, shape=(7,), dtype=np.float32)  # momentum, rsi, macd, atr, sentiment, usd, asset
 
     def reset(self, seed=None, options=None):
         self.current_step = 0
@@ -44,13 +44,21 @@ class TradingEnv(Env):
         self.current_step += 1
         done = self.current_step >= len(self.df) - 1
         if done:
-            self.current_step = 0  # Reset to loop data
+            self.current_step = 0
         obs = self._get_observation()
         return obs, reward, done, False, {}
 
     def _get_observation(self):
         row = self.df.iloc[self.current_step]
-        return np.array([row.get('momentum', 0.0), self.balance_usd, self.balance_asset], dtype=np.float32)
+        return np.array([
+            row.get('momentum', 0.0),
+            row.get('rsi', 0.0),
+            row.get('macd', 0.0),
+            row.get('atr', 0.0),
+            row.get('sentiment', 0.0),
+            self.balance_usd,
+            self.balance_asset
+        ], dtype=np.float32)
 
 def main():
     print(f"Starting AI Crypto Trading Bot on {ACTIVE_EXCHANGE}")
@@ -65,7 +73,8 @@ def main():
     models = {}
     for symbol in executor.trading_pairs:
         df = fetch_historical_data(symbol, limit=50)
-        print(f"Initial historical data fetched for {symbol}: {len(df)} rows")
+        df = process_data(df, symbol)
+        print(f"Initial historical data fetched and processed for {symbol}: {len(df)} rows")
         dataframes[symbol] = df
         model_path = f'models/trained_models/ppo_trading_model_{symbol.replace("/", "_")}'
         try:
@@ -95,16 +104,23 @@ def main():
                 print(f"New data for {symbol}: {new_data}")
                 
                 df = pd.concat([dataframes[symbol], new_data]).tail(50)
+                df = process_data(df, symbol)
                 dataframes[symbol] = df
-                processed_df = process_data(df)
-                latest = processed_df.iloc[-1] if len(processed_df) > 0 else df.iloc[-1]
-                momentum = latest.get('momentum', 0.0)
+                latest = df.iloc[-1]
                 
                 balance_usd, balance_asset = executor.get_balance(symbol)
                 current_price = latest['close']
-                obs = np.array([momentum, balance_usd, balance_asset])
+                obs = np.array([
+                    latest['momentum'],
+                    latest['rsi'],
+                    latest['macd'],
+                    latest['atr'],
+                    latest['sentiment'],
+                    balance_usd,
+                    balance_asset
+                ])
                 asset_name = symbol.split('/')[0]
-                print(f"Observation for {symbol}: momentum={momentum}, balance_usd={balance_usd}, balance_{asset_name}={balance_asset}")
+                print(f"Observation for {symbol}: momentum={latest['momentum']}, rsi={latest['rsi']}, macd={latest['macd']}, atr={latest['atr']}, sentiment={latest['sentiment']}, balance_usd={balance_usd}, balance_{asset_name}={balance_asset}")
                 
                 action = models[symbol].predict(obs)[0]
                 print(f"Action chosen for {symbol}: {action} (0=hold, 1=buy, 2=sell)")
@@ -128,7 +144,7 @@ def main():
         
         iteration += 1
         if iteration % 10 == 0:
-            executor.update_trading_pairs()
+            executor.trading_pairs = executor.update_trading_pairs()
         print("Waiting 60 seconds...")
         time.sleep(60)
 

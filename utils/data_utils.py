@@ -8,7 +8,9 @@ import pandas as pd
 import numpy as np
 from websocket import create_connection
 import json
-from config import KRAKEN_API_KEY, KRAKEN_API_SECRET, TRADING_PAIRS, ACTIVE_EXCHANGE
+import talib
+from sentiment_analyzer import SentimentAnalyzer
+from config import KRAKEN_API_KEY, KRAKEN_API_SECRET, ACTIVE_EXCHANGE
 
 kraken = ccxt.kraken({
     'apiKey': KRAKEN_API_KEY,
@@ -16,7 +18,8 @@ kraken = ccxt.kraken({
     'enableRateLimit': True,
 })
 
-exchange = kraken if ACTIVE_EXCHANGE == 'kraken' else ccxt.coinbasepro()
+exchange = kraken if ACTIVE_EXCHANGE == 'kraken' else ccxt.coinbase()
+sentiment_analyzer = SentimentAnalyzer()
 
 def fetch_historical_data(symbol, timeframe='1h', limit=50):
     retries = 3
@@ -32,18 +35,30 @@ def fetch_historical_data(symbol, timeframe='1h', limit=50):
             time.sleep(5)
     return pd.DataFrame(columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
 
-def process_data(df):
+def process_data(df, symbol):
     df = df.copy()
-    df['ma_short'] = df['close'].rolling(window=min(5, len(df))).mean()  # Faster reaction
+    # Moving Averages for momentum
+    df['ma_short'] = df['close'].rolling(window=min(5, len(df))).mean()
     df['ma_long'] = df['close'].rolling(window=min(20, len(df))).mean()
     df['momentum'] = df['ma_short'] - df['ma_long']
-    df['momentum'] = df['momentum'].fillna(0)
-    return df
+    # RSI
+    df['rsi'] = talib.RSI(df['close'], timeperiod=14)
+    # MACD
+    df['macd'], df['macd_signal'], _ = talib.MACD(df['close'], fastperiod=12, slowperiod=26, signalperiod=9)
+    # ATR
+    df['atr'] = talib.ATR(df['high'], df['low'], df['close'], timeperiod=14)
+    # Sentiment
+    sentiment_result = sentiment_analyzer.analyze_social_media(symbol.split('/')[0], '1h')
+    df['sentiment'] = sentiment_result['sentiment_score']
+    # Fill NaNs
+    df = df.fillna(0)
+    selected_features = ['momentum', 'rsi', 'macd', 'atr', 'sentiment']
+    return df[selected_features]
 
 def fetch_real_time_data(symbol):
     timeout = 60
     start_time = time.time()
-    for _ in range(3):  # Retry logic
+    for _ in range(3):
         try:
             ws = create_connection('wss://ws.kraken.com')
             ws.send(json.dumps({

@@ -1,5 +1,5 @@
 import ccxt
-from config import KRAKEN_API_KEY, KRAKEN_API_SECRET, COINBASE_API_KEY, COINBASE_API_SECRET, TRADING_PAIRS, ACTIVE_EXCHANGE
+from config import KRAKEN_API_KEY, KRAKEN_API_SECRET, ACTIVE_EXCHANGE
 
 class TradeExecutor:
     def __init__(self):
@@ -7,26 +7,31 @@ class TradeExecutor:
             'apiKey': KRAKEN_API_KEY,
             'secret': KRAKEN_API_SECRET,
             'enableRateLimit': True,
-        }) if ACTIVE_EXCHANGE == 'kraken' else ccxt.coinbasepro({
-            'apiKey': COINBASE_API_KEY,
-            'secret': COINBASE_API_SECRET,
-            'enableRateLimit': True,
         })
-        self.trading_pairs = TRADING_PAIRS
-        self.update_trading_pairs()
+        self.exchange.load_markets()
+        self.trading_pairs = self.update_trading_pairs()
 
     def update_trading_pairs(self):
         balance = self.get_total_balance()
-        markets = self.exchange.load_markets()
-        self.trading_pairs = [pair for pair in markets if pair.endswith('/USD') and balance.get(pair.split('/')[0], 0) > 0]
-        print(f"Updated trading pairs: {self.trading_pairs}")
+        markets = self.exchange.markets
+        trading_pairs = [pair for pair in markets if pair.endswith('/USD') and balance.get(pair.split('/')[0], 0) > 0]
+        print(f"Updated trading pairs: {trading_pairs}")
+        return trading_pairs
 
     def execute(self, action, symbol, amount):
         balance_usd, balance_asset = self.get_balance(symbol)
         current_price = self.fetch_current_price(symbol)
+        market = self.exchange.markets[symbol]
+        min_amount = market['limits']['amount']['min']
+        min_cost = market['limits']['cost']['min'] if 'cost' in market['limits'] else 0
+
         if action == 1:  # Buy
-            if balance_usd < amount * current_price:
-                print(f"Insufficient USD: need {amount * current_price}, have {balance_usd} for {symbol}")
+            cost = amount * current_price
+            if amount < min_amount:
+                print(f"Amount {amount} below minimum {min_amount} for {symbol}")
+                return None
+            if min_cost > 0 and cost < min_cost:
+                print(f"Cost {cost} below minimum {min_cost} for {symbol}")
                 return None
             try:
                 order = self.exchange.create_market_buy_order(symbol, amount)
@@ -36,8 +41,8 @@ class TradeExecutor:
                 print(f"Buy order failed for {symbol}: {e}")
                 return None
         elif action == 2:  # Sell
-            if balance_asset < amount:
-                print(f"Insufficient asset: need {amount}, have {balance_asset} for {symbol}")
+            if amount < min_amount:
+                print(f"Amount {amount} below minimum {min_amount} for {symbol}")
                 return None
             try:
                 order = self.exchange.create_market_sell_order(symbol, amount)
@@ -52,9 +57,9 @@ class TradeExecutor:
         try:
             balance = self.exchange.fetch_balance()
             print(f"Raw balance response: {balance}")
-            usd = balance['total'].get('ZUSD', 0.0)
+            usd = balance['total'].get('USD', 0.0)  # Correct key for USD
             asset = symbol.split('/')[0]
-            asset = 'XXBT' if asset == 'XBT' else asset
+            asset = 'BTC' if asset == 'XBT' else asset  # Normalize XBT to BTC
             asset_balance = balance['total'].get(asset, 0.0)
             print(f"Balance for {symbol}: USD={usd}, {asset}={asset_balance}")
             return usd, asset_balance
@@ -75,4 +80,4 @@ class TradeExecutor:
             return ticker['last']
         except Exception as e:
             print(f"Failed to fetch price for {symbol}: {e}")
-            return 98700
+            return 98700  # Fallback price

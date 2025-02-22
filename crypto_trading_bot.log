@@ -428,3 +428,4 @@
 2025-02-21 11:27:38,309 - INFO - Action for XBT/USD: 1, Balance USD: 0.0, Balance XBT: 0.0
 2025-02-21 11:28:42,091 - ERROR - Error processing STX/USD: No trade data received from Kraken within 60 seconds
 2025-02-21 11:30:09,144 - INFO - Starting AI Crypto Trading Bot on kraken
+2025-02-22 00:43:44,827 - INFO - Starting AI Crypto Trading Bot on kraken
