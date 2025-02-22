@@ -1,3 +1,8 @@
+import sys
+import os
+import time
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__) + '/..'))
+
 import gymnasium as gym
 import numpy as np
 import pandas as pd
