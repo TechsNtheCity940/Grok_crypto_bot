@@ -10,7 +10,9 @@ from config import TRADING_PAIRS, ACTIVE_EXCHANGE
 from stable_baselines3 import PPO
 from stable_baselines3.common.vec_env import DummyVecEnv
 from gymnasium import Env, spaces
-from sentiment_analyzer import SentimentAnalyzer  # Corrected import from root directory
+import sys
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))  # Ensure root directory is in sys.path
+from sentiment_analyzer import SentimentAnalyzer  # Corrected import from root
 
 class TradingEnv(Env):
     def __init__(self, df, symbol, executor):
