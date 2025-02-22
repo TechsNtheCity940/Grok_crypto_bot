@@ -1,6 +1,7 @@
 import time
 import pandas as pd
 import numpy as np
+import os
 from utils.data_utils import fetch_real_time_data, process_data, fetch_historical_data
 from utils.log_setup import logger
 from strategies.momentum_strategy import MomentumStrategy
@@ -8,32 +9,75 @@ from execution.trade_executor import TradeExecutor
 from risk_management.risk_manager import RiskManager
 from config import TRADING_PAIRS, ACTIVE_EXCHANGE
 from stable_baselines3 import PPO
+from gymnasium import Env, spaces
+
+class TradingEnv(Env):
+    def __init__(self, df, symbol, executor):
+        super().__init__()
+        self.df = df
+        self.symbol = symbol
+        self.executor = executor
+        self.current_step = 0
+        self.balance_usd, self.balance_asset = self.executor.get_balance(symbol)
+        self.action_space = spaces.Discrete(3)  # 0=hold, 1=buy, 2=sell
+        self.observation_space = spaces.Box(low=-np.inf, high=np.inf, shape=(3,), dtype=np.float32)
+
+    def reset(self, seed=None, options=None):
+        self.current_step = 0
+        self.balance_usd, self.balance_asset = self.executor.get_balance(self.symbol)
+        return self._get_observation(), {}
+
+    def step(self, action):
+        price = self.df.iloc[self.current_step]['close']
+        reward = 0
+        
+        if action == 1 and self.balance_usd > 0:
+            amount = self.balance_usd / price * 0.5  # 50% of USD
+            self.executor.execute(1, self.symbol, amount)
+            self.balance_usd, self.balance_asset = self.executor.get_balance(self.symbol)
+        elif action == 2 and self.balance_asset > 0:
+            amount = self.balance_asset * 0.5  # 50% of asset
+            self.executor.execute(2, self.symbol, amount)
+            self.balance_usd, self.balance_asset = self.executor.get_balance(self.symbol)
+            reward = self.balance_usd - 7.4729  # Profit/loss
+        
+        self.current_step += 1
+        done = self.current_step >= len(self.df) - 1
+        obs = self._get_observation()
+        return obs, reward, done, False, {}
+
+    def _get_observation(self):
+        row = self.df.iloc[self.current_step]
+        return np.array([row.get('momentum', 0.0), self.balance_usd, self.balance_asset], dtype=np.float32)
+
+from stable_baselines3.common.vec_env import DummyVecEnv
 
 def main():
     print(f"Starting AI Crypto Trading Bot on {ACTIVE_EXCHANGE}")
     logger.info(f"Starting AI Crypto Trading Bot on {ACTIVE_EXCHANGE}")
     
-    # Initialize components
+    # Ensure directory exists
+    os.makedirs('models/trained_models', exist_ok=True)
+    
     executor = TradeExecutor()
-    risk_manager = RiskManager(max_loss=0.3)  # More aggressive
+    risk_manager = RiskManager(max_loss=0.5)
     strategy = MomentumStrategy()
     
-    # Initialize data and models for all trading pairs
     dataframes = {}
     models = {}
     for symbol in executor.trading_pairs:
         df = fetch_historical_data(symbol, limit=50)
         print(f"Initial historical data fetched for {symbol}: {len(df)} rows")
         dataframes[symbol] = df
+        model_path = f'models/trained_models/ppo_trading_model_{symbol.replace("/", "_")}'
         try:
-            models[symbol] = PPO.load(f'models/trained_models/ppo_trading_model_{symbol.replace("/", "_")}')
+            models[symbol] = PPO.load(model_path)
         except FileNotFoundError:
-            env = DummyVecEnv([lambda: TradingEnv(df)])
+            env = DummyVecEnv([lambda: TradingEnv(df, symbol, executor)])
             models[symbol] = PPO('MlpPolicy', env, verbose=0)
             models[symbol].learn(total_timesteps=10000)
-            models[symbol].save(f'models/trained_models/ppo_trading_model_{symbol.replace("/", "_")}')
+            models[symbol].save(model_path)
 
-    # Main trading loop
     iteration = 0
     while True:
         total_usd, total_assets = 0, {}
@@ -68,7 +112,6 @@ def main():
                 print(f"Action chosen for {symbol}: {action} (0=hold, 1=buy, 2=sell)")
                 logger.info(f"Action for {symbol}: {action}, Balance USD: {balance_usd}, Balance {asset_name}: {balance_asset}")
                 
-                # Dynamic trade size: 20% of total value per trade
                 amount = (total_value * 0.2) / current_price if action != 0 else 0
                 amount = min(amount, balance_asset if action == 2 else balance_usd / current_price)
                 
@@ -76,57 +119,20 @@ def main():
                     order = executor.execute(action, symbol, amount)
                     if order:
                         logger.info(f"Executed order for {symbol}: {order}")
-                        # Online learning after successful trade
-                        env = DummyVecEnv([lambda: TradingEnv(df)])
+                        env = DummyVecEnv([lambda: TradingEnv(df, symbol, executor)])
                         models[symbol].set_env(env)
                         models[symbol].learn(total_timesteps=1000, reset_num_timesteps=False)
-                        models[symbol].save(f'models/trained_models/ppo_trading_model_{symbol.replace("/", "_")}')
+                        models[symbol].save(model_path)
             except Exception as e:
                 print(f"Error processing {symbol}: {e}")
                 logger.error(f"Error processing {symbol}: {e}")
                 continue
         
         iteration += 1
-        if iteration % 10 == 0:  # Update pairs every 10 iterations
+        if iteration % 10 == 0:
             executor.update_trading_pairs()
         print("Waiting 60 seconds...")
         time.sleep(60)
 
-class TradingEnv:
-    def __init__(self, df):
-        self.df = df
-        self.current_step = 0
-        self.balance_usd = 7.4729  # Initial from your account
-        self.positions = {'XBT': 0.000100009, 'STX': 0.00097, 'AVAX': 6.44e-06}
-        self.action_space = [0, 1, 2]  # hold, buy, sell
-        self.observation_space = np.array([0.0, 0.0, 0.0])  # momentum, usd, asset
-
-    def reset(self):
-        self.current_step = 0
-        return self._get_observation()
-
-    def step(self, action):
-        price = self.df.iloc[self.current_step]['close']
-        reward = 0
-        asset = 'XBT'  # Simplified; adjust per pair in real use
-        
-        if action == 1 and self.balance_usd > 0:
-            self.positions[asset] += self.balance_usd / price
-            self.balance_usd = 0
-        elif action == 2 and self.positions[asset] > 0:
-            self.balance_usd += self.positions[asset] * price
-            reward = self.balance_usd - 7.4729  # Profit/loss
-            self.positions[asset] = 0
-
-        self.current_step += 1
-        done = self.current_step >= len(self.df) - 1
-        obs = self._get_observation()
-        return obs, reward, done, {}
-
-    def _get_observation(self):
-        row = self.df.iloc[self.current_step]
-        return np.array([row.get('momentum', 0.0), self.balance_usd, self.positions['XBT']])
-
-from stable_baselines3.common.vec_env import DummyVecEnv
 if __name__ == "__main__":
     main()

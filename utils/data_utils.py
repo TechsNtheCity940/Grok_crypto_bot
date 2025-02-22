@@ -34,7 +34,7 @@ def fetch_historical_data(symbol, timeframe='1h', limit=50):
 
 def process_data(df):
     df = df.copy()
-    df['ma_short'] = df['close'].rolling(window=min(5, len(df))).mean()  # Reduced for faster reaction
+    df['ma_short'] = df['close'].rolling(window=min(5, len(df))).mean()  # Faster reaction
     df['ma_long'] = df['close'].rolling(window=min(20, len(df))).mean()
     df['momentum'] = df['ma_short'] - df['ma_long']
     df['momentum'] = df['momentum'].fillna(0)
@@ -43,25 +43,28 @@ def process_data(df):
 def fetch_real_time_data(symbol):
     timeout = 60
     start_time = time.time()
-    ws = create_connection('wss://ws.kraken.com')
-    ws.send(json.dumps({
-        "event": "subscribe",
-        "pair": [symbol],
-        "subscription": {"name": "trade"}
-    }))
-    while time.time() - start_time < timeout:
+    for _ in range(3):  # Retry logic
         try:
-            message = ws.recv()
-            print(f"Kraken WebSocket message: {message}")
-            data = json.loads(message)
-            if isinstance(data, list) and len(data) > 2 and data[2] == "trade":
-                price = float(data[1][0][0])
-                timestamp = pd.to_datetime(float(data[1][0][2]), unit='s')
-                ws.close()
-                print(f"Kraken trade detected for {symbol}: price={price}, timestamp={timestamp}")
-                return pd.DataFrame([[timestamp, price]], columns=['timestamp', 'close'])
+            ws = create_connection('wss://ws.kraken.com')
+            ws.send(json.dumps({
+                "event": "subscribe",
+                "pair": [symbol],
+                "subscription": {"name": "trade"}
+            }))
+            while time.time() - start_time < timeout:
+                message = ws.recv()
+                print(f"Kraken WebSocket message: {message}")
+                data = json.loads(message)
+                if isinstance(data, list) and len(data) > 2 and data[2] == "trade":
+                    price = float(data[1][0][0])
+                    timestamp = pd.to_datetime(float(data[1][0][2]), unit='s')
+                    ws.close()
+                    print(f"Kraken trade detected for {symbol}: price={price}, timestamp={timestamp}")
+                    return pd.DataFrame([[timestamp, price]], columns=['timestamp', 'close'])
+            ws.close()
         except Exception as e:
             print(f"WebSocket error for {symbol}: {e}")
-            break
-    ws.close()
-    raise TimeoutError(f"No trade data received from Kraken within {timeout} seconds")
+        time.sleep(5)
+    print(f"Falling back to historical data for {symbol}")
+    df = fetch_historical_data(symbol, limit=1)
+    return df.tail(1) if not df.empty else pd.DataFrame([[pd.Timestamp.now(), 98700]], columns=['timestamp', 'close'])

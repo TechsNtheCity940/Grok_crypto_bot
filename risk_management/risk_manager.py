@@ -1,5 +1,5 @@
 class RiskManager:
-    def __init__(self, max_loss=0.3):  # Increased to 30% for aggression
+    def __init__(self, max_loss=0.5):  # 50% for aggression
         self.max_loss = max_loss
         self.initial_balances = {}
 
