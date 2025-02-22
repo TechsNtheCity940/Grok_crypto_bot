@@ -4,7 +4,7 @@ from functools import lru_cache
 import os
 import sys
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))  # Ensure root directory is in sys.path
-from utils.log_setup import logger
+import logging
 
 
 class SentimentAnalyzer:

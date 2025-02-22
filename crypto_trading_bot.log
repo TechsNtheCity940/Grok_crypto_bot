@@ -431,3 +431,5 @@
 2025-02-22 00:43:44,827 - INFO - Starting AI Crypto Trading Bot on kraken
 2025-02-22 08:31:55,520 - INFO - Starting AI Crypto Trading Bot on kraken
 2025-02-22 08:34:27,428 - INFO - Starting AI Crypto Trading Bot on kraken
+2025-02-22 08:42:41,516 - WARNING - From C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\tf_keras\src\losses.py:2976: The name tf.losses.sparse_softmax_cross_entropy is deprecated. Please use tf.compat.v1.losses.sparse_softmax_cross_entropy instead.
+
