@@ -1,6 +1,7 @@
 import numpy as np
 from transformers import pipeline
 from functools import lru_cache
+import os
 
 
 class SentimentAnalyzer:
