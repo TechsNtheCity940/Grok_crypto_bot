@@ -2,12 +2,21 @@ import numpy as np
 from transformers import pipeline
 from functools import lru_cache
 import os
+import sys
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))  # Ensure root directory is in sys.path
+from utils.log_setup import logger
 
 
 class SentimentAnalyzer:
     def __init__(self):
         self.sentiment_pipeline = pipeline("sentiment-analysis")
-
+        self.logger = logging.getLogger('SentimentAnalyzer')
+        try:
+            from mem0 import MemoryClient
+            self.client = MemoryClient(api_key="m0-PCgGv0quxAvEnPbeO8tVpOsKFnCaB4owemKlTBeC")
+        except ImportError:
+            self.logger.warning("MemoryClient not available; using dummy sentiment data.")
+            self.client = None
     def analyze_news(self, text):
         """Analyze sentiment from news articles"""
         result = self.sentiment_pipeline(text)
