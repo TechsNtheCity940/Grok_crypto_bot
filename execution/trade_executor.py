@@ -27,6 +27,9 @@ class TradeExecutor:
 
         if action == 1:  # Buy
             cost = amount * current_price
+            if balance_usd <= 0:
+                print(f"No USD available for buy: {balance_usd}")
+                return None
             if amount < min_amount:
                 print(f"Amount {amount} below minimum {min_amount} for {symbol}")
                 return None
@@ -41,6 +44,9 @@ class TradeExecutor:
                 print(f"Buy order failed for {symbol}: {e}")
                 return None
         elif action == 2:  # Sell
+            if balance_asset <= 0:
+                print(f"No asset available for sell: {balance_asset}")
+                return None
             if amount < min_amount:
                 print(f"Amount {amount} below minimum {min_amount} for {symbol}")
                 return None
@@ -57,9 +63,9 @@ class TradeExecutor:
         try:
             balance = self.exchange.fetch_balance()
             print(f"Raw balance response: {balance}")
-            usd = balance['total'].get('USD', 0.0)  # Correct key for USD
+            usd = balance['total'].get('USD', 0.0)  # Ensure correct key
             asset = symbol.split('/')[0]
-            asset = 'BTC' if asset == 'XBT' else asset  # Normalize XBT to BTC
+            asset = 'BTC' if asset == 'XBT' else asset
             asset_balance = balance['total'].get(asset, 0.0)
             print(f"Balance for {symbol}: USD={usd}, {asset}={asset_balance}")
             return usd, asset_balance

@@ -22,8 +22,9 @@ class TradingEnv(Env):
         self.executor = executor
         self.current_step = 0
         self.balance_usd, self.balance_asset = self.executor.get_balance(self.symbol)
+        self.initial_value = self.balance_usd + (self.balance_asset * self.df['close'].iloc[0])
         self.action_space = spaces.Discrete(3)  # 0=hold, 1=buy, 2=sell
-        self.observation_space = spaces.Box(low=-np.inf, high=np.inf, shape=(7,), dtype=np.float32)  # momentum, rsi, macd, atr, sentiment, usd, asset
+        self.observation_space = spaces.Box(low=-np.inf, high=np.inf, shape=(7,), dtype=np.float32)
 
     def reset(self, seed=None, options=None):
         self.current_step = 0
@@ -31,24 +32,37 @@ class TradingEnv(Env):
         return self._get_observation(), {}
 
     def step(self, action):
-        price = self.df.iloc[self.current_step]['close']  # 'close' is now retained
+        price = self.df.iloc[self.current_step]['close']
         reward = 0
         
         if action == 1 and self.balance_usd > 0:
-            amount = self.balance_usd / price * 0.5  # Aggressive: 50% of USD
-            self.executor.execute(1, self.symbol, amount)
-            self.balance_usd, self.balance_asset = self.executor.get_balance(self.symbol)
+            amount = self.balance_usd / price * 0.5
+            order = self.executor.execute(1, self.symbol, amount)
+            if order:
+                self.balance_usd, self.balance_asset = self.executor.get_balance(self.symbol)
         elif action == 2 and self.balance_asset > 0:
-            amount = self.balance_asset * 0.5  # Aggressive: 50% of asset
-            self.executor.execute(2, self.symbol, amount)
-            self.balance_usd, self.balance_asset = self.executor.get_balance(self.symbol)
-            reward = self.balance_usd - 7.4729  # Profit/loss based on initial USD
+            amount = self.balance_asset * 0.5
+            order = self.executor.execute(2, self.symbol, amount)
+            if order:
+                self.balance_usd, self.balance_asset = self.executor.get_balance(self.symbol)
+                current_value = self.balance_usd + (self.balance_asset * price)
+                reward = current_value - self.initial_value  # Reward based on portfolio value change
         
         self.current_step += 1
         done = self.current_step >= len(self.df) - 1
         if done:
             self.current_step = 0
         obs = self._get_observation()
+        
+        # Stop-loss and take-profit logic
+        current_value = self.balance_usd + (self.balance_asset * price)
+        if current_value < self.initial_value * 0.9:  # 10% stop-loss
+            reward -= 100  # Penalize significant loss
+            done = True
+        elif current_value > self.initial_value * 1.1:  # 10% take-profit
+            reward += 100  # Reward significant gain
+            done = True
+        
         return obs, reward, done, False, {}
 
     def _get_observation(self):
@@ -152,4 +166,4 @@ def main():
         time.sleep(60)
 
 if __name__ == "__main__":
-    main()
+    main() 

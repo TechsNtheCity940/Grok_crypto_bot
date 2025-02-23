@@ -18,7 +18,7 @@ kraken = ccxt.kraken({
     'enableRateLimit': True,
 })
 
-exchange = kraken if ACTIVE_EXCHANGE == 'kraken' else ccxt.coinbasepro()
+exchange = kraken if ACTIVE_EXCHANGE == 'kraken' else ccxt.coinbase()
 sentiment_analyzer = SentimentAnalyzer()
 
 def fetch_historical_data(symbol, timeframe='1h', limit=50):
@@ -52,14 +52,14 @@ def process_data(df, symbol):
     df['sentiment'] = sentiment_result['sentiment_score']
     # Fill NaNs
     df = df.fillna(0)
-    # Keep 'close' alongside features for TradingEnv
     selected_columns = ['close', 'momentum', 'rsi', 'macd', 'atr', 'sentiment']
     return df[selected_columns]
 
 def fetch_real_time_data(symbol):
     timeout = 60
     start_time = time.time()
-    for _ in range(3):
+    retries = 5  # Increased retries for reliability
+    for attempt in range(retries):
         try:
             ws = create_connection('wss://ws.kraken.com')
             ws.send(json.dumps({
@@ -79,7 +79,7 @@ def fetch_real_time_data(symbol):
                     return pd.DataFrame([[timestamp, price]], columns=['timestamp', 'close'])
             ws.close()
         except Exception as e:
-            print(f"WebSocket error for {symbol}: {e}")
+            print(f"WebSocket error for {symbol} (attempt {attempt + 1}/{retries}): {e}")
         time.sleep(5)
     print(f"Falling back to historical data for {symbol}")
     df = fetch_historical_data(symbol, limit=1)
