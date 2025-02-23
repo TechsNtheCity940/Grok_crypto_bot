@@ -29,41 +29,41 @@ class TradeExecutor:
             cost = amount * current_price
             if balance_usd <= 0:
                 print(f"No USD available for buy: {balance_usd}")
-                return None
+                return None, False  # False indicates insufficient funds
             if amount < min_amount:
                 print(f"Amount {amount} below minimum {min_amount} for {symbol}")
-                return None
+                return None, True  # True indicates minimum not met but funds exist
             if min_cost > 0 and cost < min_cost:
                 print(f"Cost {cost} below minimum {min_cost} for {symbol}")
-                return None
+                return None, True
             try:
                 order = self.exchange.create_market_buy_order(symbol, amount)
                 print(f"Buy order executed for {symbol}: {order}")
-                return order
+                return order, False
             except Exception as e:
                 print(f"Buy order failed for {symbol}: {e}")
-                return None
+                return None, False
         elif action == 2:  # Sell
             if balance_asset <= 0:
                 print(f"No asset available for sell: {balance_asset}")
-                return None
+                return None, False
             if amount < min_amount:
                 print(f"Amount {amount} below minimum {min_amount} for {symbol}")
-                return None
+                return None, True  # Minimum not met, try another pair
             try:
                 order = self.exchange.create_market_sell_order(symbol, amount)
                 print(f"Sell order executed for {symbol}: {order}")
-                return order
+                return order, False
             except Exception as e:
                 print(f"Sell order failed for {symbol}: {e}")
-                return None
-        return None
+                return None, False
+        return None, False
 
     def get_balance(self, symbol):
         try:
             balance = self.exchange.fetch_balance()
             print(f"Raw balance response: {balance}")
-            usd = balance['total'].get('USD', 0.0)  # Ensure correct key
+            usd = balance['total'].get('USD', 0.0)
             asset = symbol.split('/')[0]
             asset = 'BTC' if asset == 'XBT' else asset
             asset_balance = balance['total'].get(asset, 0.0)
@@ -86,4 +86,4 @@ class TradeExecutor:
             return ticker['last']
         except Exception as e:
             print(f"Failed to fetch price for {symbol}: {e}")
-            return 98700  # Fallback price
+            return 98700

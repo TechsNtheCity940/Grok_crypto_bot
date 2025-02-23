@@ -441,3 +441,10 @@
 2025-02-22 08:49:17,763 - ERROR - Error analyzing social media: name 'client' is not defined
 2025-02-22 08:49:19,438 - ERROR - Error analyzing social media: name 'client' is not defined
 2025-02-22 08:49:20,529 - ERROR - Error analyzing social media: name 'client' is not defined
+2025-02-23 04:59:17,235 - INFO - Starting AI Crypto Trading Bot on kraken
+2025-02-23 04:59:24,512 - ERROR - Error analyzing social media for AVAX: 403 Forbidden
+453 - You currently have access to a subset of X API V2 endpoints and limited v1.1 endpoints (e.g. media post, oauth) only. If you need access to this endpoint, you may need a different access level. You can learn more here: https://developer.x.com/en/portal/product
+2025-02-23 04:59:27,159 - ERROR - Error analyzing social media for STX: 403 Forbidden
+453 - You currently have access to a subset of X API V2 endpoints and limited v1.1 endpoints (e.g. media post, oauth) only. If you need access to this endpoint, you may need a different access level. You can learn more here: https://developer.x.com/en/portal/product
+2025-02-23 04:59:28,079 - ERROR - Error analyzing social media for BTC: 403 Forbidden
+453 - You currently have access to a subset of X API V2 endpoints and limited v1.1 endpoints (e.g. media post, oauth) only. If you need access to this endpoint, you may need a different access level. You can learn more here: https://developer.x.com/en/portal/product
