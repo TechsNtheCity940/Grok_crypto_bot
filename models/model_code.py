@@ -64,7 +64,7 @@ def train_model(df, symbol):
     model.save(f'models/trained_models/ppo_trading_model_{symbol.replace("/", "_")}')
     return model
 
-if __name__ == "__main__":
+if __name__ == "__main__":                                                                                                      
     import os
     os.makedirs('models/trained_models', exist_ok=True)
     for symbol in TRADING_PAIRS:
