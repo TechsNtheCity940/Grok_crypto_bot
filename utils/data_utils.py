@@ -37,7 +37,7 @@ def fetch_historical_data(symbol, timeframe='1h', limit=8760):  # 1 year of hour
     return pd.DataFrame(columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
 
 def augment_data(df):
-    gan = CryptoGAN(input_dim=6)  # OHLCV + timestamp (simplified representation)
+    gan = CryptoGAN(input_dim=5)  # Updated to match OHLCV (5 features: open, high, low, close, volume)
     real_data = df[['open', 'high', 'low', 'close', 'volume']].values
     synthetic_data = gan.generate(real_data)
     augmented_data = np.concatenate([real_data, synthetic_data])

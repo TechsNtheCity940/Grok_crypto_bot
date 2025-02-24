@@ -1407,3 +1407,4 @@ For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/St
 2025-02-23 20:50:42,829 - ERROR - Error processing AVAX/USD: Error: Unexpected observation shape (7,) for Box environment, please use (3,) or (n_env, 3) for the observation shape.
 2025-02-23 20:51:11,548 - ERROR - Error processing STX/USD: 'high'
 2025-02-23 20:51:13,867 - ERROR - Error processing BTC/USD: 'high'
+2025-02-24 01:41:49,799 - INFO - Starting AI Crypto Trading Bot on kraken
