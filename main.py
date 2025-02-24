@@ -8,8 +8,8 @@ from utils.log_setup import logger
 from execution.trade_executor import TradeExecutor
 from risk_management.risk_manager import RiskManager
 from config import TRADING_PAIRS, ACTIVE_EXCHANGE
-from hybrid_model import HybridCryptoModel  # Import your hybrid model
-from grid_trading import GridTrader
+from models.hybrid_model import HybridCryptoModel  # Corrected import
+from strategies.grid_trading import GridTrader
 import sys
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 from sentiment_analyzer import SentimentAnalyzer
