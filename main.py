@@ -21,7 +21,7 @@ def train_hybrid_model(symbol, df):
     for i in range(len(df) - 50):
         X.append(df[['momentum', 'rsi', 'macd', 'atr', 'sentiment', 'arbitrage_spread', 'whale_activity', 'defi_apr']].iloc[i:i+50].values)
         price_change = (df['close'].iloc[i+50] - df['close'].iloc[i+49]) / df['close'].iloc[i+49]
-        y_price.append(1 if price_change > 0.02 else 0)  # 2% threshold for DOGE volatility
+        y_price.append(1 if price_change > 0.02 else 0)
     X = np.array(X)
     y_price = np.array(y_price)
     split_idx = int(len(X) * 0.8)
@@ -118,7 +118,7 @@ def main():
             'grid_trading': {
                 'num_grids': 10,
                 'grid_spread': 0.5,
-                'max_position': 0.5,
+                'max_position': 1.0,  # Full balance usage
                 'min_profit': 0.2
             }
         }
@@ -164,13 +164,12 @@ def main():
                 print(f"Action chosen for {symbol}: {action} (1=buy, 2=sell)")
                 logger.info(f"Action for {symbol}: {action}, Balance USD: {balance_usd}, Balance DOGE: {balance_asset}")
                 
-                # Adjust trade size: Use ~half balance (12 DOGE) or full available, minimum 10 DOGE
-                min_trade_size = 10.0  # Kraken's actual minimum for DOGE/USD
-                target_trade_size = max(12.0, min_trade_size)  # ~$2.78 at $0.232, aiming for quick gains
+                # Trade size: Use all available balance, minimum 10 DOGE
+                min_trade_size = 10.0  # Kraken's minimum for DOGE/USD
                 if action == 1:  # Buy
-                    amount = target_trade_size if balance_usd >= target_trade_size * current_price else balance_usd / current_price
+                    amount = balance_usd / current_price  # Use all USD
                 else:  # Sell
-                    amount = target_trade_size if balance_asset >= target_trade_size else balance_asset
+                    amount = balance_asset  # Use all DOGE
                 amount = max(min_trade_size, amount)  # Ensure at least 10 DOGE
                 
                 if risk_manager.is_safe(action, symbol, balance_usd, balance_asset, current_price) and amount >= min_trade_size:
@@ -189,7 +188,7 @@ def main():
                 logger.error(f"Error processing {symbol}: {e}")
 
         for symbol in retry_pairs:
-            print(f"Retrying {symbol} with adjusted amount...")
+            print(f"Retrying {symbol} with full balance...")
             try:
                 balance_usd, balance_asset = executor.get_balance(symbol)
                 current_price = executor.fetch_current_price(symbol)
@@ -199,11 +198,10 @@ def main():
                 action = 1 if hybrid_models[symbol].predict(np.expand_dims(dataframes[symbol][['momentum', 'rsi', 'macd', 'atr', 'sentiment', 'arbitrage_spread', 'whale_activity', 'defi_apr']].iloc[-50:].values, axis=0))[0][0] > 0.5 else 2
                 
                 min_trade_size = 10.0
-                target_trade_size = max(12.0, min_trade_size)
                 if action == 1:
-                    amount = target_trade_size if balance_usd >= target_trade_size * current_price else balance_usd / current_price
+                    amount = balance_usd / current_price
                 else:
-                    amount = target_trade_size if balance_asset >= target_trade_size else balance_asset
+                    amount = balance_asset
                 amount = max(min_trade_size, amount)
                 if risk_manager.is_safe(action, symbol, balance_usd, balance_asset, current_price) and amount >= min_trade_size:
                     order, retry = executor.execute(action, symbol, amount)
