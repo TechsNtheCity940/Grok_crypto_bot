@@ -21,7 +21,7 @@ def train_hybrid_model(symbol, df):
     for i in range(len(df) - 50):
         X.append(df[['momentum', 'rsi', 'macd', 'atr', 'sentiment', 'arbitrage_spread', 'whale_activity', 'defi_apr']].iloc[i:i+50].values)
         price_change = (df['close'].iloc[i+50] - df['close'].iloc[i+49]) / df['close'].iloc[i+49]
-        y_price.append(1 if price_change > 0.005 else 0)
+        y_price.append(1 if price_change > 0.02 else 0)  # 2% threshold for DOGE volatility
     X = np.array(X)
     y_price = np.array(y_price)
     split_idx = int(len(X) * 0.8)
@@ -44,7 +44,7 @@ class TradingEnv:
         self.current_step = 0
         self.balance_usd, self.balance_asset = self.executor.get_balance(self.symbol)
         self.initial_value = self.balance_usd + (self.balance_asset * self.df['close'].iloc[0])
-        self.grid_trader.setup_grids(self.df['close'].iloc[0], price_range=5.0)
+        self.grid_trader.setup_grids(self.df['close'].iloc[0], price_range=10.0)
 
     def reset(self):
         self.current_step = 0
@@ -72,11 +72,11 @@ class TradingEnv:
         obs = self._get_observation()
         
         current_value = self.balance_usd + (self.balance_asset * price)
-        if current_value < self.initial_value * 0.95:
-            reward -= 50
+        if current_value < self.initial_value * 0.9:
+            reward -= 100
             done = True
-        elif current_value > self.initial_value * 1.20:
-            reward += 50
+        elif current_value > self.initial_value * 2:
+            reward += 200
             done = True
         
         return obs, reward, done, False
@@ -118,7 +118,7 @@ def main():
             'grid_trading': {
                 'num_grids': 10,
                 'grid_spread': 0.5,
-                'max_position': 0.1,
+                'max_position': 0.5,
                 'min_profit': 0.2
             }
         }
@@ -164,10 +164,14 @@ def main():
                 print(f"Action chosen for {symbol}: {action} (1=buy, 2=sell)")
                 logger.info(f"Action for {symbol}: {action}, Balance USD: {balance_usd}, Balance DOGE: {balance_asset}")
                 
-                # Adjust amount to meet minimum trade size (13 DOGE for DOGE/USD)
-                min_trade_size = 13.0  # Kraken minimum for DOGE/USD
-                amount = max(min_trade_size, (total_value * 0.2) / current_price) if action != 0 else 0
-                amount = min(amount, balance_asset if action == 2 else balance_usd / current_price)
+                # Adjust trade size: Use ~half balance (12 DOGE) or full available, minimum 10 DOGE
+                min_trade_size = 10.0  # Kraken's actual minimum for DOGE/USD
+                target_trade_size = max(12.0, min_trade_size)  # ~$2.78 at $0.232, aiming for quick gains
+                if action == 1:  # Buy
+                    amount = target_trade_size if balance_usd >= target_trade_size * current_price else balance_usd / current_price
+                else:  # Sell
+                    amount = target_trade_size if balance_asset >= target_trade_size else balance_asset
+                amount = max(min_trade_size, amount)  # Ensure at least 10 DOGE
                 
                 if risk_manager.is_safe(action, symbol, balance_usd, balance_asset, current_price) and amount >= min_trade_size:
                     order, retry = executor.execute(action, symbol, amount)
@@ -176,15 +180,14 @@ def main():
                         env.step(action)
                     elif retry:
                         retry_pairs.append(symbol)
-                        print(f"Added {symbol} to retry list due to minimum trade size")
+                        print(f"Added {symbol} to retry list due to execution issue")
                 else:
-                    print(f"Trade skipped for {symbol}: Amount {amount} below minimum {min_trade_size} or risk not safe")
+                    print(f"Trade skipped for {symbol}: Amount {amount} not viable or risk not safe")
                 processed_pairs.add(symbol)
             except Exception as e:
                 print(f"Error processing {symbol}: {e}")
                 logger.error(f"Error processing {symbol}: {e}")
 
-        # Simplified retry logic: increase amount if possible
         for symbol in retry_pairs:
             print(f"Retrying {symbol} with adjusted amount...")
             try:
@@ -195,9 +198,13 @@ def main():
                 obs = env.reset()
                 action = 1 if hybrid_models[symbol].predict(np.expand_dims(dataframes[symbol][['momentum', 'rsi', 'macd', 'atr', 'sentiment', 'arbitrage_spread', 'whale_activity', 'defi_apr']].iloc[-50:].values, axis=0))[0][0] > 0.5 else 2
                 
-                # Use full available balance if below minimum, else retry with minimum
-                min_trade_size = 13.0
-                amount = max(min_trade_size, balance_asset if action == 2 else balance_usd / current_price)
+                min_trade_size = 10.0
+                target_trade_size = max(12.0, min_trade_size)
+                if action == 1:
+                    amount = target_trade_size if balance_usd >= target_trade_size * current_price else balance_usd / current_price
+                else:
+                    amount = target_trade_size if balance_asset >= target_trade_size else balance_asset
+                amount = max(min_trade_size, amount)
                 if risk_manager.is_safe(action, symbol, balance_usd, balance_asset, current_price) and amount >= min_trade_size:
                     order, retry = executor.execute(action, symbol, amount)
                     if order:
@@ -206,7 +213,7 @@ def main():
                     else:
                         print(f"Retry failed for {symbol}: Insufficient funds or execution error")
                 else:
-                    print(f"Retry skipped for {symbol}: Amount {amount} still below minimum or risk not safe")
+                    print(f"Retry skipped for {symbol}: Amount {amount} not viable or risk not safe")
             except Exception as e:
                 print(f"Error retrying {symbol}: {e}")
                 logger.error(f"Error retrying {symbol}: {e}")
