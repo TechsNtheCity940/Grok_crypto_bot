@@ -11,7 +11,7 @@ import json
 import talib
 from sentiment_analyzer import SentimentAnalyzer
 from config import KRAKEN_API_KEY, KRAKEN_API_SECRET, ACTIVE_EXCHANGE
-from train import CryptoGAN  # Import your GAN module
+from models.train import CryptoGAN  # Corrected import
 
 kraken = ccxt.kraken({
     'apiKey': KRAKEN_API_KEY,
@@ -80,6 +80,7 @@ def fetch_real_time_data(symbol):
             }))
             while time.time() - start_time < timeout:
                 message = ws.recv()
+                print(f"Kraken WebSocket message: {message}")
                 data = json.loads(message)
                 if isinstance(data, list) and len(data) > 2 and data[2] == "ohlc":
                     ohlc = data[1]
@@ -93,10 +94,12 @@ def fetch_real_time_data(symbol):
                         float(ohlc[6])   # Volume
                     ]], columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
                     ws.close()
+                    print(f"Kraken OHLC detected for {symbol}: {df.iloc[-1].to_dict()}")
                     return df
             ws.close()
         except Exception as e:
             print(f"WebSocket error for {symbol} (attempt {attempt + 1}/{retries}): {e}")
         time.sleep(5)
+    print(f"Falling back to historical data for {symbol}")
     df = fetch_historical_data(symbol, limit=1)
     return df.tail(1) if not df.empty else pd.DataFrame([[pd.Timestamp.now(), 98700, 98700, 98700, 98700, 0]], columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
