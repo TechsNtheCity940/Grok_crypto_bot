@@ -83,7 +83,6 @@ class TradingEnv:
 
     def _get_observation(self):
         row = self.df.iloc[self.current_step]
-        # Use only the 8 features expected by the model, excluding 'close'
         X = self.df[['momentum', 'rsi', 'macd', 'atr', 'sentiment', 'arbitrage_spread', 'whale_activity', 'defi_apr']].iloc[max(0, self.current_step-49):self.current_step+1].values
         if len(X) < 50:
             X = np.pad(X, ((50 - len(X), 0), (0, 0)), mode='edge')
@@ -165,10 +164,12 @@ def main():
                 print(f"Action chosen for {symbol}: {action} (1=buy, 2=sell)")
                 logger.info(f"Action for {symbol}: {action}, Balance USD: {balance_usd}, Balance DOGE: {balance_asset}")
                 
-                amount = (total_value * 0.2) / current_price if action != 0 else 0
+                # Adjust amount to meet minimum trade size (13 DOGE for DOGE/USD)
+                min_trade_size = 13.0  # Kraken minimum for DOGE/USD
+                amount = max(min_trade_size, (total_value * 0.2) / current_price) if action != 0 else 0
                 amount = min(amount, balance_asset if action == 2 else balance_usd / current_price)
                 
-                if risk_manager.is_safe(action, symbol, balance_usd, balance_asset, current_price) and amount > 0:
+                if risk_manager.is_safe(action, symbol, balance_usd, balance_asset, current_price) and amount >= min_trade_size:
                     order, retry = executor.execute(action, symbol, amount)
                     if order:
                         logger.info(f"Executed order for {symbol}: {order}")
@@ -176,43 +177,39 @@ def main():
                     elif retry:
                         retry_pairs.append(symbol)
                         print(f"Added {symbol} to retry list due to minimum trade size")
+                else:
+                    print(f"Trade skipped for {symbol}: Amount {amount} below minimum {min_trade_size} or risk not safe")
                 processed_pairs.add(symbol)
             except Exception as e:
                 print(f"Error processing {symbol}: {e}")
                 logger.error(f"Error processing {symbol}: {e}")
 
+        # Simplified retry logic: increase amount if possible
         for symbol in retry_pairs:
-            print(f"Retrying {symbol} with adjusted pair selection...")
-            for alt_symbol in [s for s in TRADING_PAIRS if s not in processed_pairs]:
-                print(f"Switching to {alt_symbol}")
-                try:
-                    new_data = fetch_real_time_data(alt_symbol)
-                    df = pd.concat([dataframes.get(alt_symbol, fetch_historical_data(alt_symbol)), new_data]).tail(100)
-                    df = process_data(df, alt_symbol)
-                    dataframes[alt_symbol] = df
-                    latest = df.iloc[-1]
-                    
-                    balance_usd, balance_asset = executor.get_balance(alt_symbol)
-                    current_price = latest['close']
-                    env = TradingEnv(df, alt_symbol, executor, hybrid_models[alt_symbol], grid_traders[alt_symbol])
-                    obs = env.reset()
-                    action = 1 if hybrid_models[alt_symbol].predict(np.expand_dims(df[['momentum', 'rsi', 'macd', 'atr', 'sentiment', 'arbitrage_spread', 'whale_activity', 'defi_apr']].iloc[-50:].values, axis=0))[0][0] > 0.5 else 2
-                    print(f"Action chosen for {alt_symbol}: {action} (1=buy, 2=sell)")
-                    logger.info(f"Action for {alt_symbol}: {action}, Balance USD: {balance_usd}, Balance DOGE: {balance_asset}")
-                    
-                    amount = (total_value * 0.2) / current_price if action != 0 else 0
-                    amount = min(amount, balance_asset if action == 2 else balance_usd / current_price)
-                    
-                    if risk_manager.is_safe(action, alt_symbol, balance_usd, balance_asset, current_price) and amount > 0:
-                        order, retry = executor.execute(action, alt_symbol, amount)
-                        if order:
-                            logger.info(f"Executed order for {alt_symbol}: {order}")
-                            env.step(action)
-                            processed_pairs.add(alt_symbol)
-                            break
-                except Exception as e:
-                    print(f"Error processing {alt_symbol}: {e}")
-                    logger.error(f"Error processing {alt_symbol}: {e}")
+            print(f"Retrying {symbol} with adjusted amount...")
+            try:
+                balance_usd, balance_asset = executor.get_balance(symbol)
+                current_price = executor.fetch_current_price(symbol)
+                total_value = balance_usd + balance_asset * current_price
+                env = TradingEnv(dataframes[symbol], symbol, executor, hybrid_models[symbol], grid_traders[symbol])
+                obs = env.reset()
+                action = 1 if hybrid_models[symbol].predict(np.expand_dims(dataframes[symbol][['momentum', 'rsi', 'macd', 'atr', 'sentiment', 'arbitrage_spread', 'whale_activity', 'defi_apr']].iloc[-50:].values, axis=0))[0][0] > 0.5 else 2
+                
+                # Use full available balance if below minimum, else retry with minimum
+                min_trade_size = 13.0
+                amount = max(min_trade_size, balance_asset if action == 2 else balance_usd / current_price)
+                if risk_manager.is_safe(action, symbol, balance_usd, balance_asset, current_price) and amount >= min_trade_size:
+                    order, retry = executor.execute(action, symbol, amount)
+                    if order:
+                        logger.info(f"Executed retry order for {symbol}: {order}")
+                        env.step(action)
+                    else:
+                        print(f"Retry failed for {symbol}: Insufficient funds or execution error")
+                else:
+                    print(f"Retry skipped for {symbol}: Amount {amount} still below minimum or risk not safe")
+            except Exception as e:
+                print(f"Error retrying {symbol}: {e}")
+                logger.error(f"Error retrying {symbol}: {e}")
         
         iteration += 1
         if iteration % 10 == 0:

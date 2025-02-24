@@ -1653,3 +1653,34 @@ File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\k
 2025-02-24 08:44:01,395 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
 2025-02-24 08:44:05,259 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
 2025-02-24 08:44:11,767 - INFO - Action for DOGE/USD: 2, Balance USD: 12.8586, Balance DOGE: 0.0
+2025-02-24 09:48:41,924 - INFO - Starting AI Crypto Trading Bot on kraken
+2025-02-24 09:48:50,867 - WARNING - 5 out of the last 5 calls to <function TensorFlowTrainer.make_train_function.<locals>.one_step_on_iterator at 0x000002C3E38905E0> triggered tf.function retracing. Tracing is expensive and the excessive number of tracings could be due to (1) creating @tf.function repeatedly in a loop, (2) passing tensors with different shapes, (3) passing Python objects instead of tensors. For (1), please define your @tf.function outside of the loop. For (2), @tf.function has reduce_retracing=True option that can avoid unnecessary retracing. For (3), please refer to https://www.tensorflow.org/guide/function#controlling_retracing and https://www.tensorflow.org/api_docs/python/tf/function for  more details.
+2025-02-24 09:48:51,048 - WARNING - 6 out of the last 6 calls to <function TensorFlowTrainer.make_train_function.<locals>.one_step_on_iterator at 0x000002C3E3893880> triggered tf.function retracing. Tracing is expensive and the excessive number of tracings could be due to (1) creating @tf.function repeatedly in a loop, (2) passing tensors with different shapes, (3) passing Python objects instead of tensors. For (1), please define your @tf.function outside of the loop. For (2), @tf.function has reduce_retracing=True option that can avoid unnecessary retracing. For (3), please refer to https://www.tensorflow.org/guide/function#controlling_retracing and https://www.tensorflow.org/api_docs/python/tf/function for  more details.
+2025-02-24 09:49:31,994 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 09:49:34,338 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 09:50:45,705 - WARNING - You are saving your model as an HDF5 file via `model.save()` or `keras.saving.save_model(model)`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')` or `keras.saving.save_model(model, 'my_model.keras')`. 
+2025-02-24 09:50:45,807 - WARNING - You are saving your model as an HDF5 file via `model.save()` or `keras.saving.save_model(model)`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')` or `keras.saving.save_model(model, 'my_model.keras')`. 
+2025-02-24 09:52:21,501 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 09:52:23,417 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 09:52:30,237 - INFO - Action for DOGE/USD: 2, Balance USD: 0.0086, Balance DOGE: 55.83
+2025-02-24 09:55:07,547 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 09:55:09,083 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 09:55:15,703 - INFO - Action for DOGE/USD: 2, Balance USD: 0.0086, Balance DOGE: 55.83
+2025-02-24 09:57:55,920 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 09:57:58,776 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 09:58:05,465 - INFO - Action for DOGE/USD: 2, Balance USD: 0.0086, Balance DOGE: 55.83
+2025-02-24 10:00:45,125 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 10:00:47,147 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 10:00:53,907 - INFO - Action for DOGE/USD: 2, Balance USD: 0.0086, Balance DOGE: 55.83
+2025-02-24 10:03:31,180 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 10:03:32,859 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 10:03:39,381 - INFO - Action for DOGE/USD: 2, Balance USD: 0.0086, Balance DOGE: 55.83
+2025-02-24 10:06:19,201 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 10:06:21,258 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 10:06:28,051 - INFO - Action for DOGE/USD: 2, Balance USD: 0.0086, Balance DOGE: 55.83
+2025-02-24 10:09:05,102 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 10:10:03,252 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 10:10:09,761 - INFO - Action for DOGE/USD: 2, Balance USD: 0.0086, Balance DOGE: 55.83
+2025-02-24 10:12:49,237 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 10:12:56,207 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 10:13:02,907 - INFO - Action for DOGE/USD: 2, Balance USD: 0.0086, Balance DOGE: 55.83
