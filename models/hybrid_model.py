@@ -5,7 +5,7 @@ from tensorflow.keras.layers import Input, Conv1D, LSTM, Dense, Dropout, Concate
 from tensorflow.keras.optimizers import Adam
 
 class HybridCryptoModel:
-    def __init__(self, sequence_length=50, n_features=9):
+    def __init__(self, sequence_length=50, n_features=8):  # Changed from 9 to 8
         self.sequence_length = sequence_length
         self.n_features = n_features
         self.model = self._build_model()
@@ -33,4 +33,4 @@ class HybridCryptoModel:
         return history
 
     def predict(self, X):
-        return self.model.predict(X), np.zeros_like(self.model.predict(X))  # Dummy volatility for compatibility
+        return self.model.predict(X), np.zeros_like(self.model.predict(X))  # Dummy volatility

@@ -8,27 +8,27 @@ from utils.log_setup import logger
 from execution.trade_executor import TradeExecutor
 from risk_management.risk_manager import RiskManager
 from config import TRADING_PAIRS, ACTIVE_EXCHANGE
-from models.hybrid_model import HybridCryptoModel  # Corrected import
+from models.hybrid_model import HybridCryptoModel
 from strategies.grid_trading import GridTrader
 import sys
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 from sentiment_analyzer import SentimentAnalyzer
 
 def train_hybrid_model(symbol, df):
-    model = HybridCryptoModel(sequence_length=50, n_features=9)
+    model = HybridCryptoModel(sequence_length=50, n_features=8)
     X = []
     y_price = []
     for i in range(len(df) - 50):
         X.append(df[['momentum', 'rsi', 'macd', 'atr', 'sentiment', 'arbitrage_spread', 'whale_activity', 'defi_apr']].iloc[i:i+50].values)
         price_change = (df['close'].iloc[i+50] - df['close'].iloc[i+49]) / df['close'].iloc[i+49]
-        y_price.append(1 if price_change > 0.005 else 0)  # 0.5% threshold for binary classification
+        y_price.append(1 if price_change > 0.005 else 0)
     X = np.array(X)
     y_price = np.array(y_price)
     split_idx = int(len(X) * 0.8)
     X_train, X_val = X[:split_idx], X[split_idx:]
     y_train, y_val = y_price[:split_idx], y_price[split_idx:]
     history = model.train(
-        X_train, y_train, np.zeros_like(y_train),  # Volatility unused for simplicity
+        X_train, y_train, np.zeros_like(y_train),
         (X_val, y_val, np.zeros_like(y_val)),
         batch_size=32, epochs=50, model_path=f'models/trained_models/hybrid_{symbol.replace("/", "_")}.h5'
     )
@@ -104,7 +104,7 @@ def main():
     dataframes = {}
     hybrid_models = {}
     grid_traders = {}
-    for symbol in executor.trading_pairs:
+    for symbol in TRADING_PAIRS:  # Use TRADING_PAIRS directly
         df = fetch_historical_data(symbol)
         df_augmented = augment_data(df)
         df_processed = process_data(df_augmented, symbol)
@@ -130,7 +130,7 @@ def main():
     iteration = 0
     while True:
         total_usd, total_assets = 0, {}
-        for symbol in executor.trading_pairs:
+        for symbol in TRADING_PAIRS:
             balance_usd, balance_asset = executor.get_balance(symbol)
             current_price = executor.fetch_current_price(symbol)
             total_usd += balance_usd
@@ -142,7 +142,7 @@ def main():
         retry_pairs = []
         processed_pairs = set()
 
-        for symbol in executor.trading_pairs:
+        for symbol in TRADING_PAIRS:
             if symbol in processed_pairs:
                 continue
             print(f"Processing {symbol}...")
@@ -171,7 +171,7 @@ def main():
                     order, retry = executor.execute(action, symbol, amount)
                     if order:
                         logger.info(f"Executed order for {symbol}: {order}")
-                        env.step(action)  # Update environment state
+                        env.step(action)
                     elif retry:
                         retry_pairs.append(symbol)
                         print(f"Added {symbol} to retry list due to minimum trade size")
@@ -182,7 +182,7 @@ def main():
 
         for symbol in retry_pairs:
             print(f"Retrying {symbol} with adjusted pair selection...")
-            for alt_symbol in [s for s in executor.trading_pairs if s not in processed_pairs]:
+            for alt_symbol in [s for s in TRADING_PAIRS if s not in processed_pairs]:
                 print(f"Switching to {alt_symbol}")
                 try:
                     new_data = fetch_real_time_data(alt_symbol)

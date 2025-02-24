@@ -1408,3 +1408,18 @@ For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/St
 2025-02-23 20:51:11,548 - ERROR - Error processing STX/USD: 'high'
 2025-02-23 20:51:13,867 - ERROR - Error processing BTC/USD: 'high'
 2025-02-24 01:41:49,799 - INFO - Starting AI Crypto Trading Bot on kraken
+2025-02-24 02:14:04,778 - INFO - Starting AI Crypto Trading Bot on kraken
+2025-02-24 02:14:13,249 - WARNING - 5 out of the last 5 calls to <function TensorFlowTrainer.make_train_function.<locals>.one_step_on_iterator at 0x000001626D5B4360> triggered tf.function retracing. Tracing is expensive and the excessive number of tracings could be due to (1) creating @tf.function repeatedly in a loop, (2) passing tensors with different shapes, (3) passing Python objects instead of tensors. For (1), please define your @tf.function outside of the loop. For (2), @tf.function has reduce_retracing=True option that can avoid unnecessary retracing. For (3), please refer to https://www.tensorflow.org/guide/function#controlling_retracing and https://www.tensorflow.org/api_docs/python/tf/function for  more details.
+2025-02-24 02:14:13,430 - WARNING - 6 out of the last 6 calls to <function TensorFlowTrainer.make_train_function.<locals>.one_step_on_iterator at 0x000001626D5B7A60> triggered tf.function retracing. Tracing is expensive and the excessive number of tracings could be due to (1) creating @tf.function repeatedly in a loop, (2) passing tensors with different shapes, (3) passing Python objects instead of tensors. For (1), please define your @tf.function outside of the loop. For (2), @tf.function has reduce_retracing=True option that can avoid unnecessary retracing. For (3), please refer to https://www.tensorflow.org/guide/function#controlling_retracing and https://www.tensorflow.org/api_docs/python/tf/function for  more details.
+2025-02-24 02:14:54,630 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 02:14:54,630 - INFO - No cached data in Mem0 for AVAX; fetching from Reddit
+2025-02-24 02:15:03,605 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 02:15:17,759 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 02:15:24,408 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 02:15:35,801 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 02:15:49,797 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 02:16:00,870 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 02:16:22,616 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 02:16:37,158 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 02:16:55,050 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 02:16:55,147 - ERROR - Error analyzing social media for AVAX: The size of tensor a (3478) must match the size of tensor b (512) at non-singleton dimension 1
