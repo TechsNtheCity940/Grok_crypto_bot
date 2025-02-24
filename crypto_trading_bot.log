@@ -1426,3 +1426,205 @@ For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/St
 2025-02-24 02:35:42,053 - INFO - Starting AI Crypto Trading Bot on kraken
 2025-02-24 02:35:50,825 - WARNING - 5 out of the last 5 calls to <function TensorFlowTrainer.make_train_function.<locals>.one_step_on_iterator at 0x000002554BB1D440> triggered tf.function retracing. Tracing is expensive and the excessive number of tracings could be due to (1) creating @tf.function repeatedly in a loop, (2) passing tensors with different shapes, (3) passing Python objects instead of tensors. For (1), please define your @tf.function outside of the loop. For (2), @tf.function has reduce_retracing=True option that can avoid unnecessary retracing. For (3), please refer to https://www.tensorflow.org/guide/function#controlling_retracing and https://www.tensorflow.org/api_docs/python/tf/function for  more details.
 2025-02-24 02:35:51,010 - WARNING - 6 out of the last 6 calls to <function TensorFlowTrainer.make_train_function.<locals>.one_step_on_iterator at 0x000002554BB1FB00> triggered tf.function retracing. Tracing is expensive and the excessive number of tracings could be due to (1) creating @tf.function repeatedly in a loop, (2) passing tensors with different shapes, (3) passing Python objects instead of tensors. For (1), please define your @tf.function outside of the loop. For (2), @tf.function has reduce_retracing=True option that can avoid unnecessary retracing. For (3), please refer to https://www.tensorflow.org/guide/function#controlling_retracing and https://www.tensorflow.org/api_docs/python/tf/function for  more details.
+2025-02-24 02:43:25,103 - INFO - Starting AI Crypto Trading Bot on kraken
+2025-02-24 02:43:33,476 - WARNING - 5 out of the last 5 calls to <function TensorFlowTrainer.make_train_function.<locals>.one_step_on_iterator at 0x0000019A3E8604A0> triggered tf.function retracing. Tracing is expensive and the excessive number of tracings could be due to (1) creating @tf.function repeatedly in a loop, (2) passing tensors with different shapes, (3) passing Python objects instead of tensors. For (1), please define your @tf.function outside of the loop. For (2), @tf.function has reduce_retracing=True option that can avoid unnecessary retracing. For (3), please refer to https://www.tensorflow.org/guide/function#controlling_retracing and https://www.tensorflow.org/api_docs/python/tf/function for  more details.
+2025-02-24 02:43:33,653 - WARNING - 6 out of the last 6 calls to <function TensorFlowTrainer.make_train_function.<locals>.one_step_on_iterator at 0x0000019A3E863A60> triggered tf.function retracing. Tracing is expensive and the excessive number of tracings could be due to (1) creating @tf.function repeatedly in a loop, (2) passing tensors with different shapes, (3) passing Python objects instead of tensors. For (1), please define your @tf.function outside of the loop. For (2), @tf.function has reduce_retracing=True option that can avoid unnecessary retracing. For (3), please refer to https://www.tensorflow.org/guide/function#controlling_retracing and https://www.tensorflow.org/api_docs/python/tf/function for  more details.
+2025-02-24 02:44:14,607 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 02:44:19,529 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 02:45:34,880 - WARNING - You are saving your model as an HDF5 file via `model.save()` or `keras.saving.save_model(model)`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')` or `keras.saving.save_model(model, 'my_model.keras')`. 
+2025-02-24 02:45:34,987 - WARNING - You are saving your model as an HDF5 file via `model.save()` or `keras.saving.save_model(model)`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')` or `keras.saving.save_model(model, 'my_model.keras')`. 
+2025-02-24 02:47:09,116 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 02:47:13,251 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 02:47:20,237 - ERROR - Error processing DOGE/USD: Graph execution error:
+
+Detected at node convolution defined at (most recent call last):
+<stack traces unavailable>
+Depth of input must be a multiple of depth of filter: 9 vs 8
+
+Stack trace for op definition: 
+File "f:\newrepos\Grok_crypto_bot\main.py", line 223, in <module>
+File "f:\newrepos\Grok_crypto_bot\main.py", line 163, in main
+File "f:\newrepos\Grok_crypto_bot\models\hybrid_model.py", line 36, in predict
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\utils\traceback_utils.py", line 117, in error_handler
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\backend\tensorflow\trainer.py", line 508, in predict
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\backend\tensorflow\trainer.py", line 208, in one_step_on_data_distributed
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\backend\tensorflow\trainer.py", line 198, in one_step_on_data
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\backend\tensorflow\trainer.py", line 96, in predict_step
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\utils\traceback_utils.py", line 117, in error_handler
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\layers\layer.py", line 882, in __call__
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\utils\traceback_utils.py", line 117, in error_handler
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\ops\operation.py", line 46, in __call__
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\utils\traceback_utils.py", line 156, in error_handler
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\models\functional.py", line 175, in call
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\ops\function.py", line 171, in _run_through_graph
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\models\functional.py", line 556, in call
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\utils\traceback_utils.py", line 117, in error_handler
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\layers\layer.py", line 882, in __call__
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\utils\traceback_utils.py", line 117, in error_handler
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\ops\operation.py", line 46, in __call__
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\utils\traceback_utils.py", line 156, in error_handler
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\layers\convolutional\conv1d.py", line 151, in call
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\ops\nn.py", line 909, in conv
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\backend\tensorflow\nn.py", line 254, in conv
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\backend\tensorflow\nn.py", line 244, in _conv_xla
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\backend\tensorflow\nn.py", line 231, in _conv
+
+	 [[{{node convolution}}]]
+	tf2xla conversion failed while converting __inference__conv_xla_53896[]. Run with TF_DUMP_GRAPH_PREFIX=/path/to/dump/dir and --vmodule=xla_compiler=2 to obtain a dump of the compiled functions.
+	 [[functional_3_1/conv1d_1/StatefulPartitionedCall]] [Op:__inference_one_step_on_data_distributed_54057]
+2025-02-24 02:49:54,356 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 02:49:55,991 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 02:50:02,419 - ERROR - Error processing DOGE/USD: Graph execution error:
+
+Detected at node convolution defined at (most recent call last):
+<stack traces unavailable>
+Depth of input must be a multiple of depth of filter: 9 vs 8
+
+Stack trace for op definition: 
+File "f:\newrepos\Grok_crypto_bot\main.py", line 223, in <module>
+File "f:\newrepos\Grok_crypto_bot\main.py", line 163, in main
+File "f:\newrepos\Grok_crypto_bot\models\hybrid_model.py", line 36, in predict
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\utils\traceback_utils.py", line 117, in error_handler
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\backend\tensorflow\trainer.py", line 508, in predict
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\backend\tensorflow\trainer.py", line 208, in one_step_on_data_distributed
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\backend\tensorflow\trainer.py", line 198, in one_step_on_data
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\backend\tensorflow\trainer.py", line 96, in predict_step
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\utils\traceback_utils.py", line 117, in error_handler
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\layers\layer.py", line 882, in __call__
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\utils\traceback_utils.py", line 117, in error_handler
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\ops\operation.py", line 46, in __call__
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\utils\traceback_utils.py", line 156, in error_handler
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\models\functional.py", line 175, in call
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\ops\function.py", line 171, in _run_through_graph
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\models\functional.py", line 556, in call
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\utils\traceback_utils.py", line 117, in error_handler
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\layers\layer.py", line 882, in __call__
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\utils\traceback_utils.py", line 117, in error_handler
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\ops\operation.py", line 46, in __call__
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\utils\traceback_utils.py", line 156, in error_handler
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\layers\convolutional\conv1d.py", line 151, in call
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\ops\nn.py", line 909, in conv
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\backend\tensorflow\nn.py", line 254, in conv
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\backend\tensorflow\nn.py", line 244, in _conv_xla
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\backend\tensorflow\nn.py", line 231, in _conv
+
+	 [[{{node convolution}}]]
+	tf2xla conversion failed while converting __inference__conv_xla_53896[]. Run with TF_DUMP_GRAPH_PREFIX=/path/to/dump/dir and --vmodule=xla_compiler=2 to obtain a dump of the compiled functions.
+	 [[functional_3_1/conv1d_1/StatefulPartitionedCall]] [Op:__inference_one_step_on_data_distributed_54057]
+2025-02-24 02:52:36,259 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 02:52:37,688 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 02:52:44,103 - ERROR - Error processing DOGE/USD: Graph execution error:
+
+Detected at node convolution defined at (most recent call last):
+<stack traces unavailable>
+Depth of input must be a multiple of depth of filter: 9 vs 8
+
+Stack trace for op definition: 
+File "f:\newrepos\Grok_crypto_bot\main.py", line 223, in <module>
+File "f:\newrepos\Grok_crypto_bot\main.py", line 163, in main
+File "f:\newrepos\Grok_crypto_bot\models\hybrid_model.py", line 36, in predict
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\utils\traceback_utils.py", line 117, in error_handler
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\backend\tensorflow\trainer.py", line 508, in predict
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\backend\tensorflow\trainer.py", line 208, in one_step_on_data_distributed
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\backend\tensorflow\trainer.py", line 198, in one_step_on_data
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\backend\tensorflow\trainer.py", line 96, in predict_step
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\utils\traceback_utils.py", line 117, in error_handler
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\layers\layer.py", line 882, in __call__
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\utils\traceback_utils.py", line 117, in error_handler
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\ops\operation.py", line 46, in __call__
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\utils\traceback_utils.py", line 156, in error_handler
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\models\functional.py", line 175, in call
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\ops\function.py", line 171, in _run_through_graph
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\models\functional.py", line 556, in call
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\utils\traceback_utils.py", line 117, in error_handler
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\layers\layer.py", line 882, in __call__
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\utils\traceback_utils.py", line 117, in error_handler
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\ops\operation.py", line 46, in __call__
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\utils\traceback_utils.py", line 156, in error_handler
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\layers\convolutional\conv1d.py", line 151, in call
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\ops\nn.py", line 909, in conv
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\backend\tensorflow\nn.py", line 254, in conv
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\backend\tensorflow\nn.py", line 244, in _conv_xla
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\backend\tensorflow\nn.py", line 231, in _conv
+
+	 [[{{node convolution}}]]
+	tf2xla conversion failed while converting __inference__conv_xla_53896[]. Run with TF_DUMP_GRAPH_PREFIX=/path/to/dump/dir and --vmodule=xla_compiler=2 to obtain a dump of the compiled functions.
+	 [[functional_3_1/conv1d_1/StatefulPartitionedCall]] [Op:__inference_one_step_on_data_distributed_54057]
+2025-02-24 02:55:20,116 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 02:55:30,029 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 02:55:36,470 - ERROR - Error processing DOGE/USD: Graph execution error:
+
+Detected at node convolution defined at (most recent call last):
+<stack traces unavailable>
+Depth of input must be a multiple of depth of filter: 9 vs 8
+
+Stack trace for op definition: 
+File "f:\newrepos\Grok_crypto_bot\main.py", line 223, in <module>
+File "f:\newrepos\Grok_crypto_bot\main.py", line 163, in main
+File "f:\newrepos\Grok_crypto_bot\models\hybrid_model.py", line 36, in predict
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\utils\traceback_utils.py", line 117, in error_handler
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\backend\tensorflow\trainer.py", line 508, in predict
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\backend\tensorflow\trainer.py", line 208, in one_step_on_data_distributed
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\backend\tensorflow\trainer.py", line 198, in one_step_on_data
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\backend\tensorflow\trainer.py", line 96, in predict_step
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\utils\traceback_utils.py", line 117, in error_handler
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\layers\layer.py", line 882, in __call__
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\utils\traceback_utils.py", line 117, in error_handler
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\ops\operation.py", line 46, in __call__
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\utils\traceback_utils.py", line 156, in error_handler
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\models\functional.py", line 175, in call
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\ops\function.py", line 171, in _run_through_graph
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\models\functional.py", line 556, in call
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\utils\traceback_utils.py", line 117, in error_handler
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\layers\layer.py", line 882, in __call__
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\utils\traceback_utils.py", line 117, in error_handler
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\ops\operation.py", line 46, in __call__
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\utils\traceback_utils.py", line 156, in error_handler
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\layers\convolutional\conv1d.py", line 151, in call
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\ops\nn.py", line 909, in conv
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\backend\tensorflow\nn.py", line 254, in conv
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\backend\tensorflow\nn.py", line 244, in _conv_xla
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\backend\tensorflow\nn.py", line 231, in _conv
+
+	 [[{{node convolution}}]]
+	tf2xla conversion failed while converting __inference__conv_xla_53896[]. Run with TF_DUMP_GRAPH_PREFIX=/path/to/dump/dir and --vmodule=xla_compiler=2 to obtain a dump of the compiled functions.
+	 [[functional_3_1/conv1d_1/StatefulPartitionedCall]] [Op:__inference_one_step_on_data_distributed_54057]
+2025-02-24 02:58:10,522 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 02:58:16,984 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 02:58:23,401 - ERROR - Error processing DOGE/USD: Graph execution error:
+
+Detected at node convolution defined at (most recent call last):
+<stack traces unavailable>
+Depth of input must be a multiple of depth of filter: 9 vs 8
+
+Stack trace for op definition: 
+File "f:\newrepos\Grok_crypto_bot\main.py", line 223, in <module>
+File "f:\newrepos\Grok_crypto_bot\main.py", line 163, in main
+File "f:\newrepos\Grok_crypto_bot\models\hybrid_model.py", line 36, in predict
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\utils\traceback_utils.py", line 117, in error_handler
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\backend\tensorflow\trainer.py", line 508, in predict
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\backend\tensorflow\trainer.py", line 208, in one_step_on_data_distributed
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\backend\tensorflow\trainer.py", line 198, in one_step_on_data
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\backend\tensorflow\trainer.py", line 96, in predict_step
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\utils\traceback_utils.py", line 117, in error_handler
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\layers\layer.py", line 882, in __call__
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\utils\traceback_utils.py", line 117, in error_handler
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\ops\operation.py", line 46, in __call__
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\utils\traceback_utils.py", line 156, in error_handler
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\models\functional.py", line 175, in call
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\ops\function.py", line 171, in _run_through_graph
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\models\functional.py", line 556, in call
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\utils\traceback_utils.py", line 117, in error_handler
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\layers\layer.py", line 882, in __call__
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\utils\traceback_utils.py", line 117, in error_handler
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\ops\operation.py", line 46, in __call__
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\utils\traceback_utils.py", line 156, in error_handler
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\layers\convolutional\conv1d.py", line 151, in call
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\ops\nn.py", line 909, in conv
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\backend\tensorflow\nn.py", line 254, in conv
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\backend\tensorflow\nn.py", line 244, in _conv_xla
+File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\keras\src\backend\tensorflow\nn.py", line 231, in _conv
+
+	 [[{{node convolution}}]]
+	tf2xla conversion failed while converting __inference__conv_xla_53896[]. Run with TF_DUMP_GRAPH_PREFIX=/path/to/dump/dir and --vmodule=xla_compiler=2 to obtain a dump of the compiled functions.
+	 [[functional_3_1/conv1d_1/StatefulPartitionedCall]] [Op:__inference_one_step_on_data_distributed_54057]

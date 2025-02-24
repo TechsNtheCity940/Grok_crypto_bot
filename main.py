@@ -83,6 +83,7 @@ class TradingEnv:
 
     def _get_observation(self):
         row = self.df.iloc[self.current_step]
+        # Use only the 8 features expected by the model, excluding 'close'
         X = self.df[['momentum', 'rsi', 'macd', 'atr', 'sentiment', 'arbitrage_spread', 'whale_activity', 'defi_apr']].iloc[max(0, self.current_step-49):self.current_step+1].values
         if len(X) < 50:
             X = np.pad(X, ((50 - len(X), 0), (0, 0)), mode='edge')
@@ -104,7 +105,7 @@ def main():
     dataframes = {}
     hybrid_models = {}
     grid_traders = {}
-    for symbol in TRADING_PAIRS:  # Use TRADING_PAIRS directly
+    for symbol in TRADING_PAIRS:
         df = fetch_historical_data(symbol)
         df_augmented = augment_data(df)
         df_processed = process_data(df_augmented, symbol)
@@ -160,7 +161,7 @@ def main():
                 
                 env = TradingEnv(df, symbol, executor, hybrid_models[symbol], grid_traders[symbol])
                 obs = env.reset()
-                action = 1 if hybrid_models[symbol].predict(np.expand_dims(df.iloc[-50:].values, axis=0))[0][0] > 0.5 else 2
+                action = 1 if hybrid_models[symbol].predict(np.expand_dims(df[['momentum', 'rsi', 'macd', 'atr', 'sentiment', 'arbitrage_spread', 'whale_activity', 'defi_apr']].iloc[-50:].values, axis=0))[0][0] > 0.5 else 2
                 print(f"Action chosen for {symbol}: {action} (1=buy, 2=sell)")
                 logger.info(f"Action for {symbol}: {action}, Balance USD: {balance_usd}, Balance DOGE: {balance_asset}")
                 
@@ -195,7 +196,7 @@ def main():
                     current_price = latest['close']
                     env = TradingEnv(df, alt_symbol, executor, hybrid_models[alt_symbol], grid_traders[alt_symbol])
                     obs = env.reset()
-                    action = 1 if hybrid_models[alt_symbol].predict(np.expand_dims(df.iloc[-50:].values, axis=0))[0][0] > 0.5 else 2
+                    action = 1 if hybrid_models[alt_symbol].predict(np.expand_dims(df[['momentum', 'rsi', 'macd', 'atr', 'sentiment', 'arbitrage_spread', 'whale_activity', 'defi_apr']].iloc[-50:].values, axis=0))[0][0] > 0.5 else 2
                     print(f"Action chosen for {alt_symbol}: {action} (1=buy, 2=sell)")
                     logger.info(f"Action for {alt_symbol}: {action}, Balance USD: {balance_usd}, Balance DOGE: {balance_asset}")
                     
