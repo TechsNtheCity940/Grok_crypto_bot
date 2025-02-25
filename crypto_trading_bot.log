@@ -2118,3 +2118,254 @@ File "C:\Users\wonde\AppData\Local\Programs\Python\Python312\Lib\site-packages\k
 2025-02-24 16:38:10,680 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
 2025-02-24 16:38:36,016 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
 2025-02-24 16:38:43,032 - INFO - Action for DOGE/USD: 2, Balance USD: 11.7409, Balance DOGE: 3.83
+2025-02-24 16:46:45,841 - INFO - Starting AI Crypto Trading Bot on kraken
+2025-02-24 16:46:54,262 - WARNING - 5 out of the last 5 calls to <function TensorFlowTrainer.make_train_function.<locals>.one_step_on_iterator at 0x0000026867960400> triggered tf.function retracing. Tracing is expensive and the excessive number of tracings could be due to (1) creating @tf.function repeatedly in a loop, (2) passing tensors with different shapes, (3) passing Python objects instead of tensors. For (1), please define your @tf.function outside of the loop. For (2), @tf.function has reduce_retracing=True option that can avoid unnecessary retracing. For (3), please refer to https://www.tensorflow.org/guide/function#controlling_retracing and https://www.tensorflow.org/api_docs/python/tf/function for  more details.
+2025-02-24 16:46:54,438 - WARNING - 6 out of the last 6 calls to <function TensorFlowTrainer.make_train_function.<locals>.one_step_on_iterator at 0x0000026867963CE0> triggered tf.function retracing. Tracing is expensive and the excessive number of tracings could be due to (1) creating @tf.function repeatedly in a loop, (2) passing tensors with different shapes, (3) passing Python objects instead of tensors. For (1), please define your @tf.function outside of the loop. For (2), @tf.function has reduce_retracing=True option that can avoid unnecessary retracing. For (3), please refer to https://www.tensorflow.org/guide/function#controlling_retracing and https://www.tensorflow.org/api_docs/python/tf/function for  more details.
+2025-02-24 16:47:35,136 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 16:47:36,695 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 16:48:53,108 - WARNING - You are saving your model as an HDF5 file via `model.save()` or `keras.saving.save_model(model)`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')` or `keras.saving.save_model(model, 'my_model.keras')`. 
+2025-02-24 16:48:53,194 - WARNING - You are saving your model as an HDF5 file via `model.save()` or `keras.saving.save_model(model)`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')` or `keras.saving.save_model(model, 'my_model.keras')`. 
+2025-02-24 16:50:28,824 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 16:50:34,436 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 16:50:41,149 - INFO - Action for DOGE/USD: 2, Balance USD: 11.7409, Balance DOGE: 3.83
+2025-02-24 16:53:32,656 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 16:53:36,679 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 16:53:43,228 - INFO - Action for DOGE/USD: 2, Balance USD: 11.7409, Balance DOGE: 3.83
+2025-02-24 16:56:34,704 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 16:56:38,809 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 16:56:45,604 - INFO - Action for DOGE/USD: 2, Balance USD: 11.7409, Balance DOGE: 3.83
+2025-02-24 16:59:39,228 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 16:59:40,748 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 16:59:47,312 - INFO - Action for DOGE/USD: 2, Balance USD: 11.7409, Balance DOGE: 3.83
+2025-02-24 17:02:40,918 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 17:02:48,373 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 17:02:54,872 - INFO - Action for DOGE/USD: 2, Balance USD: 0.0009, Balance DOGE: 58.47
+2025-02-24 17:02:59,039 - INFO - Executed order for DOGE/USD: {'id': 'OFE3PC-W7QK2-CHREEY', 'clientOrderId': None, 'info': {'txid': ['OFE3PC-W7QK2-CHREEY'], 'descr': {'order': 'sell 58.47000000 XDGUSD @ market'}}, 'timestamp': None, 'datetime': None, 'lastTradeTimestamp': None, 'status': None, 'symbol': 'DOGE/USD', 'type': 'market', 'timeInForce': 'IOC', 'postOnly': False, 'side': 'sell', 'price': None, 'triggerPrice': None, 'takeProfitPrice': None, 'stopLossPrice': None, 'cost': None, 'amount': 58.47, 'filled': None, 'average': None, 'remaining': None, 'reduceOnly': None, 'fee': None, 'trades': [], 'fees': [], 'lastUpdateTimestamp': None, 'stopPrice': None}
+2025-02-24 17:05:33,800 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 17:05:35,468 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 17:05:42,274 - INFO - Action for DOGE/USD: 2, Balance USD: 12.1994, Balance DOGE: 0.0
+2025-02-24 17:08:20,202 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 17:08:21,580 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 17:08:28,169 - INFO - Action for DOGE/USD: 2, Balance USD: 12.1994, Balance DOGE: 0.0
+2025-02-24 17:11:07,922 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 17:11:09,250 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 17:11:15,749 - INFO - Action for DOGE/USD: 2, Balance USD: 12.1994, Balance DOGE: 0.0
+2025-02-24 17:13:54,136 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 17:13:55,621 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 17:14:02,130 - INFO - Action for DOGE/USD: 2, Balance USD: 12.1994, Balance DOGE: 0.0
+2025-02-24 17:16:40,571 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 17:16:47,505 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 17:16:54,008 - INFO - Action for DOGE/USD: 2, Balance USD: 12.1994, Balance DOGE: 0.0
+2025-02-24 17:19:35,836 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 17:19:37,104 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 17:19:43,902 - INFO - Action for DOGE/USD: 2, Balance USD: 12.1994, Balance DOGE: 0.0
+2025-02-24 17:22:22,278 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 17:22:26,999 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 17:22:33,508 - INFO - Action for DOGE/USD: 2, Balance USD: 12.1994, Balance DOGE: 0.0
+2025-02-24 17:25:12,805 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 17:25:14,575 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 17:25:21,358 - INFO - Action for DOGE/USD: 2, Balance USD: 12.1994, Balance DOGE: 0.0
+2025-02-24 17:27:59,757 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 17:28:01,343 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 17:28:07,856 - INFO - Action for DOGE/USD: 2, Balance USD: 12.1994, Balance DOGE: 0.0
+2025-02-24 17:30:46,247 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 17:30:47,991 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 17:30:54,515 - INFO - Action for DOGE/USD: 2, Balance USD: 12.1994, Balance DOGE: 0.0
+2025-02-24 17:33:32,798 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 17:33:37,047 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 17:33:43,575 - INFO - Action for DOGE/USD: 2, Balance USD: 12.1994, Balance DOGE: 0.0
+2025-02-24 17:36:22,818 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 17:36:24,425 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 17:36:31,200 - INFO - Action for DOGE/USD: 2, Balance USD: 12.1994, Balance DOGE: 0.0
+2025-02-24 17:39:11,448 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 17:39:12,667 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 17:39:19,193 - INFO - Action for DOGE/USD: 2, Balance USD: 12.1994, Balance DOGE: 0.0
+2025-02-24 17:41:58,062 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 17:42:01,434 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 17:42:08,006 - INFO - Action for DOGE/USD: 2, Balance USD: 12.1994, Balance DOGE: 0.0
+2025-02-24 17:44:44,182 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 17:44:49,736 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 17:44:56,512 - INFO - Action for DOGE/USD: 2, Balance USD: 12.1994, Balance DOGE: 0.0
+2025-02-24 17:47:40,258 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 17:47:41,729 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 17:47:48,262 - INFO - Action for DOGE/USD: 2, Balance USD: 12.1994, Balance DOGE: 0.0
+2025-02-24 17:50:41,446 - ERROR - Request error occurred: [SSL: SSLV3_ALERT_HANDSHAKE_FAILURE] sslv3 alert handshake failure (_ssl.c:1000)
+2025-02-24 17:50:41,446 - ERROR - Error analyzing social media for DOGE: Request failed: [SSL: SSLV3_ALERT_HANDSHAKE_FAILURE] sslv3 alert handshake failure (_ssl.c:1000)
+2025-02-24 17:50:47,791 - INFO - Action for DOGE/USD: 2, Balance USD: 0.0, Balance DOGE: 0.0
+2025-02-24 17:52:31,447 - ERROR - Request error occurred: [SSL: SSLV3_ALERT_HANDSHAKE_FAILURE] sslv3 alert handshake failure (_ssl.c:1000)
+2025-02-24 17:52:31,447 - ERROR - Error analyzing social media for DOGE: Request failed: [SSL: SSLV3_ALERT_HANDSHAKE_FAILURE] sslv3 alert handshake failure (_ssl.c:1000)
+2025-02-24 17:52:38,346 - INFO - Action for DOGE/USD: 2, Balance USD: 0.0, Balance DOGE: 0.0
+2025-02-24 17:54:23,603 - ERROR - Request error occurred: [Errno 11002] getaddrinfo failed
+2025-02-24 17:54:23,603 - ERROR - Error analyzing social media for DOGE: Request failed: [Errno 11002] getaddrinfo failed
+2025-02-24 17:54:30,720 - INFO - Action for DOGE/USD: 2, Balance USD: 0.0, Balance DOGE: 0.0
+2025-02-24 17:56:15,669 - ERROR - Request error occurred: [SSL: SSLV3_ALERT_HANDSHAKE_FAILURE] sslv3 alert handshake failure (_ssl.c:1000)
+2025-02-24 17:56:15,671 - ERROR - Error analyzing social media for DOGE: Request failed: [SSL: SSLV3_ALERT_HANDSHAKE_FAILURE] sslv3 alert handshake failure (_ssl.c:1000)
+2025-02-24 17:56:22,732 - INFO - Action for DOGE/USD: 2, Balance USD: 0.0, Balance DOGE: 0.0
+2025-02-24 17:58:07,610 - ERROR - Request error occurred: [Errno 11002] getaddrinfo failed
+2025-02-24 17:58:07,610 - ERROR - Error analyzing social media for DOGE: Request failed: [Errno 11002] getaddrinfo failed
+2025-02-24 17:58:14,520 - INFO - Action for DOGE/USD: 2, Balance USD: 0.0, Balance DOGE: 0.0
+2025-02-24 17:59:59,634 - ERROR - Request error occurred: [Errno 11002] getaddrinfo failed
+2025-02-24 17:59:59,634 - ERROR - Error analyzing social media for DOGE: Request failed: [Errno 11002] getaddrinfo failed
+2025-02-24 18:00:06,535 - INFO - Action for DOGE/USD: 2, Balance USD: 0.0, Balance DOGE: 0.0
+2025-02-24 18:01:51,360 - ERROR - Request error occurred: [Errno 11002] getaddrinfo failed
+2025-02-24 18:01:51,361 - ERROR - Error analyzing social media for DOGE: Request failed: [Errno 11002] getaddrinfo failed
+2025-02-24 18:01:58,241 - INFO - Action for DOGE/USD: 2, Balance USD: 0.0, Balance DOGE: 0.0
+2025-02-24 18:03:47,672 - ERROR - Request error occurred: [Errno 11002] getaddrinfo failed
+2025-02-24 18:03:47,672 - ERROR - Error analyzing social media for DOGE: Request failed: [Errno 11002] getaddrinfo failed
+2025-02-24 18:03:54,690 - INFO - Action for DOGE/USD: 2, Balance USD: 0.0, Balance DOGE: 0.0
+2025-02-24 18:05:39,590 - ERROR - Request error occurred: [Errno 11002] getaddrinfo failed
+2025-02-24 18:05:39,590 - ERROR - Error analyzing social media for DOGE: Request failed: [Errno 11002] getaddrinfo failed
+2025-02-24 18:05:46,474 - INFO - Action for DOGE/USD: 2, Balance USD: 0.0, Balance DOGE: 0.0
+2025-02-24 18:07:37,307 - ERROR - Request error occurred: [SSL: SSLV3_ALERT_HANDSHAKE_FAILURE] sslv3 alert handshake failure (_ssl.c:1000)
+2025-02-24 18:07:37,308 - ERROR - Error analyzing social media for DOGE: Request failed: [SSL: SSLV3_ALERT_HANDSHAKE_FAILURE] sslv3 alert handshake failure (_ssl.c:1000)
+2025-02-24 18:07:44,220 - INFO - Action for DOGE/USD: 2, Balance USD: 0.0, Balance DOGE: 0.0
+2025-02-24 18:09:28,808 - ERROR - Request error occurred: [SSL: SSLV3_ALERT_HANDSHAKE_FAILURE] sslv3 alert handshake failure (_ssl.c:1000)
+2025-02-24 18:09:28,808 - ERROR - Error analyzing social media for DOGE: Request failed: [SSL: SSLV3_ALERT_HANDSHAKE_FAILURE] sslv3 alert handshake failure (_ssl.c:1000)
+2025-02-24 18:09:35,686 - INFO - Action for DOGE/USD: 2, Balance USD: 0.0, Balance DOGE: 0.0
+2025-02-24 18:11:20,768 - ERROR - Request error occurred: [Errno 11002] getaddrinfo failed
+2025-02-24 18:11:20,768 - ERROR - Error analyzing social media for DOGE: Request failed: [Errno 11002] getaddrinfo failed
+2025-02-24 18:11:27,661 - INFO - Action for DOGE/USD: 2, Balance USD: 0.0, Balance DOGE: 0.0
+2025-02-24 18:14:04,689 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 18:14:06,958 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 18:14:13,520 - INFO - Action for DOGE/USD: 2, Balance USD: 12.1994, Balance DOGE: 0.0
+2025-02-24 18:16:51,400 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 18:16:52,763 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 18:16:59,268 - INFO - Action for DOGE/USD: 1, Balance USD: 12.1994, Balance DOGE: 0.0
+2025-02-24 18:19:38,559 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 18:19:39,893 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 18:19:46,435 - INFO - Action for DOGE/USD: 1, Balance USD: 12.1994, Balance DOGE: 0.0
+2025-02-24 18:22:27,010 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 18:22:28,518 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 18:22:35,045 - INFO - Action for DOGE/USD: 1, Balance USD: 12.1994, Balance DOGE: 0.0
+2025-02-24 18:22:39,127 - INFO - Executed order for DOGE/USD: {'id': 'OGEQZX-KUSHM-4LAIXG', 'clientOrderId': None, 'info': {'txid': ['OGEQZX-KUSHM-4LAIXG'], 'descr': {'order': 'buy 57.43102171 XDGUSD @ market'}}, 'timestamp': None, 'datetime': None, 'lastTradeTimestamp': None, 'status': None, 'symbol': 'DOGE/USD', 'type': 'market', 'timeInForce': 'IOC', 'postOnly': False, 'side': 'buy', 'price': None, 'triggerPrice': None, 'takeProfitPrice': None, 'stopLossPrice': None, 'cost': None, 'amount': 57.43102171, 'filled': None, 'average': None, 'remaining': None, 'reduceOnly': None, 'fee': None, 'trades': [], 'fees': [], 'lastUpdateTimestamp': None, 'stopPrice': None}
+2025-02-24 18:25:14,420 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 18:25:15,897 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 18:25:22,420 - INFO - Action for DOGE/USD: 1, Balance USD: 0.0317, Balance DOGE: 57.20129762
+2025-02-24 18:28:17,060 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 18:28:20,891 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 18:28:27,427 - INFO - Action for DOGE/USD: 1, Balance USD: 0.0317, Balance DOGE: 57.20129762
+2025-02-24 18:31:19,918 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 18:31:21,461 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 18:31:27,963 - INFO - Action for DOGE/USD: 1, Balance USD: 0.0317, Balance DOGE: 57.20129762
+2025-02-24 18:34:22,368 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 18:34:23,701 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 18:34:30,487 - INFO - Action for DOGE/USD: 1, Balance USD: 0.0317, Balance DOGE: 57.20129762
+2025-02-24 18:37:21,979 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 18:37:23,357 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 18:37:29,872 - INFO - Action for DOGE/USD: 1, Balance USD: 0.0317, Balance DOGE: 57.20129762
+2025-02-24 18:40:22,046 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 18:40:23,620 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 18:40:30,141 - INFO - Action for DOGE/USD: 1, Balance USD: 0.0317, Balance DOGE: 57.20129762
+2025-02-24 18:43:21,439 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 18:43:22,814 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 18:43:29,357 - INFO - Action for DOGE/USD: 1, Balance USD: 0.0317, Balance DOGE: 57.20129762
+2025-02-24 18:46:20,841 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 18:46:22,273 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 18:46:28,784 - INFO - Action for DOGE/USD: 1, Balance USD: 0.0317, Balance DOGE: 57.20129762
+2025-02-24 18:49:22,266 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 18:49:23,712 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 18:49:30,279 - INFO - Action for DOGE/USD: 1, Balance USD: 0.0317, Balance DOGE: 57.20129762
+2025-02-24 18:52:23,441 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 18:52:24,736 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 18:52:31,250 - INFO - Action for DOGE/USD: 1, Balance USD: 0.0317, Balance DOGE: 57.20129762
+2025-02-24 18:55:23,229 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 18:55:24,664 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 18:55:31,156 - INFO - Action for DOGE/USD: 1, Balance USD: 0.0317, Balance DOGE: 57.20129762
+2025-02-24 18:58:24,157 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 18:58:30,380 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 18:58:36,891 - INFO - Action for DOGE/USD: 1, Balance USD: 0.0317, Balance DOGE: 57.20129762
+2025-02-24 19:01:29,243 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 19:01:30,599 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 19:01:37,186 - INFO - Action for DOGE/USD: 1, Balance USD: 0.0317, Balance DOGE: 57.20129762
+2025-02-24 19:04:32,070 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 19:04:33,721 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 19:04:40,235 - INFO - Action for DOGE/USD: 1, Balance USD: 0.0317, Balance DOGE: 57.20129762
+2025-02-24 19:07:32,815 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 19:07:34,184 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 19:07:40,852 - INFO - Action for DOGE/USD: 1, Balance USD: 0.0317, Balance DOGE: 57.20129762
+2025-02-24 19:10:32,895 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-24 19:10:34,195 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-24 19:10:40,697 - INFO - Action for DOGE/USD: 1, Balance USD: 0.0317, Balance DOGE: 57.20129762
+2025-02-25 11:17:36,777 - ERROR - Request error occurred: [Errno 11001] getaddrinfo failed
+2025-02-25 11:17:36,777 - ERROR - Error analyzing social media for DOGE: Request failed: [Errno 11001] getaddrinfo failed
+2025-02-25 11:17:43,129 - INFO - Action for DOGE/USD: 2, Balance USD: 0.0, Balance DOGE: 0.0
+2025-02-25 11:19:26,296 - ERROR - Request error occurred: [SSL: SSLV3_ALERT_HANDSHAKE_FAILURE] sslv3 alert handshake failure (_ssl.c:1000)
+2025-02-25 11:19:26,296 - ERROR - Error analyzing social media for DOGE: Request failed: [SSL: SSLV3_ALERT_HANDSHAKE_FAILURE] sslv3 alert handshake failure (_ssl.c:1000)
+2025-02-25 11:19:33,189 - INFO - Action for DOGE/USD: 2, Balance USD: 0.0, Balance DOGE: 0.0
+2025-02-25 11:21:14,230 - ERROR - Request error occurred: [Errno 11001] getaddrinfo failed
+2025-02-25 11:21:14,230 - ERROR - Error analyzing social media for DOGE: Request failed: [Errno 11001] getaddrinfo failed
+2025-02-25 11:21:20,585 - INFO - Action for DOGE/USD: 2, Balance USD: 0.0, Balance DOGE: 0.0
+2025-02-25 11:23:39,546 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-25 11:23:41,338 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-25 11:23:47,849 - INFO - Action for DOGE/USD: 2, Balance USD: 0.0317, Balance DOGE: 57.20129762
+2025-02-25 11:23:51,840 - INFO - Executed order for DOGE/USD: {'id': 'OUGFGP-QSL7H-WT6BOS', 'clientOrderId': None, 'info': {'txid': ['OUGFGP-QSL7H-WT6BOS'], 'descr': {'order': 'sell 57.20129762 XDGUSD @ market'}}, 'timestamp': None, 'datetime': None, 'lastTradeTimestamp': None, 'status': None, 'symbol': 'DOGE/USD', 'type': 'market', 'timeInForce': 'IOC', 'postOnly': False, 'side': 'sell', 'price': None, 'triggerPrice': None, 'takeProfitPrice': None, 'stopLossPrice': None, 'cost': None, 'amount': 57.20129762, 'filled': None, 'average': None, 'remaining': None, 'reduceOnly': None, 'fee': None, 'trades': [], 'fees': [], 'lastUpdateTimestamp': None, 'stopPrice': None}
+2025-02-25 11:26:26,198 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-25 11:26:27,738 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-25 11:26:34,303 - INFO - Action for DOGE/USD: 2, Balance USD: 11.7445, Balance DOGE: 0.0
+2025-02-25 11:29:11,255 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-25 11:29:13,119 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-25 11:29:19,672 - INFO - Action for DOGE/USD: 2, Balance USD: 11.7445, Balance DOGE: 0.0
+2025-02-25 11:31:56,575 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-25 11:31:58,286 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-25 11:32:04,848 - INFO - Action for DOGE/USD: 1, Balance USD: 11.7445, Balance DOGE: 0.0
+2025-02-25 11:34:48,136 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-25 11:34:49,792 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-25 11:34:56,345 - INFO - Action for DOGE/USD: 1, Balance USD: 11.7445, Balance DOGE: 0.0
+2025-02-25 11:37:34,309 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-25 11:37:36,351 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-25 11:37:42,934 - INFO - Action for DOGE/USD: 1, Balance USD: 11.7445, Balance DOGE: 0.0
+2025-02-25 11:37:46,613 - INFO - Executed order for DOGE/USD: {'id': 'OWR23Q-QCBF2-7EPNQ2', 'clientOrderId': None, 'info': {'txid': ['OWR23Q-QCBF2-7EPNQ2'], 'descr': {'order': 'buy 56.80924968 XDGUSD @ market'}}, 'timestamp': None, 'datetime': None, 'lastTradeTimestamp': None, 'status': None, 'symbol': 'DOGE/USD', 'type': 'market', 'timeInForce': 'IOC', 'postOnly': False, 'side': 'buy', 'price': None, 'triggerPrice': None, 'takeProfitPrice': None, 'stopLossPrice': None, 'cost': None, 'amount': 56.80924968, 'filled': None, 'average': None, 'remaining': None, 'reduceOnly': None, 'fee': None, 'trades': [], 'fees': [], 'lastUpdateTimestamp': None, 'stopPrice': None}
+2025-02-25 11:40:22,821 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-25 11:40:31,511 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-25 11:40:38,044 - INFO - Action for DOGE/USD: 1, Balance USD: 0.0147, Balance DOGE: 56.58201268
+2025-02-25 11:43:31,853 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-25 11:43:33,505 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-25 11:43:40,033 - INFO - Action for DOGE/USD: 1, Balance USD: 0.0147, Balance DOGE: 56.58201268
+2025-02-25 11:46:33,110 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-25 11:46:35,552 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-25 11:46:42,057 - INFO - Action for DOGE/USD: 1, Balance USD: 0.0147, Balance DOGE: 56.58201268
+2025-02-25 11:49:35,117 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-25 11:49:36,849 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-25 11:49:43,359 - INFO - Action for DOGE/USD: 1, Balance USD: 0.0147, Balance DOGE: 56.58201268
+2025-02-25 11:52:33,305 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-25 11:52:34,989 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-25 11:52:41,508 - INFO - Action for DOGE/USD: 1, Balance USD: 0.0147, Balance DOGE: 56.58201268
+2025-02-25 11:55:33,913 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-25 11:55:35,847 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-25 11:55:42,635 - INFO - Action for DOGE/USD: 1, Balance USD: 0.0147, Balance DOGE: 56.58201268
+2025-02-25 11:58:36,337 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-25 11:58:38,202 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-25 11:58:44,714 - INFO - Action for DOGE/USD: 1, Balance USD: 0.0147, Balance DOGE: 56.58201268
+2025-02-25 12:01:37,027 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-25 12:01:40,069 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-25 12:01:46,580 - INFO - Action for DOGE/USD: 1, Balance USD: 0.0147, Balance DOGE: 56.58201268
+2025-02-25 12:04:40,884 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-25 12:04:42,752 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-25 12:04:49,261 - INFO - Action for DOGE/USD: 1, Balance USD: 0.0147, Balance DOGE: 56.58201268
+2025-02-25 12:07:39,677 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-25 12:07:41,565 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-25 12:07:48,077 - INFO - Action for DOGE/USD: 1, Balance USD: 0.0147, Balance DOGE: 56.58201268
+2025-02-25 12:10:42,117 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-25 12:10:43,997 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-25 12:10:50,544 - INFO - Action for DOGE/USD: 1, Balance USD: 0.0147, Balance DOGE: 56.58201268
+2025-02-25 12:13:40,429 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-25 12:13:42,362 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-25 12:13:48,930 - INFO - Action for DOGE/USD: 1, Balance USD: 0.0147, Balance DOGE: 56.58201268
+2025-02-25 12:16:40,715 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-25 12:16:42,493 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-25 12:16:49,069 - INFO - Action for DOGE/USD: 1, Balance USD: 0.0147, Balance DOGE: 56.58201268
+2025-02-25 12:19:40,334 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-25 12:19:41,947 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-25 12:19:48,475 - INFO - Action for DOGE/USD: 1, Balance USD: 0.0147, Balance DOGE: 56.58201268
+2025-02-25 12:22:40,175 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-25 12:22:42,255 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-25 12:22:48,816 - INFO - Action for DOGE/USD: 1, Balance USD: 0.0147, Balance DOGE: 56.58201268
+2025-02-25 12:25:42,436 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-25 12:25:44,311 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-25 12:25:50,885 - INFO - Action for DOGE/USD: 1, Balance USD: 0.0147, Balance DOGE: 56.58201268
+2025-02-25 12:28:42,833 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-25 12:28:44,207 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-25 12:28:50,824 - INFO - Action for DOGE/USD: 1, Balance USD: 0.0147, Balance DOGE: 56.58201268
+2025-02-25 12:31:43,844 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/search/ "HTTP/1.1 200 OK"
+2025-02-25 12:31:45,299 - INFO - HTTP Request: POST https://api.mem0.ai/v1/memories/ "HTTP/1.1 200 OK"
+2025-02-25 12:31:51,807 - INFO - Action for DOGE/USD: 1, Balance USD: 0.0147, Balance DOGE: 56.58201268

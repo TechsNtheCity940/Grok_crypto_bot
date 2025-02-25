@@ -11,7 +11,7 @@ import json
 import talib
 from sentiment_analyzer import SentimentAnalyzer
 from config import KRAKEN_API_KEY, KRAKEN_API_SECRET, ACTIVE_EXCHANGE
-from models.train import CryptoGAN  # Corrected import
+from models.train import CryptoGAN
 
 kraken = ccxt.kraken({
     'apiKey': KRAKEN_API_KEY,
@@ -22,22 +22,26 @@ kraken = ccxt.kraken({
 exchange = kraken if ACTIVE_EXCHANGE == 'kraken' else ccxt.coinbasepro()
 sentiment_analyzer = SentimentAnalyzer()
 
-def fetch_historical_data(symbol, timeframe='1h', limit=8760):  # 1 year of hourly data
+def fetch_historical_data(symbol, timeframe='1h', limit=8760):
     retries = 3
+    df = pd.DataFrame()
     for _ in range(retries):
         try:
-            ohlcv = exchange.fetch_ohlcv(symbol, timeframe, limit=limit)
-            df = pd.DataFrame(ohlcv, columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
-            df['timestamp'] = pd.to_datetime(df['timestamp'], unit='ms')
-            df.to_csv(f'data/historical/{symbol.replace("/", "_")}_{timeframe}.csv', index=False)
-            return df
+            since = exchange.milliseconds() - (limit * 3600 * 1000)  # 1 year back
+            ohlcv = exchange.fetch_ohlcv(symbol, timeframe, since=since, limit=limit)
+            new_df = pd.DataFrame(ohlcv, columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
+            new_df['timestamp'] = pd.to_datetime(new_df['timestamp'], unit='ms')
+            df = pd.concat([df, new_df]).drop_duplicates().sort_values('timestamp')
+            if len(df) >= limit:
+                break
         except Exception as e:
             print(f"Failed to fetch historical data for {symbol}: {e}")
             time.sleep(5)
-    return pd.DataFrame(columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
+    df.to_csv(f'data/historical/{symbol.replace("/", "_")}_{timeframe}.csv', index=False)
+    return df
 
 def augment_data(df):
-    gan = CryptoGAN(input_dim=5)  # Updated to match OHLCV (5 features: open, high, low, close, volume)
+    gan = CryptoGAN(input_dim=5)
     real_data = df[['open', 'high', 'low', 'close', 'volume']].values
     synthetic_data = gan.generate(real_data)
     augmented_data = np.concatenate([real_data, synthetic_data])
@@ -58,13 +62,14 @@ def process_data(df, symbol):
     df['rsi'] = talib.RSI(df['close'], timeperiod=14)
     df['macd'], df['macd_signal'], _ = talib.MACD(df['close'], fastperiod=12, slowperiod=26, signalperiod=9)
     df['atr'] = talib.ATR(df['high'], df['low'], df['close'], timeperiod=14)
+    df['bb_upper'], df['bb_middle'], df['bb_lower'] = talib.BBANDS(df['close'], timeperiod=20)
     sentiment_result = sentiment_analyzer.analyze_social_media(symbol.split('/')[0], '1h')
     df['sentiment'] = sentiment_result['sentiment_score']
-    df['arbitrage_spread'] = 0  # Placeholder; implement if arbitrage data available
-    df['whale_activity'] = 0  # Placeholder; requires ChainAnalyzer
-    df['defi_apr'] = 0  # Placeholder; requires DeFiManager
+    df['arbitrage_spread'] = 0  # Placeholder for arbitrage
+    df['whale_activity'] = df['volume'].rolling(window=24).mean() * 0.1  # Simulated whale proxy
+    df['defi_apr'] = 0
     df = df.fillna(0)
-    return df[['close', 'momentum', 'rsi', 'macd', 'atr', 'sentiment', 'arbitrage_spread', 'whale_activity', 'defi_apr']]
+    return df[['close', 'momentum', 'rsi', 'macd', 'atr', 'sentiment', 'arbitrage_spread', 'whale_activity', 'bb_upper']]
 
 def fetch_real_time_data(symbol):
     timeout = 60
@@ -80,26 +85,19 @@ def fetch_real_time_data(symbol):
             }))
             while time.time() - start_time < timeout:
                 message = ws.recv()
-                print(f"Kraken WebSocket message: {message}")
                 data = json.loads(message)
                 if isinstance(data, list) and len(data) > 2 and data[2] == "ohlc":
                     ohlc = data[1]
                     timestamp = pd.to_datetime(float(ohlc[1]), unit='s')
                     df = pd.DataFrame([[
                         timestamp,
-                        float(ohlc[2]),  # Open
-                        float(ohlc[3]),  # High
-                        float(ohlc[4]),  # Low
-                        float(ohlc[5]),  # Close
-                        float(ohlc[6])   # Volume
+                        float(ohlc[2]), float(ohlc[3]), float(ohlc[4]), float(ohlc[5]), float(ohlc[6])
                     ]], columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
                     ws.close()
-                    print(f"Kraken OHLC detected for {symbol}: {df.iloc[-1].to_dict()}")
                     return df
             ws.close()
         except Exception as e:
-            print(f"WebSocket error for {symbol} (attempt {attempt + 1}/{retries}): {e}")
+            print(f"WebSocket error for {symbol}: {e}")
         time.sleep(5)
-    print(f"Falling back to historical data for {symbol}")
     df = fetch_historical_data(symbol, limit=1)
-    return df.tail(1) if not df.empty else pd.DataFrame([[pd.Timestamp.now(), 98700, 98700, 98700, 98700, 0]], columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
+    return df.tail(1) if not df.empty else pd.DataFrame([[pd.Timestamp.now(), 0.232, 0.232, 0.232, 0.232, 0]], columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
