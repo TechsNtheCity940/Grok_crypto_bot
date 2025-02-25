@@ -61,7 +61,7 @@ def process_data(df, symbol):
     df['momentum'] = df['ma_short'] - df['ma_long']
     df['rsi'] = talib.RSI(df['close'], timeperiod=14)
     df['macd'], df['macd_signal'], _ = talib.MACD(df['close'], fastperiod=12, slowperiod=26, signalperiod=9)
-    df['atr'] = talib.ATR(df['high'], df['low'], 'close', timeperiod=14)
+    df['atr'] = talib.ATR(df['high'], df['low'], df['close'], timeperiod=14)  # Fixed: use df['close'] instead of 'close'
     df['bb_upper'], df['bb_middle'], df['bb_lower'] = talib.BBANDS(df['close'], timeperiod=20)
     sentiment_result = sentiment_analyzer.analyze_social_media(symbol.split('/')[0], '1h')
     df['sentiment'] = sentiment_result['sentiment_score']
@@ -69,7 +69,6 @@ def process_data(df, symbol):
     df['whale_activity'] = df['volume'].rolling(window=24).mean() * 0.1  # Simulated whale proxy
     df['defi_apr'] = 0  # Placeholder, kept as 0 for now
     df = df.fillna(0)
-    # Include defi_apr in the return list
     return df[['close', 'momentum', 'rsi', 'macd', 'atr', 'sentiment', 'arbitrage_spread', 'whale_activity', 'bb_upper', 'defi_apr']]
 
 def fetch_real_time_data(symbol):
