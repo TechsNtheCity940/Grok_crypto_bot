@@ -22,7 +22,7 @@ def train_hybrid_model(symbol, df):
     X = []
     y_price = []
     for i in range(len(df) - 50):
-        X.append(df[['momentum', 'rsi', 'macd', 'atr', 'sentiment', 'arbitrage_spread', 'whale_activity', 'bb_upper']].iloc[i:i+50].values)
+        X.append(df[['momentum', 'rsi', 'macd', 'atr', 'sentiment', 'arbitrage_spread', 'whale_activity', 'bb_upper', 'defi_apr']].iloc[i:i+50].values)  # Added defi_apr
         price_change = (df['close'].iloc[i+50] - df['close'].iloc[i+49]) / df['close'].iloc[i+49]
         y_price.append(1 if price_change > 0.02 else 0)
     X = np.array(X)
@@ -40,7 +40,7 @@ def train_lstm_model(symbol, df):
     X = []
     y_price = []
     for i in range(len(df) - 50):
-        X.append(df[['momentum', 'rsi', 'macd', 'atr', 'sentiment', 'arbitrage_spread', 'whale_activity', 'bb_upper']].iloc[i:i+50].values)
+        X.append(df[['momentum', 'rsi', 'macd', 'atr', 'sentiment', 'arbitrage_spread', 'whale_activity', 'bb_upper', 'defi_apr']].iloc[i:i+50].values)  # Added defi_apr
         price_change = (df['close'].iloc[i+50] - df['close'].iloc[i+49]) / df['close'].iloc[i+49]
         y_price.append(1 if price_change > 0.02 else 0)
     X = np.array(X)
@@ -104,7 +104,7 @@ class TradingEnv:
 
     def _get_observation(self):
         row = self.df.iloc[self.current_step]
-        X = self.df[['momentum', 'rsi', 'macd', 'atr', 'sentiment', 'arbitrage_spread', 'whale_activity', 'bb_upper']].iloc[max(0, self.current_step-49):self.current_step+1].values
+        X = self.df[['momentum', 'rsi', 'macd', 'atr', 'sentiment', 'arbitrage_spread', 'whale_activity', 'bb_upper', 'defi_apr']].iloc[max(0, self.current_step-49):self.current_step+1].values
         if len(X) < 50:
             X = np.pad(X, ((50 - len(X), 0), (0, 0)), mode='edge')
         hybrid_pred = self.hybrid_model.predict(np.expand_dims(X, axis=0))[0][0]
@@ -190,7 +190,7 @@ def main():
                 
                 env = TradingEnv(df, symbol, executor, hybrid_models[symbol], lstm_models[symbol], ppo_models[symbol], grid_traders[symbol])
                 obs = env.reset()
-                action = 1 if obs[0] > 0.5 else 2  # Ensemble vote
+                action = 1 if obs[0] > 0.5 else 2
                 print(f"Action chosen for {symbol}: {action} (1=buy, 2=sell)")
                 logger.info(f"Action for {symbol}: {action}, Balance USD: {balance_usd}, Balance {symbol.split('/')[0]}: {balance_asset}")
                 
