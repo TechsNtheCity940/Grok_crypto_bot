@@ -1,5 +1,8 @@
 import pandas as pd
 import numpy as np
+import os
+import sys
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 from utils.data_utils import process_data
 
 def backtest_model(model, symbol, df, sequence_length=50):
