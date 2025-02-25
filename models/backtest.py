@@ -1,9 +1,10 @@
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'utils')))  # Add utils/ to path
+
 import pandas as pd
 import numpy as np
-import os
-import sys
-sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
-from utils.data_utils import process_data
+from data_utils import process_data
 
 def backtest_model(model, symbol, df, sequence_length=50):
     df_processed = process_data(df, symbol)
@@ -17,3 +18,14 @@ def backtest_model(model, symbol, df, sequence_length=50):
     preds = model.predict(X)
     accuracy = np.mean((preds.flatten() > 0.5) == y)
     return accuracy
+
+if __name__ == "__main__":
+    # Example usage for standalone testing
+    from data_utils import fetch_historical_data
+    symbol = 'DOGE/USD'
+    df = fetch_historical_data(symbol)
+    from hybrid_model import HybridCryptoModel
+    model = HybridCryptoModel()
+    model.model.load_weights('models/trained_models/hybrid_DOGE_USD.h5')
+    accuracy = backtest_model(model, symbol, df)
+    print(f"Backtest accuracy for {symbol}: {accuracy:.2f}")
