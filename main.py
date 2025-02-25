@@ -16,13 +16,15 @@ import sys
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 from sentiment_analyzer import SentimentAnalyzer
 from stable_baselines3 import PPO
+import gym
+from gym import spaces
 
 def train_hybrid_model(symbol, df):
     model = HybridCryptoModel(sequence_length=50, n_features=9)
     X = []
     y_price = []
     for i in range(len(df) - 50):
-        X.append(df[['momentum', 'rsi', 'macd', 'atr', 'sentiment', 'arbitrage_spread', 'whale_activity', 'bb_upper', 'defi_apr']].iloc[i:i+50].values)  # Added defi_apr
+        X.append(df[['momentum', 'rsi', 'macd', 'atr', 'sentiment', 'arbitrage_spread', 'whale_activity', 'bb_upper', 'defi_apr']].iloc[i:i+50].values)
         price_change = (df['close'].iloc[i+50] - df['close'].iloc[i+49]) / df['close'].iloc[i+49]
         y_price.append(1 if price_change > 0.02 else 0)
     X = np.array(X)
@@ -40,7 +42,7 @@ def train_lstm_model(symbol, df):
     X = []
     y_price = []
     for i in range(len(df) - 50):
-        X.append(df[['momentum', 'rsi', 'macd', 'atr', 'sentiment', 'arbitrage_spread', 'whale_activity', 'bb_upper', 'defi_apr']].iloc[i:i+50].values)  # Added defi_apr
+        X.append(df[['momentum', 'rsi', 'macd', 'atr', 'sentiment', 'arbitrage_spread', 'whale_activity', 'bb_upper', 'defi_apr']].iloc[i:i+50].values)
         price_change = (df['close'].iloc[i+50] - df['close'].iloc[i+49]) / df['close'].iloc[i+49]
         y_price.append(1 if price_change > 0.02 else 0)
     X = np.array(X)
@@ -53,8 +55,9 @@ def train_lstm_model(symbol, df):
     logger.info(f"LSTM backtest accuracy for {symbol}: {accuracy:.2f}")
     return model, history
 
-class TradingEnv:
+class TradingEnv(gym.Env):
     def __init__(self, df, symbol, executor, hybrid_model, lstm_model, ppo_model, grid_trader):
+        super(TradingEnv, self).__init__()
         self.df = df
         self.symbol = symbol
         self.executor = executor
@@ -66,6 +69,10 @@ class TradingEnv:
         self.balance_usd, self.balance_asset = self.executor.get_balance(self.symbol)
         self.initial_value = self.balance_usd + (self.balance_asset * self.df['close'].iloc[0])
         self.grid_trader.setup_grids(self.df['close'].iloc[0], price_range=10.0)
+        
+        # Define observation and action spaces for Gym compatibility
+        self.observation_space = spaces.Box(low=-np.inf, high=np.inf, shape=(3,), dtype=np.float32)  # [ensemble_pred, balance_usd, balance_asset]
+        self.action_space = spaces.Discrete(2)  # 0=sell, 1=buy (mapped to 1, 2 internally)
 
     def reset(self):
         self.current_step = 0
@@ -73,6 +80,9 @@ class TradingEnv:
         return self._get_observation()
 
     def step(self, action):
+        # Map Gym action (0, 1) to internal action (1, 2)
+        internal_action = action + 1  # 0->1 (buy), 1->2 (sell)
+        
         price = self.df.iloc[self.current_step]['close']
         reward = 0
         
@@ -100,7 +110,7 @@ class TradingEnv:
             reward += 200
             done = True
         
-        return obs, reward, done, False
+        return obs, reward, done, {}
 
     def _get_observation(self):
         row = self.df.iloc[self.current_step]
@@ -109,7 +119,7 @@ class TradingEnv:
             X = np.pad(X, ((50 - len(X), 0), (0, 0)), mode='edge')
         hybrid_pred = self.hybrid_model.predict(np.expand_dims(X, axis=0))[0][0]
         lstm_pred = self.lstm_model.predict(np.expand_dims(X, axis=0))[0]
-        ppo_pred = self.ppo_model.predict(obs=np.array([self.balance_usd, self.balance_asset, hybrid_pred]), deterministic=True)[0]
+        ppo_pred = self.ppo_model.predict(obs=np.array([self.balance_usd, self.balance_asset, hybrid_pred]), deterministic=True)[0] if self.ppo_model else 0
         ensemble_pred = np.mean([hybrid_pred, lstm_pred, 1 if ppo_pred == 1 else 0])
         return np.array([ensemble_pred, self.balance_usd, self.balance_asset], dtype=np.float32)
 
@@ -205,7 +215,7 @@ def main():
                     order, retry = executor.execute(action, symbol, amount)
                     if order:
                         logger.info(f"Executed order for {symbol}: {order}")
-                        env.step(action)
+                        env.step(action-1)  # Adjust action for Gym (1->0, 2->1)
                     elif retry:
                         retry_pairs.append(symbol)
                         print(f"Added {symbol} to retry list due to execution issue")
@@ -235,7 +245,7 @@ def main():
                     order, retry = executor.execute(action, symbol, amount)
                     if order:
                         logger.info(f"Executed retry order for {symbol}: {order}")
-                        env.step(action)
+                        env.step(action-1)  # Adjust action for Gym
                     else:
                         print(f"Retry failed for {symbol}: Insufficient funds or execution error")
                 else:
