@@ -70,9 +70,8 @@ class TradingEnv(gym.Env):
         self.initial_value = self.balance_usd + (self.balance_asset * self.df['close'].iloc[0])
         self.grid_trader.setup_grids(self.df['close'].iloc[0], price_range=10.0)
         
-        # Define observation and action spaces for Gym compatibility
-        self.observation_space = spaces.Box(low=-np.inf, high=np.inf, shape=(3,), dtype=np.float32)  # [ensemble_pred, balance_usd, balance_asset]
-        self.action_space = spaces.Discrete(2)  # 0=sell, 1=buy (mapped to 1, 2 internally)
+        self.observation_space = spaces.Box(low=-np.inf, high=np.inf, shape=(3,), dtype=np.float32)
+        self.action_space = spaces.Discrete(2)
 
     def reset(self):
         self.current_step = 0
@@ -80,7 +79,6 @@ class TradingEnv(gym.Env):
         return self._get_observation()
 
     def step(self, action):
-        # Map Gym action (0, 1) to internal action (1, 2)
         internal_action = action + 1  # 0->1 (buy), 1->2 (sell)
         
         price = self.df.iloc[self.current_step]['close']
@@ -118,9 +116,9 @@ class TradingEnv(gym.Env):
         if len(X) < 50:
             X = np.pad(X, ((50 - len(X), 0), (0, 0)), mode='edge')
         hybrid_pred = self.hybrid_model.predict(np.expand_dims(X, axis=0))[0][0]
-        lstm_pred = self.lstm_model.predict(np.expand_dims(X, axis=0))[0]
+        lstm_pred = self.lstm_model.predict(np.expand_dims(X, axis=0))[0][0]  # Fixed: Added [0] to get scalar
         ppo_pred = self.ppo_model.predict(obs=np.array([self.balance_usd, self.balance_asset, hybrid_pred]), deterministic=True)[0] if self.ppo_model else 0
-        ensemble_pred = np.mean([hybrid_pred, lstm_pred, 1 if ppo_pred == 1 else 0])
+        ensemble_pred = np.mean([hybrid_pred, lstm_pred, float(1 if ppo_pred == 1 else 0)])  # Ensure scalar with float()
         return np.array([ensemble_pred, self.balance_usd, self.balance_asset], dtype=np.float32)
 
 def main():
@@ -215,7 +213,7 @@ def main():
                     order, retry = executor.execute(action, symbol, amount)
                     if order:
                         logger.info(f"Executed order for {symbol}: {order}")
-                        env.step(action-1)  # Adjust action for Gym (1->0, 2->1)
+                        env.step(action-1)
                     elif retry:
                         retry_pairs.append(symbol)
                         print(f"Added {symbol} to retry list due to execution issue")
@@ -245,7 +243,7 @@ def main():
                     order, retry = executor.execute(action, symbol, amount)
                     if order:
                         logger.info(f"Executed retry order for {symbol}: {order}")
-                        env.step(action-1)  # Adjust action for Gym
+                        env.step(action-1)
                     else:
                         print(f"Retry failed for {symbol}: Insufficient funds or execution error")
                 else:
