@@ -18,6 +18,15 @@ from sentiment_analyzer import SentimentAnalyzer
 from stable_baselines3 import PPO
 import gym
 from gym import spaces
+import tensorflow as tf
+
+# Ensure GPU is used if available
+physical_devices = tf.config.list_physical_devices('GPU')
+if physical_devices:
+    tf.config.experimental.set_memory_growth(physical_devices[0], True)
+    print(f"Using GPU: {physical_devices[0]}")
+else:
+    print("Using CPU device")
 
 def train_hybrid_model(symbol, df):
     model = HybridCryptoModel(sequence_length=50, n_features=9)
@@ -115,8 +124,8 @@ class TradingEnv(gym.Env):
         X = self.df[['momentum', 'rsi', 'macd', 'atr', 'sentiment', 'arbitrage_spread', 'whale_activity', 'bb_upper', 'defi_apr']].iloc[max(0, self.current_step-49):self.current_step+1].values
         if len(X) < 50:
             X = np.pad(X, ((50 - len(X), 0), (0, 0)), mode='edge')
-        hybrid_pred = np.asscalar(self.hybrid_model.predict(np.expand_dims(X, axis=0))[0][0])  # Force scalar
-        lstm_pred = np.asscalar(self.lstm_model.predict(np.expand_dims(X, axis=0))[0][0])    # Force scalar
+        hybrid_pred = self.hybrid_model.predict(np.expand_dims(X, axis=0))[0][0].item()  # Use .item() for scalar
+        lstm_pred = self.lstm_model.predict(np.expand_dims(X, axis=0))[0][0].item()    # Use .item() for scalar
         ppo_pred = self.ppo_model.predict(obs=np.array([self.balance_usd, self.balance_asset, hybrid_pred]), deterministic=True)[0] if self.ppo_model else 0
         ensemble_pred = np.mean([hybrid_pred, lstm_pred, float(ppo_pred)])  # Ensure all are scalars
         return np.array([ensemble_pred, self.balance_usd, self.balance_asset], dtype=np.float32)
@@ -151,8 +160,8 @@ def main():
         lstm_models[symbol] = lstm_model
         
         env = TradingEnv(df_processed, symbol, executor, hybrid_model, lstm_model, None, GridTrader({'grid_trading': {}}))
-        ppo_models[symbol] = PPO('MlpPolicy', env, verbose=1)  # Verbose=1 for progress
-        ppo_models[symbol].learn(total_timesteps=1000)  # Reduced to 1000
+        ppo_models[symbol] = PPO('MlpPolicy', env, verbose=1)
+        ppo_models[symbol].learn(total_timesteps=1000)
         ppo_models[symbol].save(f'{model_dir}/ppo_{symbol.replace("/", "_")}')
         
         grid_config = {
