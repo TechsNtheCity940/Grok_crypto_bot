@@ -115,10 +115,10 @@ class TradingEnv(gym.Env):
         X = self.df[['momentum', 'rsi', 'macd', 'atr', 'sentiment', 'arbitrage_spread', 'whale_activity', 'bb_upper', 'defi_apr']].iloc[max(0, self.current_step-49):self.current_step+1].values
         if len(X) < 50:
             X = np.pad(X, ((50 - len(X), 0), (0, 0)), mode='edge')
-        hybrid_pred = self.hybrid_model.predict(np.expand_dims(X, axis=0))[0][0]  # Scalar, no float()
-        lstm_pred = self.lstm_model.predict(np.expand_dims(X, axis=0))[0][0]    # Scalar, no float()
+        hybrid_pred = np.asscalar(self.hybrid_model.predict(np.expand_dims(X, axis=0))[0][0])  # Force scalar
+        lstm_pred = np.asscalar(self.lstm_model.predict(np.expand_dims(X, axis=0))[0][0])    # Force scalar
         ppo_pred = self.ppo_model.predict(obs=np.array([self.balance_usd, self.balance_asset, hybrid_pred]), deterministic=True)[0] if self.ppo_model else 0
-        ensemble_pred = np.mean([hybrid_pred, lstm_pred, ppo_pred])  # All scalars
+        ensemble_pred = np.mean([hybrid_pred, lstm_pred, float(ppo_pred)])  # Ensure all are scalars
         return np.array([ensemble_pred, self.balance_usd, self.balance_asset], dtype=np.float32)
 
 def main():
