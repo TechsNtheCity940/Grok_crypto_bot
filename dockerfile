@@ -20,6 +20,7 @@ RUN wget http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz && \
     ./configure --prefix=/usr && \
     make && \
     make install && \
+    ldconfig && \
     cd .. && \
     rm -rf ta-lib ta-lib-0.4.0-src.tar.gz
 
@@ -36,7 +37,7 @@ COPY models/trained_models/ ./models/trained_models/
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
-ENV LD_LIBRARY_PATH=/usr/lib
+ENV LD_LIBRARY_PATH=/usr/lib:/usr/local/lib
 
 # Run the bot with trade-only mode
 CMD ["python3", "main.py", "--trade-only"]
