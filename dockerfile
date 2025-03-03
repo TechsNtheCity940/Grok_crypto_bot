@@ -30,11 +30,11 @@ RUN wget http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz && \
 # Copy requirements.txt
 COPY requirements.txt .
 
-# Install numpy first
-RUN pip3 install --no-cache-dir numpy
+# Install specific numpy version known to work with TA-Lib
+RUN pip3 install --no-cache-dir numpy==1.23.5
 
-# Install TA-Lib with retries
-RUN pip3 install --no-cache-dir TA-Lib==0.4.32 || pip3 install --no-cache-dir TA-Lib==0.4.32 || pip3 install --no-cache-dir TA-Lib==0.4.32
+# Install specific TA-Lib version compatible with numpy
+RUN pip3 install --no-cache-dir TA-Lib==0.4.24 || pip3 install --no-cache-dir TA-Lib==0.4.24
 
 # Install TensorFlow separately with retries
 RUN pip3 install --no-cache-dir tensorflow || pip3 install --no-cache-dir tensorflow || pip3 install --no-cache-dir tensorflow

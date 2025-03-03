@@ -34,8 +34,8 @@ else:
 
 def train_hybrid_model(symbol, df, model_path):
     model = HybridCryptoModel(sequence_length=50, n_features=9)
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model.to(device)
+    # TensorFlow models don't use PyTorch's .to(device) method
+    # GPU usage is handled by TensorFlow's configuration
     if os.path.exists(model_path):
         model.model.load_weights(model_path)
         logger.info(f"Loaded existing hybrid model for {symbol} from {model_path}")
@@ -59,8 +59,8 @@ def train_hybrid_model(symbol, df, model_path):
 
 def train_lstm_model(symbol, df, model_path):
     model = LSTMModel(sequence_length=50, n_features=9)
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model.to(device)
+    # TensorFlow models don't use PyTorch's .to(device) method
+    # GPU usage is handled by TensorFlow's configuration
     if os.path.exists(model_path):
         model.model.load_weights(model_path)
         logger.info(f"Loaded existing LSTM model for {symbol} from {model_path}")
