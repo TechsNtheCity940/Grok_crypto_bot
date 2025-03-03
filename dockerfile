@@ -14,10 +14,11 @@ RUN apt-get update && apt-get install -y \
 COPY requirements.txt .
 
 # Install Python dependencies, including latest TA-Lib wheel
-RUN pip3 install --no-cache-dir -r requirements.txt && \
-    pip3 install --no-cache-dir TA-Lib==0.4.32
+RUN pip3 uninstall -y numpy && \
+    pip3 install --no-cache-dir TA-Lib==0.4.32 && \
+    pip3 install --no-cache-dir -r requirements.txt
 
-# Copy bot code and trained models
+# Copy bot code  trained models
 COPY . .
 COPY models/trained_models/ ./models/trained_models/
 
