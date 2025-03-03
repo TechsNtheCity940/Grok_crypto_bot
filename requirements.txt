@@ -1,6 +1,14 @@
 ccxt
 numpy
+pandas
+talib-binary
+transformers
+praw
+nltk
+mem0
 stable-baselines3
+gym
+tensorflow[and-cuda]
 torch
-websocket-client
-python-dotenv
+torchvision
+torchaudio

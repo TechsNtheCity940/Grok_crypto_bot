@@ -19,8 +19,12 @@ from stable_baselines3 import PPO
 import gym
 from gym import spaces
 import tensorflow as tf
+import argparse
+import torch
 
-# Ensure GPU is used if available
+device =torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print(device)
+# GPU setup
 physical_devices = tf.config.list_physical_devices('GPU')
 if physical_devices:
     tf.config.experimental.set_memory_growth(physical_devices[0], True)
@@ -28,41 +32,68 @@ if physical_devices:
 else:
     print("Using CPU device")
 
-def train_hybrid_model(symbol, df):
+def train_hybrid_model(symbol, df, model_path):
     model = HybridCryptoModel(sequence_length=50, n_features=9)
-    X = []
-    y_price = []
-    for i in range(len(df) - 50):
-        X.append(df[['momentum', 'rsi', 'macd', 'atr', 'sentiment', 'arbitrage_spread', 'whale_activity', 'bb_upper', 'defi_apr']].iloc[i:i+50].values)
-        price_change = (df['close'].iloc[i+50] - df['close'].iloc[i+49]) / df['close'].iloc[i+49]
-        y_price.append(1 if price_change > 0.02 else 0)
-    X = np.array(X)
-    y_price = np.array(y_price)
-    split_idx = int(len(X) * 0.8)
-    X_train, X_val = X[:split_idx], X[split_idx:]
-    y_train, y_val = y_price[:split_idx], y_price[split_idx:]
-    history = model.train(X_train, y_train, np.zeros_like(y_train), (X_val, y_val, np.zeros_like(y_val)), model_path=f'models/trained_models/hybrid_{symbol.replace("/", "_")}.h5')
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model.to(device)
+    if os.path.exists(model_path):
+        model.model.load_weights(model_path)
+        logger.info(f"Loaded existing hybrid model for {symbol} from {model_path}")
+    else:
+        X = []
+        y_price = []
+        for i in range(len(df) - 50):
+            X.append(df[['momentum', 'rsi', 'macd', 'atr', 'sentiment', 'arbitrage_spread', 'whale_activity', 'bb_upper', 'defi_apr']].iloc[i:i+50].values)
+            price_change = (df['close'].iloc[i+50] - df['close'].iloc[i+49]) / df['close'].iloc[i+49]
+            y_price.append(1 if price_change > 0.02 else 0)
+        X = np.array(X)
+        y_price = np.array(y_price)
+        split_idx = int(len(X) * 0.8)
+        X_train, X_val = X[:split_idx], X[split_idx:]
+        y_train, y_val = y_price[:split_idx], y_price[split_idx:]
+        history = model.train(X_train, y_train, np.zeros_like(y_train), (X_val, y_val, np.zeros_like(y_val)), model_path=model_path)
+        logger.info(f"Trained new hybrid model for {symbol}")
     accuracy = backtest_model(model, symbol, df)
     logger.info(f"Backtest accuracy for {symbol}: {accuracy:.2f}")
-    return model, history
+    return model, None
 
-def train_lstm_model(symbol, df):
+def train_lstm_model(symbol, df, model_path):
     model = LSTMModel(sequence_length=50, n_features=9)
-    X = []
-    y_price = []
-    for i in range(len(df) - 50):
-        X.append(df[['momentum', 'rsi', 'macd', 'atr', 'sentiment', 'arbitrage_spread', 'whale_activity', 'bb_upper', 'defi_apr']].iloc[i:i+50].values)
-        price_change = (df['close'].iloc[i+50] - df['close'].iloc[i+49]) / df['close'].iloc[i+49]
-        y_price.append(1 if price_change > 0.02 else 0)
-    X = np.array(X)
-    y_price = np.array(y_price)
-    split_idx = int(len(X) * 0.8)
-    X_train, X_val = X[:split_idx], X[split_idx:]
-    y_train, y_val = y_price[:split_idx], y_price[split_idx:]
-    history = model.train(X_train, y_train, X_val, y_val, model_path=f'models/trained_models/lstm_{symbol.replace("/", "_")}.h5')
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model.to(device)
+    if os.path.exists(model_path):
+        model.model.load_weights(model_path)
+        logger.info(f"Loaded existing LSTM model for {symbol} from {model_path}")
+    else:
+        X = []
+        y_price = []
+        for i in range(len(df) - 50):
+            X.append(df[['momentum', 'rsi', 'macd', 'atr', 'sentiment', 'arbitrage_spread', 'whale_activity', 'bb_upper', 'defi_apr']].iloc[i:i+50].values)
+            price_change = (df['close'].iloc[i+50] - df['close'].iloc[i+49]) / df['close'].iloc[i+49]
+            y_price.append(1 if price_change > 0.02 else 0)
+        X = np.array(X)
+        y_price = np.array(y_price)
+        split_idx = int(len(X) * 0.8)
+        X_train, X_val = X[:split_idx], X[split_idx:]
+        y_train, y_val = y_price[:split_idx], y_price[split_idx:]
+        history = model.train(X_train, y_train, X_val, y_val, model_path=model_path)
+        logger.info(f"Trained new LSTM model for {symbol}")
     accuracy = backtest_model(model, symbol, df)
     logger.info(f"LSTM backtest accuracy for {symbol}: {accuracy:.2f}")
-    return model, history
+    return model, None
+
+def train_ppo_model(env, symbol, model_path):
+    model = PPO('MlpPolicy', env, verbose=1)
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model.to(device)
+    if os.path.exists(f"{model_path}.zip"):
+        model = PPO.load(f"{model_path}.zip", env=env)
+        logger.info(f"Loaded existing PPO model for {symbol} from {model_path}.zip")
+    else:
+        model.learn(total_timesteps=1000)
+        model.save(model_path)
+        logger.info(f"Trained new PPO model for {symbol}")
+    return model
 
 class TradingEnv(gym.Env):
     def __init__(self, df, symbol, executor, hybrid_model, lstm_model, ppo_model, grid_trader):
@@ -127,16 +158,25 @@ class TradingEnv(gym.Env):
         lstm_pred = self.lstm_model.predict(np.expand_dims(X, axis=0))[0][0].item()
         ppo_pred = self.ppo_model.predict(observation=np.array([self.balance_usd, self.balance_asset, hybrid_pred]), deterministic=True)[0] if self.ppo_model else 0
         ensemble_pred = np.mean([hybrid_pred, lstm_pred, float(ppo_pred)])
+        atr = row['atr']
+        if atr < 0.005:  # Skip low volatility
+            ensemble_pred = 0.5  # Neutral
         return np.array([ensemble_pred, self.balance_usd, self.balance_asset], dtype=np.float32)
 
-def main():
+def optimize_portfolio(dataframes):
+    returns = {s: df['close'].pct_change().mean() for s, df in dataframes.items()}
+    vols = {s: df['close'].pct_change().std() for s, df in dataframes.items()}
+    total_sharpe = sum(r / v for r, v in zip(returns.values(), vols.values()) if v != 0)
+    weights = {s: (r / v) / total_sharpe if v != 0 else 0 for s, r, v in zip(returns.keys(), returns.values(), vols.values())}
+    return weights
+
+def main(trade_only=False):
     print(f"Starting AI Crypto Trading Bot on {ACTIVE_EXCHANGE}")
     logger.info(f"Starting AI Crypto Trading Bot on {ACTIVE_EXCHANGE}")
     
     model_dir = 'models/trained_models'
-    if os.path.exists(model_dir):
-        shutil.rmtree(model_dir)
-    os.makedirs(model_dir, exist_ok=True)
+    if not os.path.exists(model_dir):
+        os.makedirs(model_dir, exist_ok=True)
     
     executor = TradeExecutor()
     risk_manager = RiskManager(max_loss=0.5)
@@ -146,6 +186,10 @@ def main():
     lstm_models = {}
     ppo_models = {}
     grid_traders = {}
+    last_retrain_time = time.time()
+    last_update_time = time.time()
+
+    # Initial setup or load
     for symbol in TRADING_PAIRS:
         df = fetch_historical_data(symbol)
         df_augmented = augment_data(df)
@@ -153,28 +197,64 @@ def main():
         dataframes[symbol] = df_processed
         print(f"Initial historical data fetched and processed for {symbol}: {len(df_processed)} rows")
         
-        hybrid_model, _ = train_hybrid_model(symbol, df_processed)
-        lstm_model, _ = train_lstm_model(symbol, df_processed)
+        hybrid_path = f'{model_dir}/hybrid_{symbol.replace("/", "_")}.h5'
+        lstm_path = f'{model_dir}/lstm_{symbol.replace("/", "_")}.h5'
+        ppo_path = f'{model_dir}/ppo_{symbol.replace("/", "_")}'
+        
+        hybrid_model, _ = train_hybrid_model(symbol, df_processed, hybrid_path)
+        lstm_model, _ = train_lstm_model(symbol, df_processed, lstm_path)
         hybrid_models[symbol] = hybrid_model
         lstm_models[symbol] = lstm_model
         
         env = TradingEnv(df_processed, symbol, executor, hybrid_model, lstm_model, None, GridTrader({'grid_trading': {}}))
-        ppo_models[symbol] = PPO('MlpPolicy', env, verbose=1)
-        ppo_models[symbol].learn(total_timesteps=1000)
-        ppo_models[symbol].save(f'{model_dir}/ppo_{symbol.replace("/", "_")}')
+        ppo_models[symbol] = train_ppo_model(env, symbol, ppo_path) if not trade_only else PPO.load(f"{ppo_path}.zip", env=env)
+        if trade_only:
+            logger.info(f"Loaded models for {symbol} without retraining")
         
-        grid_config = {
-            'grid_trading': {
-                'num_grids': 10,
-                'grid_spread': 0.05,
-                'max_position': 1.0,
-                'min_profit': 0.2
-            }
-        }
+        grid_config = {'grid_trading': {'num_grids': 10, 'grid_spread': 0.05, 'max_position': 1.0, 'min_profit': 0.2}}
         grid_traders[symbol] = GridTrader(grid_config)
 
     iteration = 0
     while True:
+        # Full retraining every 24 hours (if not trade-only)
+        if not trade_only and time.time() - last_retrain_time > 24 * 3600:
+            for symbol in TRADING_PAIRS:
+                df = fetch_historical_data(symbol)
+                df_augmented = augment_data(df)
+                df_processed = process_data(df_augmented, symbol)
+                dataframes[symbol] = df_processed
+                
+                hybrid_path = f'{model_dir}/hybrid_{symbol.replace("/", "_")}.h5'
+                lstm_path = f'{model_dir}/lstm_{symbol.replace("/", "_")}.h5'
+                ppo_path = f'{model_dir}/ppo_{symbol.replace("/", "_")}'
+                
+                hybrid_model, _ = train_hybrid_model(symbol, df_processed, hybrid_path)
+                lstm_model, _ = train_lstm_model(symbol, df_processed, lstm_path)
+                hybrid_models[symbol] = hybrid_model
+                lstm_models[symbol] = lstm_model
+                
+                env = TradingEnv(df_processed, symbol, executor, hybrid_model, lstm_model, ppo_models[symbol], grid_traders[symbol])
+                ppo_models[symbol] = train_ppo_model(env, symbol, ppo_path)
+            last_retrain_time = time.time()
+            logger.info("Models retrained with new data")
+
+        # Incremental update every hour
+        if time.time() - last_update_time > 3600:
+            for symbol in TRADING_PAIRS:
+                new_data = fetch_real_time_data(symbol)
+                df = pd.concat([dataframes[symbol], new_data]).tail(100)
+                df = process_data(df, symbol)
+                dataframes[symbol] = df
+                
+                X = [df[['momentum', 'rsi', 'macd', 'atr', 'sentiment', 'arbitrage_spread', 'whale_activity', 'bb_upper', 'defi_apr']].iloc[-50:].values]
+                y = [1 if (df['close'].iloc[-1] - df['close'].iloc[-2]) / df['close'].iloc[-2] > 0.02 else 0]
+                hybrid_models[symbol].model.fit(np.array(X), np.array(y), epochs=1, verbose=0)
+                lstm_models[symbol].model.fit(np.array(X), np.array(y), epochs=1, verbose=0)
+                env = TradingEnv(df, symbol, executor, hybrid_models[symbol], lstm_models[symbol], ppo_models[symbol], grid_traders[symbol])
+                ppo_models[symbol].learn(total_timesteps=100, reset_num_timesteps=False)
+            last_update_time = time.time()
+            logger.info("Models fine-tuned with new data")
+
         total_usd, total_assets = 0, {}
         for symbol in TRADING_PAIRS:
             balance_usd, balance_asset = executor.get_balance(symbol)
@@ -184,7 +264,9 @@ def main():
         
         total_value = total_usd + sum(total_assets.values())
         print(f"Total account value: ${total_value:.2f}")
+        logger.info(f"Total account value: ${total_value:.2f}")
 
+        weights = optimize_portfolio(dataframes)
         retry_pairs = []
         processed_pairs = set()
 
@@ -212,9 +294,9 @@ def main():
                 
                 min_trade_size = executor.min_trade_sizes.get(symbol, 10.0)
                 if action == 1:
-                    amount = balance_usd / current_price
+                    amount = min(balance_usd * weights[symbol] / current_price, balance_usd / current_price)
                 else:
-                    amount = balance_asset
+                    amount = min(balance_asset * weights[symbol], balance_asset)
                 amount = max(min_trade_size, amount)
                 
                 if risk_manager.is_safe(action, symbol, balance_usd, balance_asset, current_price) and amount >= min_trade_size:
@@ -243,9 +325,9 @@ def main():
                 
                 min_trade_size = executor.min_trade_sizes.get(symbol, 10.0)
                 if action == 1:
-                    amount = balance_usd / current_price
+                    amount = min(balance_usd * weights[symbol] / current_price, balance_usd / current_price)
                 else:
-                    amount = balance_asset
+                    amount = min(balance_asset * weights[symbol], balance_asset)
                 amount = max(min_trade_size, amount)
                 if risk_manager.is_safe(action, symbol, balance_usd, balance_asset, current_price) and amount >= min_trade_size:
                     order, retry = executor.execute(action, symbol, amount)
@@ -267,4 +349,7 @@ def main():
         time.sleep(60)
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description="Run the trading bot with or without retraining")
+    parser.add_argument('--trade-only', action='store_true', help="Load existing models and trade without retraining")
+    args = parser.parse_args()
+    main(trade_only=args.trade_only)
