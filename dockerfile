@@ -29,9 +29,12 @@ RUN wget http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz && \
 COPY requirements.txt .
 
 # Install Python dependencies, then TA-Lib Python wrapper with specific version
-RUN pip3 install --no-cache-dir -r requirements.txt && \
-    pip3 install --no-cache-dir TA-Lib==0.4.32
-
+RUN pip3 uninstall -y numpy && \
+    apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    ta-lib && \
+    pip3 install --no-cache-dir -r requirements.txt
+ 
 # Copy bot code and trained models
 COPY . .
 COPY models/trained_models/ ./models/trained_models/
