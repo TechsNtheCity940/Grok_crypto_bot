@@ -17,9 +17,10 @@ RUN apt-get update && apt-get install -y \
 RUN wget http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz && \
     tar -xzf ta-lib-0.4.0-src.tar.gz && \
     cd ta-lib && \
-    ./configure --prefix=/usr && \
+    ./configure --prefix=/usr/local && \
     make && \
     make install && \
+    cp /usr/local/lib/libta_lib.so* /usr/lib/ && \
     ldconfig && \
     cd .. && \
     rm -rf ta-lib ta-lib-0.4.0-src.tar.gz
@@ -27,9 +28,9 @@ RUN wget http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz && \
 # Copy requirements.txt
 COPY requirements.txt .
 
-# Install Python dependencies, including TA-Lib Python wrapper
+# Install Python dependencies, then TA-Lib Python wrapper with specific version
 RUN pip3 install --no-cache-dir -r requirements.txt && \
-    pip3 install --no-cache-dir TA-Lib
+    pip3 install --no-cache-dir TA-Lib==0.4.28
 
 # Copy bot code and trained models
 COPY . .
