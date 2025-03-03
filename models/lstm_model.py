@@ -10,6 +10,11 @@ class LSTMModel:
         self.n_features = n_features
         self.model = self._build_model()
         self.logger = logging.getLogger('lstm_model')
+    
+    def to(self, device):
+        # Dummy method to handle PyTorch's .to(device) calls
+        # TensorFlow models don't use this method, but we add it for compatibility
+        return self
 
     def _build_model(self):
         model = Sequential([

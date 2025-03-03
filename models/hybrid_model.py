@@ -10,6 +10,11 @@ class HybridCryptoModel:
         self.n_features = n_features
         self.model = self._build_model()
         self.logger = logging.getLogger('hybrid_model')
+    
+    def to(self, device):
+        # Dummy method to handle PyTorch's .to(device) calls
+        # TensorFlow models don't use this method, but we add it for compatibility
+        return self
 
     def _build_model(self):
         inputs = Input(shape=(self.sequence_length, self.n_features))
