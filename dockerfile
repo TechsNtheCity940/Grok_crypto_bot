@@ -30,7 +30,7 @@ COPY requirements.txt .
 
 # Install Python dependencies, then TA-Lib Python wrapper with specific version
 RUN pip3 install --no-cache-dir -r requirements.txt && \
-    pip3 install --no-cache-dir TA-Lib==0.4.28
+    pip3 install --no-cache-dir TA-Lib==0.4.32
 
 # Copy bot code and trained models
 COPY . .
