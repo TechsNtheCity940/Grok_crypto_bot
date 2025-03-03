@@ -1,11 +1,10 @@
 ccxt
 numpy
 pandas
-talib-binary
 transformers
 praw
 nltk
-mem0
+mem0ai
 stable-baselines3
 gym
 tensorflow[and-cuda]
