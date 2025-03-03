@@ -13,6 +13,10 @@ RUN apt-get update && apt-get install -y \
     unzip \
     && rm -rf /var/lib/apt/lists/*
 
+# Upgrade pip and add timeout settings
+RUN pip3 install --upgrade pip && \
+    pip3 config set global.timeout 300
+
 # Download and install TA-Lib C library
 RUN wget http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz && \
     tar -xzf ta-lib-0.4.0-src.tar.gz && \
@@ -26,10 +30,21 @@ RUN wget http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz && \
 # Copy requirements.txt
 COPY requirements.txt .
 
-# Install Python dependencies
-RUN pip3 install --no-cache-dir numpy && \
-    pip3 install --no-cache-dir TA-Lib==0.4.32 && \
-    pip3 install --no-cache-dir -r requirements.txt
+# Install numpy first
+RUN pip3 install --no-cache-dir numpy
+
+# Install TA-Lib with retries
+RUN pip3 install --no-cache-dir TA-Lib==0.4.32 || pip3 install --no-cache-dir TA-Lib==0.4.32 || pip3 install --no-cache-dir TA-Lib==0.4.32
+
+# Install TensorFlow separately with retries
+RUN pip3 install --no-cache-dir tensorflow || pip3 install --no-cache-dir tensorflow || pip3 install --no-cache-dir tensorflow
+
+# Install torch separately with retries
+RUN pip3 install --no-cache-dir torch torchvision torchaudio || pip3 install --no-cache-dir torch torchvision torchaudio
+
+# Install remaining requirements (excluding already installed packages)
+RUN grep -v "numpy\|tensorflow\|torch\|torchvision\|torchaudio" requirements.txt > remaining_requirements.txt && \
+    pip3 install --no-cache-dir -r remaining_requirements.txt
 
 # Copy bot code  trained models
 COPY . .
