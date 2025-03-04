@@ -17,7 +17,7 @@ RUN wget http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz && \
     make install
 
 # Stage 2: Final image
-FROM nvidia/cuda:11.8.0-cudnn8-runtime-ubuntu22.04
+FROM nvidia/cuda:11.6.2-cudnn8-runtime-ubuntu20.04
 
 # Copy TA-Lib from builder stage
 COPY --from=talib-builder /usr/include/ta-lib /usr/include/ta-lib
@@ -29,7 +29,11 @@ WORKDIR /app
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     python3-pip \
+    python3-dev \
     git \
+    libgomp1 \
+    libnccl2 \
+    libnccl-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Upgrade pip and add timeout settings
@@ -45,19 +49,26 @@ RUN pip3 install --no-cache-dir numpy==1.21.6
 # Install TA-Lib with specific version
 RUN pip3 install --no-cache-dir TA-Lib==0.4.24
 
-# Install TensorFlow and PyTorch separately
+# Install TensorFlow separately
 RUN pip3 install --no-cache-dir tensorflow
-RUN pip3 install --no-cache-dir torch torchvision torchaudio
+
+# Install PyTorch with specific CUDA version
+RUN pip3 install --no-cache-dir torch==1.13.1+cu116 torchvision==0.14.1+cu116 torchaudio==0.13.1 --extra-index-url https://download.pytorch.org/whl/cu116
 
 # Install remaining requirements
 RUN pip3 install --no-cache-dir -r requirements.txt
 
-# Copy bot code  trained models
+# Install additional dependencies that might be missing
+RUN pip3 install --no-cache-dir python-dotenv websocket-client
+
+# Copy bot code, trained models, and environment variables
 COPY . .
 COPY models/trained_models/ ./models/trained_models/
+COPY .env .
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
+ENV LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
 
 # Run the bot with trade-only mode
 CMD ["python3", "main.py", "--trade-only"]
