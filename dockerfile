@@ -27,14 +27,25 @@ COPY --from=talib-builder /usr/lib/libta_lib* /usr/lib/
 WORKDIR /app
 
 # Install system dependencies
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --allow-change-held-packages \
     python3-pip \
     python3-dev \
     git \
     libgomp1 \
-    libnccl2 \
-    libnccl-dev \
     && rm -rf /var/lib/apt/lists/*
+
+# Install NVIDIA container toolkit
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gnupg2 curl ca-certificates && \
+    curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | apt-key add - && \
+    curl -s -L https://nvidia.github.io/libnvidia-container/ubuntu20.04/libnvidia-container.list | \
+    tee /etc/apt/sources.list.d/nvidia-container-toolkit.list && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends \
+    nvidia-container-toolkit && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # Upgrade pip and add timeout settings
 RUN pip3 install --upgrade pip && \
@@ -52,8 +63,8 @@ RUN pip3 install --no-cache-dir TA-Lib==0.4.24
 # Install TensorFlow separately
 RUN pip3 install --no-cache-dir tensorflow
 
-# Install PyTorch with specific CUDA version
-RUN pip3 install --no-cache-dir torch==1.13.1+cu116 torchvision==0.14.1+cu116 torchaudio==0.13.1 --extra-index-url https://download.pytorch.org/whl/cu116
+# Install PyTorch CPU version to avoid CUDA compatibility issues
+RUN pip3 install --no-cache-dir torch==1.12.1+cpu torchvision==0.13.1+cpu torchaudio==0.12.1 --extra-index-url https://download.pytorch.org/whl/cpu
 
 # Install remaining requirements
 RUN pip3 install --no-cache-dir -r requirements.txt

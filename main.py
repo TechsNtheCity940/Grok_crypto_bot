@@ -22,15 +22,26 @@ import tensorflow as tf
 import argparse
 import torch
 
-device =torch.device("cuda" if torch.cuda.is_available() else "cpu")
-print(device)
-# GPU setup
-physical_devices = tf.config.list_physical_devices('GPU')
-if physical_devices:
-    tf.config.experimental.set_memory_growth(physical_devices[0], True)
-    print(f"Using GPU: {physical_devices[0]}")
-else:
-    print("Using CPU device")
+# Try to use GPU if available, otherwise use CPU
+try:
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    print(f"PyTorch using device: {device}")
+except Exception as e:
+    print(f"Error setting PyTorch device: {e}")
+    device = torch.device("cpu")
+    print("PyTorch using CPU device")
+
+# TensorFlow GPU setup
+try:
+    physical_devices = tf.config.list_physical_devices('GPU')
+    if physical_devices:
+        tf.config.experimental.set_memory_growth(physical_devices[0], True)
+        print(f"TensorFlow using GPU: {physical_devices[0]}")
+    else:
+        print("TensorFlow using CPU device")
+except Exception as e:
+    print(f"Error setting TensorFlow device: {e}")
+    print("TensorFlow using CPU device")
 
 def train_hybrid_model(symbol, df, model_path):
     model = HybridCryptoModel(sequence_length=50, n_features=9)
@@ -84,11 +95,23 @@ def train_lstm_model(symbol, df, model_path):
 
 def train_ppo_model(env, symbol, model_path):
     model = PPO('MlpPolicy', env, verbose=1)
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model.to(device)
+    try:
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        model.to(device)
+    except Exception as e:
+        print(f"Error setting PPO model device: {e}")
+        print("Using default device for PPO model")
+    
     if os.path.exists(f"{model_path}.zip"):
-        model = PPO.load(f"{model_path}.zip", env=env)
-        logger.info(f"Loaded existing PPO model for {symbol} from {model_path}.zip")
+        try:
+            model = PPO.load(f"{model_path}.zip", env=env)
+            logger.info(f"Loaded existing PPO model for {symbol} from {model_path}.zip")
+        except Exception as e:
+            print(f"Error loading PPO model: {e}")
+            print("Training new PPO model")
+            model.learn(total_timesteps=1000)
+            model.save(model_path)
+            logger.info(f"Trained new PPO model for {symbol}")
     else:
         model.learn(total_timesteps=1000)
         model.save(model_path)
