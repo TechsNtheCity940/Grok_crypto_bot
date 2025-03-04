@@ -1,5 +1,6 @@
 import ccxt
 import os
+from config import TRADING_PAIRS
 from utils.log_setup import logger
 
 class TradeExecutor:
