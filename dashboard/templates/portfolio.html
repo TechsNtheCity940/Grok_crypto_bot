@@ -1,0 +1,546 @@
+{% extends "base.html" %}
+
+{% block title %}Portfolio - Crypto Trading Bot{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="mb-4">Portfolio</h1>
+    
+    <!-- Portfolio Summary -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Total Value</h5>
+                    <h2 id="portfolio-total-value" class="mb-0">$0.00</h2>
+                    <small id="portfolio-total-change" class="text-muted">0.00%</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Daily P&L</h5>
+                    <h2 id="daily-pnl" class="mb-0">$0.00</h2>
+                    <small id="daily-pnl-percent" class="text-muted">0.00%</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Weekly P&L</h5>
+                    <h2 id="weekly-pnl" class="mb-0">$0.00</h2>
+                    <small id="weekly-pnl-percent" class="text-muted">0.00%</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Monthly P&L</h5>
+                    <h2 id="monthly-pnl" class="mb-0">$0.00</h2>
+                    <small id="monthly-pnl-percent" class="text-muted">0.00%</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Portfolio Performance Chart -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <i class="fas fa-chart-line me-2"></i> Portfolio Performance
+                    </div>
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-sm btn-outline-primary timeframe-btn active" data-timeframe="week">Week</button>
+                        <button type="button" class="btn btn-sm btn-outline-primary timeframe-btn" data-timeframe="month">Month</button>
+                        <button type="button" class="btn btn-sm btn-outline-primary timeframe-btn" data-timeframe="year">Year</button>
+                        <button type="button" class="btn btn-sm btn-outline-primary timeframe-btn" data-timeframe="all">All</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="portfolio-performance-chart" style="height: 400px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Asset Allocation and Predictions -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-chart-pie me-2"></i> Asset Allocation
+                </div>
+                <div class="card-body">
+                    <div id="asset-allocation-chart" style="height: 300px;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-chart-bar me-2"></i> Performance by Asset
+                </div>
+                <div class="card-body">
+                    <div id="asset-performance-chart" style="height: 300px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Portfolio Predictions -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-chart-line me-2"></i> Portfolio Value Prediction
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="prediction-timeframe">Prediction Timeframe</label>
+                                <select class="form-select" id="prediction-timeframe">
+                                    <option value="week">1 Week</option>
+                                    <option value="month" selected>1 Month</option>
+                                    <option value="quarter">3 Months</option>
+                                    <option value="year">1 Year</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="prediction-confidence">Confidence Level</label>
+                                <select class="form-select" id="prediction-confidence">
+                                    <option value="0.7">70%</option>
+                                    <option value="0.8" selected>80%</option>
+                                    <option value="0.9">90%</option>
+                                    <option value="0.95">95%</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>&nbsp;</label>
+                                <button id="generate-prediction-btn" class="btn btn-primary w-100">Generate Prediction</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="portfolio-prediction-chart" style="height: 400px;"></div>
+                    <div class="row mt-3">
+                        <div class="col-md-4">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h5 class="card-title">Expected Value</h5>
+                                    <h3 id="prediction-expected-value" class="text-primary">$0.00</h3>
+                                    <small id="prediction-expected-change" class="text-muted">0.00%</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h5 class="card-title">Upper Bound</h5>
+                                    <h3 id="prediction-upper-bound" class="text-success">$0.00</h3>
+                                    <small id="prediction-upper-change" class="text-muted">0.00%</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h5 class="card-title">Lower Bound</h5>
+                                    <h3 id="prediction-lower-bound" class="text-danger">$0.00</h3>
+                                    <small id="prediction-lower-change" class="text-muted">0.00%</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        // Current portfolio value
+        let currentPortfolioValue = 0;
+        
+        // Update portfolio summary
+        function updatePortfolioSummary() {
+            $.getJSON('/api/status', function(data) {
+                // Update total value
+                currentPortfolioValue = data.portfolio_value;
+                $('#portfolio-total-value').text(formatCurrency(data.portfolio_value));
+                
+                // Get portfolio history for different timeframes
+                $.getJSON('/api/portfolio/history?timeframe=day', function(dayData) {
+                    if (dayData.length > 0) {
+                        const startValue = dayData[0].value;
+                        const pnl = data.portfolio_value - startValue;
+                        const pnlPercent = startValue > 0 ? pnl / startValue : 0;
+                        
+                        $('#daily-pnl').text(formatCurrency(pnl));
+                        $('#daily-pnl-percent').text(formatPercentage(pnlPercent));
+                        
+                        // Add color based on positive/negative
+                        if (pnl > 0) {
+                            $('#daily-pnl, #daily-pnl-percent').removeClass('text-danger').addClass('text-success');
+                        } else if (pnl < 0) {
+                            $('#daily-pnl, #daily-pnl-percent').removeClass('text-success').addClass('text-danger');
+                        } else {
+                            $('#daily-pnl, #daily-pnl-percent').removeClass('text-success text-danger');
+                        }
+                    }
+                });
+                
+                $.getJSON('/api/portfolio/history?timeframe=week', function(weekData) {
+                    if (weekData.length > 0) {
+                        const startValue = weekData[0].value;
+                        const pnl = data.portfolio_value - startValue;
+                        const pnlPercent = startValue > 0 ? pnl / startValue : 0;
+                        
+                        $('#weekly-pnl').text(formatCurrency(pnl));
+                        $('#weekly-pnl-percent').text(formatPercentage(pnlPercent));
+                        
+                        // Add color based on positive/negative
+                        if (pnl > 0) {
+                            $('#weekly-pnl, #weekly-pnl-percent').removeClass('text-danger').addClass('text-success');
+                        } else if (pnl < 0) {
+                            $('#weekly-pnl, #weekly-pnl-percent').removeClass('text-success').addClass('text-danger');
+                        } else {
+                            $('#weekly-pnl, #weekly-pnl-percent').removeClass('text-success text-danger');
+                        }
+                    }
+                });
+                
+                $.getJSON('/api/portfolio/history?timeframe=month', function(monthData) {
+                    if (monthData.length > 0) {
+                        const startValue = monthData[0].value;
+                        const pnl = data.portfolio_value - startValue;
+                        const pnlPercent = startValue > 0 ? pnl / startValue : 0;
+                        
+                        $('#monthly-pnl').text(formatCurrency(pnl));
+                        $('#monthly-pnl-percent').text(formatPercentage(pnlPercent));
+                        
+                        // Add color based on positive/negative
+                        if (pnl > 0) {
+                            $('#monthly-pnl, #monthly-pnl-percent').removeClass('text-danger').addClass('text-success');
+                        } else if (pnl < 0) {
+                            $('#monthly-pnl, #monthly-pnl-percent').removeClass('text-success').addClass('text-danger');
+                        } else {
+                            $('#monthly-pnl, #monthly-pnl-percent').removeClass('text-success text-danger');
+                        }
+                    }
+                });
+                
+                // Update asset allocation chart
+                updateAssetAllocationChart(data.balance_assets, data.balance_usd);
+                
+                // Update asset performance chart
+                updateAssetPerformanceChart();
+            });
+        }
+        
+        // Update portfolio performance chart
+        function updatePortfolioPerformanceChart(timeframe = 'week') {
+            $.getJSON(`/api/portfolio/history?timeframe=${timeframe}`, function(data) {
+                const timestamps = [];
+                const values = [];
+                
+                for (const point of data) {
+                    timestamps.push(new Date(point.timestamp));
+                    values.push(point.value);
+                }
+                
+                const trace = {
+                    x: timestamps,
+                    y: values,
+                    type: 'scatter',
+                    mode: 'lines',
+                    line: {
+                        color: '#6c5ce7',
+                        width: 2
+                    },
+                    fill: 'tozeroy',
+                    fillcolor: 'rgba(108, 92, 231, 0.1)'
+                };
+                
+                const layout = {
+                    margin: {t: 10, b: 30, l: 60, r: 20},
+                    xaxis: {
+                        title: '',
+                        showgrid: false
+                    },
+                    yaxis: {
+                        title: 'Portfolio Value (USD)',
+                        showgrid: true,
+                        gridcolor: 'rgba(0,0,0,0.05)'
+                    }
+                };
+                
+                Plotly.newPlot('portfolio-performance-chart', [trace], layout);
+            });
+        }
+        
+        // Update asset allocation chart
+        function updateAssetAllocationChart(assets, usdBalance) {
+            const labels = ['USD'];
+            const values = [usdBalance];
+            const colors = ['#fdcb6e'];
+            
+            // Add assets
+            for (const [asset, value] of Object.entries(assets)) {
+                labels.push(asset);
+                values.push(value);
+                
+                // Generate a color based on asset name
+                const hash = asset.split('').reduce((acc, char) => {
+                    return char.charCodeAt(0) + ((acc << 5) - acc);
+                }, 0);
+                const color = `hsl(${Math.abs(hash) % 360}, 70%, 60%)`;
+                colors.push(color);
+            }
+            
+            const data = [{
+                labels: labels,
+                values: values,
+                type: 'pie',
+                marker: {
+                    colors: colors
+                },
+                textinfo: 'label+percent',
+                hoverinfo: 'label+value+percent'
+            }];
+            
+            const layout = {
+                margin: {t: 10, b: 10, l: 10, r: 10},
+                showlegend: true,
+                legend: {
+                    orientation: 'h',
+                    y: -0.2
+                }
+            };
+            
+            Plotly.newPlot('asset-allocation-chart', data, layout);
+        }
+        
+        // Update asset performance chart
+        function updateAssetPerformanceChart() {
+            $.getJSON('/api/trades/stats?timeframe=week', function(data) {
+                // Extract performance by asset
+                const assets = {};
+                
+                // Process trades to calculate performance by asset
+                if (data.trades_by_symbol) {
+                    for (const [symbol, trades] of Object.entries(data.trades_by_symbol)) {
+                        const asset = symbol.split('/')[0];
+                        const profit = trades.profit || 0;
+                        const profitPercent = trades.profit_percent || 0;
+                        
+                        assets[asset] = {
+                            profit: profit,
+                            profitPercent: profitPercent
+                        };
+                    }
+                }
+                
+                // Create chart data
+                const assetNames = Object.keys(assets);
+                const profitValues = assetNames.map(asset => assets[asset].profit);
+                const colors = profitValues.map(profit => profit >= 0 ? '#00b894' : '#d63031');
+                
+                const trace = {
+                    x: assetNames,
+                    y: profitValues,
+                    type: 'bar',
+                    marker: {
+                        color: colors
+                    },
+                    text: profitValues.map(profit => formatCurrency(profit)),
+                    textposition: 'auto'
+                };
+                
+                const layout = {
+                    margin: {t: 10, b: 50, l: 60, r: 20},
+                    xaxis: {
+                        title: 'Asset'
+                    },
+                    yaxis: {
+                        title: 'Profit/Loss (USD)'
+                    }
+                };
+                
+                Plotly.newPlot('asset-performance-chart', [trace], layout);
+            });
+        }
+        
+        // Generate portfolio prediction
+        function generatePortfolioPrediction() {
+            const timeframe = $('#prediction-timeframe').val();
+            const confidence = $('#prediction-confidence').val();
+            
+            // Show loading state
+            $('#generate-prediction-btn').html('<span class="loading-spinner"></span> Generating...');
+            $('#generate-prediction-btn').prop('disabled', true);
+            
+            // Get historical data for prediction
+            $.getJSON(`/api/portfolio/history?timeframe=all`, function(historyData) {
+                // Simulate prediction calculation (in a real app, this would be an API call)
+                setTimeout(function() {
+                    // Convert timeframe to days
+                    let days = 30; // default to month
+                    switch(timeframe) {
+                        case 'week': days = 7; break;
+                        case 'quarter': days = 90; break;
+                        case 'year': days = 365; break;
+                    }
+                    
+                    // Generate prediction data
+                    const timestamps = [];
+                    const expectedValues = [];
+                    const upperBounds = [];
+                    const lowerBounds = [];
+                    
+                    // Start with current value
+                    const startDate = new Date();
+                    const startValue = currentPortfolioValue;
+                    
+                    // Generate daily predictions
+                    for (let i = 0; i <= days; i++) {
+                        const date = new Date(startDate);
+                        date.setDate(date.getDate() + i);
+                        timestamps.push(date);
+                        
+                        // Calculate expected value with some randomness
+                        // In a real app, this would use actual prediction models
+                        const dailyReturn = 0.001; // 0.1% daily return
+                        const volatility = 0.02; // 2% volatility
+                        
+                        const expectedValue = startValue * Math.pow(1 + dailyReturn, i);
+                        expectedValues.push(expectedValue);
+                        
+                        // Calculate confidence intervals
+                        const confidenceMultiplier = parseFloat(confidence) * 2; // Convert to z-score
+                        const interval = expectedValue * volatility * Math.sqrt(i) * confidenceMultiplier;
+                        
+                        upperBounds.push(expectedValue + interval);
+                        lowerBounds.push(Math.max(expectedValue - interval, 0)); // Ensure non-negative
+                    }
+                    
+                    // Create chart
+                    const expectedTrace = {
+                        x: timestamps,
+                        y: expectedValues,
+                        type: 'scatter',
+                        mode: 'lines',
+                        name: 'Expected Value',
+                        line: {
+                            color: '#6c5ce7',
+                            width: 2
+                        }
+                    };
+                    
+                    const upperTrace = {
+                        x: timestamps,
+                        y: upperBounds,
+                        type: 'scatter',
+                        mode: 'lines',
+                        name: 'Upper Bound',
+                        line: {
+                            color: '#00b894',
+                            width: 1,
+                            dash: 'dash'
+                        }
+                    };
+                    
+                    const lowerTrace = {
+                        x: timestamps,
+                        y: lowerBounds,
+                        type: 'scatter',
+                        mode: 'lines',
+                        name: 'Lower Bound',
+                        line: {
+                            color: '#d63031',
+                            width: 1,
+                            dash: 'dash'
+                        },
+                        fill: 'tonexty',
+                        fillcolor: 'rgba(108, 92, 231, 0.1)'
+                    };
+                    
+                    const layout = {
+                        margin: {t: 10, b: 30, l: 60, r: 20},
+                        xaxis: {
+                            title: '',
+                            showgrid: false
+                        },
+                        yaxis: {
+                            title: 'Portfolio Value (USD)',
+                            showgrid: true,
+                            gridcolor: 'rgba(0,0,0,0.05)'
+                        },
+                        legend: {
+                            orientation: 'h',
+                            y: 1.1
+                        }
+                    };
+                    
+                    Plotly.newPlot('portfolio-prediction-chart', [expectedTrace, upperTrace, lowerTrace], layout);
+                    
+                    // Update prediction summary
+                    const finalExpectedValue = expectedValues[expectedValues.length - 1];
+                    const finalUpperBound = upperBounds[upperBounds.length - 1];
+                    const finalLowerBound = lowerBounds[lowerBounds.length - 1];
+                    
+                    const expectedChange = (finalExpectedValue - startValue) / startValue;
+                    const upperChange = (finalUpperBound - startValue) / startValue;
+                    const lowerChange = (finalLowerBound - startValue) / startValue;
+                    
+                    $('#prediction-expected-value').text(formatCurrency(finalExpectedValue));
+                    $('#prediction-expected-change').text(formatPercentage(expectedChange));
+                    
+                    $('#prediction-upper-bound').text(formatCurrency(finalUpperBound));
+                    $('#prediction-upper-change').text(formatPercentage(upperChange));
+                    
+                    $('#prediction-lower-bound').text(formatCurrency(finalLowerBound));
+                    $('#prediction-lower-change').text(formatPercentage(lowerChange));
+                    
+                    // Reset button
+                    $('#generate-prediction-btn').html('Generate Prediction');
+                    $('#generate-prediction-btn').prop('disabled', false);
+                }, 1500);
+            });
+        }
+        
+        // Handle timeframe button clicks
+        $('.timeframe-btn').click(function() {
+            $('.timeframe-btn').removeClass('active');
+            $(this).addClass('active');
+            
+            const timeframe = $(this).data('timeframe');
+            updatePortfolioPerformanceChart(timeframe);
+        });
+        
+        // Handle prediction generation
+        $('#generate-prediction-btn').click(function() {
+            generatePortfolioPrediction();
+        });
+        
+        // Initial updates
+        updatePortfolioSummary();
+        updatePortfolioPerformanceChart();
+        generatePortfolioPrediction();
+        
+        // Periodic updates
+        setInterval(updatePortfolioSummary, 30000);
+    });
+</script>
+{% endblock %}

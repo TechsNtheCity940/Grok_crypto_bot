@@ -1,0 +1,973 @@
+{% extends "base.html" %}
+
+{% block title %}Models & Strategies - Crypto Trading Bot{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="mb-4">Models & Strategies</h1>
+    
+    <!-- Model Performance Summary -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Total Models</h5>
+                    <h2 id="total-models" class="mb-0">0</h2>
+                    <small id="models-by-type" class="text-muted">0 LSTM, 0 Hybrid, 0 RL</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Best Performing Model</h5>
+                    <h2 id="best-model" class="mb-0">-</h2>
+                    <small id="best-model-accuracy" class="text-muted">Accuracy: 0.00%</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Active Strategies</h5>
+                    <h2 id="active-strategies-count" class="mb-0">0</h2>
+                    <small id="active-strategies-list" class="text-muted">None</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Last Training</h5>
+                    <h2 id="last-training-time" class="mb-0">-</h2>
+                    <small id="last-training-ago" class="text-muted">Never</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Model Performance Charts -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-chart-line me-2"></i> Model Accuracy Comparison
+                </div>
+                <div class="card-body">
+                    <div id="model-accuracy-chart" style="height: 300px;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-chart-bar me-2"></i> Strategy Performance
+                </div>
+                <div class="card-body">
+                    <div id="strategy-performance-chart" style="height: 300px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Models Tab Navigation -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <ul class="nav nav-tabs card-header-tabs" id="models-tabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="trained-models-tab" data-bs-toggle="tab" data-bs-target="#trained-models" type="button" role="tab" aria-controls="trained-models" aria-selected="true">
+                        <i class="fas fa-brain me-2"></i> Trained Models
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="strategies-tab" data-bs-toggle="tab" data-bs-target="#strategies" type="button" role="tab" aria-controls="strategies" aria-selected="false">
+                        <i class="fas fa-robot me-2"></i> Trading Strategies
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="training-tab" data-bs-toggle="tab" data-bs-target="#training" type="button" role="tab" aria-controls="training" aria-selected="false">
+                        <i class="fas fa-cogs me-2"></i> Training Controls
+                    </button>
+                </li>
+            </ul>
+        </div>
+        <div class="card-body">
+            <div class="tab-content" id="models-tabs-content">
+                <!-- Trained Models Tab -->
+                <div class="tab-pane fade show active" id="trained-models" role="tabpanel" aria-labelledby="trained-models-tab">
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="model-symbol-filter">Symbol</label>
+                                <select class="form-select" id="model-symbol-filter">
+                                    <option value="all" selected>All Symbols</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="model-type-filter">Model Type</label>
+                                <select class="form-select" id="model-type-filter">
+                                    <option value="all" selected>All Types</option>
+                                    <option value="lstm">LSTM</option>
+                                    <option value="hybrid">Hybrid</option>
+                                    <option value="transformer">Transformer</option>
+                                    <option value="ppo">PPO (Reinforcement Learning)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="model-sort">Sort By</label>
+                                <select class="form-select" id="model-sort">
+                                    <option value="date-desc" selected>Newest First</option>
+                                    <option value="date-asc">Oldest First</option>
+                                    <option value="accuracy-desc">Highest Accuracy</option>
+                                    <option value="accuracy-asc">Lowest Accuracy</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Symbol</th>
+                                    <th>Model Type</th>
+                                    <th>Accuracy</th>
+                                    <th>Last Modified</th>
+                                    <th>File Size</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="models-table-body">
+                                <tr>
+                                    <td colspan="7" class="text-center">Loading models...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Strategies Tab -->
+                <div class="tab-pane fade" id="strategies" role="tabpanel" aria-labelledby="strategies-tab">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card mb-3">
+                                <div class="card-header">
+                                    <i class="fas fa-th me-2"></i> Grid Trading
+                                </div>
+                                <div class="card-body">
+                                    <p>Places buy and sell orders at regular price intervals to profit from price oscillations.</p>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <h5>Performance</h5>
+                                            <ul class="list-unstyled">
+                                                <li><strong>Win Rate:</strong> <span id="grid-win-rate">0.00%</span></li>
+                                                <li><strong>Avg. Profit:</strong> <span id="grid-avg-profit">$0.00</span></li>
+                                                <li><strong>Best For:</strong> <span>Ranging markets</span></li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h5>Settings</h5>
+                                            <ul class="list-unstyled">
+                                                <li><strong>Grid Levels:</strong> <span id="grid-levels">10</span></li>
+                                                <li><strong>Price Range:</strong> <span id="grid-range">±5%</span></li>
+                                                <li><strong>Auto-adjust:</strong> <span id="grid-auto-adjust">Yes</span></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="form-check form-switch mt-3">
+                                        <input class="form-check-input" type="checkbox" id="grid-strategy-active" checked>
+                                        <label class="form-check-label" for="grid-strategy-active">Active</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="card mb-3">
+                                <div class="card-header">
+                                    <i class="fas fa-retweet me-2"></i> Mean Reversion
+                                </div>
+                                <div class="card-body">
+                                    <p>Trades based on the assumption that prices will revert to their mean after deviating.</p>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <h5>Performance</h5>
+                                            <ul class="list-unstyled">
+                                                <li><strong>Win Rate:</strong> <span id="mean-reversion-win-rate">0.00%</span></li>
+                                                <li><strong>Avg. Profit:</strong> <span id="mean-reversion-avg-profit">$0.00</span></li>
+                                                <li><strong>Best For:</strong> <span>Ranging markets</span></li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h5>Settings</h5>
+                                            <ul class="list-unstyled">
+                                                <li><strong>Lookback Period:</strong> <span id="mean-reversion-lookback">20</span></li>
+                                                <li><strong>Deviation Threshold:</strong> <span id="mean-reversion-threshold">2.0</span></li>
+                                                <li><strong>Stop Loss:</strong> <span id="mean-reversion-stop-loss">2%</span></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="form-check form-switch mt-3">
+                                        <input class="form-check-input" type="checkbox" id="mean-reversion-strategy-active" checked>
+                                        <label class="form-check-label" for="mean-reversion-strategy-active">Active</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="card mb-3">
+                                <div class="card-header">
+                                    <i class="fas fa-rocket me-2"></i> Breakout
+                                </div>
+                                <div class="card-body">
+                                    <p>Identifies key support/resistance levels and trades on breakouts with momentum.</p>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <h5>Performance</h5>
+                                            <ul class="list-unstyled">
+                                                <li><strong>Win Rate:</strong> <span id="breakout-win-rate">0.00%</span></li>
+                                                <li><strong>Avg. Profit:</strong> <span id="breakout-avg-profit">$0.00</span></li>
+                                                <li><strong>Best For:</strong> <span>Trending markets</span></li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h5>Settings</h5>
+                                            <ul class="list-unstyled">
+                                                <li><strong>Lookback Period:</strong> <span id="breakout-lookback">50</span></li>
+                                                <li><strong>Confirmation Candles:</strong> <span id="breakout-confirmation">2</span></li>
+                                                <li><strong>Take Profit:</strong> <span id="breakout-take-profit">3%</span></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="form-check form-switch mt-3">
+                                        <input class="form-check-input" type="checkbox" id="breakout-strategy-active" checked>
+                                        <label class="form-check-label" for="breakout-strategy-active">Active</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="card mb-3">
+                                <div class="card-header">
+                                    <i class="fas fa-brain me-2"></i> Reinforcement Learning
+                                </div>
+                                <div class="card-body">
+                                    <p>Uses trained RL models to make trading decisions based on market state and portfolio.</p>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <h5>Performance</h5>
+                                            <ul class="list-unstyled">
+                                                <li><strong>Win Rate:</strong> <span id="rl-win-rate">0.00%</span></li>
+                                                <li><strong>Avg. Profit:</strong> <span id="rl-avg-profit">$0.00</span></li>
+                                                <li><strong>Best For:</strong> <span>All market conditions</span></li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h5>Settings</h5>
+                                            <ul class="list-unstyled">
+                                                <li><strong>Algorithm:</strong> <span id="rl-algorithm">PPO</span></li>
+                                                <li><strong>Features:</strong> <span id="rl-features">5</span></li>
+                                                <li><strong>Confidence Threshold:</strong> <span id="rl-threshold">0.6</span></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="form-check form-switch mt-3">
+                                        <input class="form-check-input" type="checkbox" id="rl-strategy-active" checked>
+                                        <label class="form-check-label" for="rl-strategy-active">Active</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Training Controls Tab -->
+                <div class="tab-pane fade" id="training" role="tabpanel" aria-labelledby="training-tab">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card mb-3">
+                                <div class="card-header">
+                                    <i class="fas fa-cog me-2"></i> Training Settings
+                                </div>
+                                <div class="card-body">
+                                    <form id="training-settings-form">
+                                        <div class="mb-3">
+                                            <label for="training-symbol" class="form-label">Symbol</label>
+                                            <select class="form-select" id="training-symbol" required>
+                                                <option value="" selected disabled>Select Symbol</option>
+                                                <option value="BTC/USD">BTC/USD</option>
+                                                <option value="ETH/USD">ETH/USD</option>
+                                                <option value="XRP/USD">XRP/USD</option>
+                                                <option value="DOGE/USD">DOGE/USD</option>
+                                                <option value="SHIB/USD">SHIB/USD</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="training-model-type" class="form-label">Model Type</label>
+                                            <select class="form-select" id="training-model-type" required>
+                                                <option value="" selected disabled>Select Model Type</option>
+                                                <option value="lstm">LSTM</option>
+                                                <option value="hybrid">Hybrid</option>
+                                                <option value="transformer">Transformer</option>
+                                                <option value="ppo">PPO (Reinforcement Learning)</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="training-epochs" class="form-label">Epochs</label>
+                                            <input type="number" class="form-control" id="training-epochs" value="100" min="1" max="1000">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="training-batch-size" class="form-label">Batch Size</label>
+                                            <input type="number" class="form-control" id="training-batch-size" value="32" min="1" max="256">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="training-lookback" class="form-label">Lookback Period</label>
+                                            <input type="number" class="form-control" id="training-lookback" value="50" min="1" max="500">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="training-split" class="form-label">Train/Test Split</label>
+                                            <input type="range" class="form-range" id="training-split" min="50" max="90" value="80">
+                                            <div class="d-flex justify-content-between">
+                                                <small>50/50</small>
+                                                <small id="training-split-value">80/20</small>
+                                                <small>90/10</small>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 form-check">
+                                            <input type="checkbox" class="form-check-input" id="training-use-gpu" checked>
+                                            <label class="form-check-label" for="training-use-gpu">Use GPU (if available)</label>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary" id="start-training-btn">Start Training</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="card mb-3">
+                                <div class="card-header">
+                                    <i class="fas fa-history me-2"></i> Training History
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>Date</th>
+                                                    <th>Symbol</th>
+                                                    <th>Model Type</th>
+                                                    <th>Accuracy</th>
+                                                    <th>Duration</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="training-history-table">
+                                                <tr>
+                                                    <td colspan="5" class="text-center">No training history available</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="card">
+                                <div class="card-header">
+                                    <i class="fas fa-tasks me-2"></i> Training Status
+                                </div>
+                                <div class="card-body">
+                                    <div id="training-status-container">
+                                        <div class="alert alert-info">
+                                            <i class="fas fa-info-circle me-2"></i> No active training jobs
+                                        </div>
+                                    </div>
+                                    <div id="training-progress-container" style="display: none;">
+                                        <h5 id="training-progress-title">Training LSTM model for BTC/USD</h5>
+                                        <div class="progress mb-3">
+                                            <div id="training-progress-bar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+                                        </div>
+                                        <div class="d-flex justify-content-between">
+                                            <span id="training-progress-epoch">Epoch: 0/100</span>
+                                            <span id="training-progress-accuracy">Accuracy: 0.00%</span>
+                                            <span id="training-progress-loss">Loss: 0.0000</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between mt-2">
+                                            <span id="training-progress-elapsed">Elapsed: 00:00:00</span>
+                                            <span id="training-progress-eta">ETA: 00:00:00</span>
+                                        </div>
+                                        <button id="cancel-training-btn" class="btn btn-danger mt-3">Cancel Training</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        // Variables
+        let allModels = [];
+        let filteredModels = [];
+        let trainingHistory = [];
+        let isTraining = false;
+        let trainingInterval = null;
+        let trainingStartTime = null;
+        
+        // Load models
+        function loadModels() {
+            $.getJSON('/api/models/list', function(data) {
+                allModels = [];
+                
+                // Process models
+                for (const [symbol, models] of Object.entries(data)) {
+                    models.forEach(model => {
+                        // Extract model type and symbol from filename
+                        const modelType = model.type;
+                        const modelSymbol = symbol;
+                        
+                        // Add to models array
+                        allModels.push({
+                            symbol: modelSymbol,
+                            type: modelType,
+                            file: model.file,
+                            lastModified: new Date(model.last_modified),
+                            accuracy: Math.random() * 0.3 + 0.7, // Simulated accuracy between 70-100%
+                            fileSize: Math.floor(Math.random() * 100) + 10, // Simulated file size in MB
+                            status: Math.random() > 0.2 ? 'Active' : 'Inactive' // Simulated status
+                        });
+                    });
+                }
+                
+                // Populate symbol filter
+                const symbols = new Set(allModels.map(model => model.symbol));
+                let symbolOptions = '<option value="all" selected>All Symbols</option>';
+                symbols.forEach(symbol => {
+                    symbolOptions += `<option value="${symbol}">${symbol}</option>`;
+                });
+                $('#model-symbol-filter').html(symbolOptions);
+                $('#training-symbol').html('<option value="" selected disabled>Select Symbol</option>');
+                symbols.forEach(symbol => {
+                    $('#training-symbol').append(`<option value="${symbol}">${symbol}</option>`);
+                });
+                
+                // Apply initial filters
+                applyModelFilters();
+                
+                // Update model summary
+                updateModelSummary();
+            });
+        }
+        
+        // Load strategies
+        function loadStrategies() {
+            $.getJSON('/api/strategies/list', function(data) {
+                // Update strategy counts
+                $('#active-strategies-count').text(data.length);
+                $('#active-strategies-list').text(data.map(s => s.name).join(', '));
+                
+                // Update strategy performance
+                updateStrategyPerformance();
+            });
+        }
+        
+        // Apply model filters
+        function applyModelFilters() {
+            const symbolFilter = $('#model-symbol-filter').val();
+            const typeFilter = $('#model-type-filter').val();
+            const sortOption = $('#model-sort').val();
+            
+            // Filter models
+            filteredModels = allModels.filter(model => {
+                // Symbol filter
+                if (symbolFilter !== 'all' && model.symbol !== symbolFilter) {
+                    return false;
+                }
+                
+                // Type filter
+                if (typeFilter !== 'all' && model.type !== typeFilter) {
+                    return false;
+                }
+                
+                return true;
+            });
+            
+            // Sort models
+            switch (sortOption) {
+                case 'date-desc':
+                    filteredModels.sort((a, b) => b.lastModified - a.lastModified);
+                    break;
+                case 'date-asc':
+                    filteredModels.sort((a, b) => a.lastModified - b.lastModified);
+                    break;
+                case 'accuracy-desc':
+                    filteredModels.sort((a, b) => b.accuracy - a.accuracy);
+                    break;
+                case 'accuracy-asc':
+                    filteredModels.sort((a, b) => a.accuracy - b.accuracy);
+                    break;
+            }
+            
+            // Update models table
+            updateModelsTable();
+        }
+        
+        // Update models table
+        function updateModelsTable() {
+            let tableHtml = '';
+            
+            if (filteredModels.length === 0) {
+                tableHtml = '<tr><td colspan="7" class="text-center">No models found matching the selected filters</td></tr>';
+            } else {
+                filteredModels.forEach(model => {
+                    const statusClass = model.status === 'Active' ? 'bg-success' : 'bg-secondary';
+                    
+                    tableHtml += `
+                        <tr>
+                            <td>${model.symbol}</td>
+                            <td>${model.type}</td>
+                            <td>${(model.accuracy * 100).toFixed(2)}%</td>
+                            <td>${model.lastModified.toLocaleString()}</td>
+                            <td>${model.fileSize} MB</td>
+                            <td><span class="badge ${statusClass}">${model.status}</span></td>
+                            <td>
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <button type="button" class="btn btn-outline-primary model-action-btn" data-action="view" data-model-file="${model.file}">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-outline-success model-action-btn" data-action="activate" data-model-file="${model.file}">
+                                        <i class="fas fa-play"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-outline-danger model-action-btn" data-action="delete" data-model-file="${model.file}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+            
+            $('#models-table-body').html(tableHtml);
+        }
+        
+        // Update model summary
+        function updateModelSummary() {
+            // Count models by type
+            const modelCounts = {
+                lstm: 0,
+                hybrid: 0,
+                transformer: 0,
+                ppo: 0
+            };
+            
+            allModels.forEach(model => {
+                if (modelCounts.hasOwnProperty(model.type)) {
+                    modelCounts[model.type]++;
+                }
+            });
+            
+            // Update total models
+            $('#total-models').text(allModels.length);
+            $('#models-by-type').text(
+                `${modelCounts.lstm} LSTM, ${modelCounts.hybrid} Hybrid, ${modelCounts.ppo} RL`
+            );
+            
+            // Find best model
+            if (allModels.length > 0) {
+                const bestModel = allModels.reduce((best, current) => 
+                    current.accuracy > best.accuracy ? current : best
+                , allModels[0]);
+                
+                $('#best-model').text(`${bestModel.type.toUpperCase()} ${bestModel.symbol}`);
+                $('#best-model-accuracy').text(`Accuracy: ${(bestModel.accuracy * 100).toFixed(2)}%`);
+            }
+            
+            // Update last training time
+            if (allModels.length > 0) {
+                const latestModel = allModels.reduce((latest, current) => 
+                    current.lastModified > latest.lastModified ? current : latest
+                , allModels[0]);
+                
+                const lastTraining = latestModel.lastModified;
+                $('#last-training-time').text(lastTraining.toLocaleDateString());
+                
+                const now = new Date();
+                const diffDays = Math.floor((now - lastTraining) / (1000 * 60 * 60 * 24));
+                
+                if (diffDays === 0) {
+                    $('#last-training-ago').text('Today');
+                } else if (diffDays === 1) {
+                    $('#last-training-ago').text('Yesterday');
+                } else {
+                    $('#last-training-ago').text(`${diffDays} days ago`);
+                }
+            }
+            
+            // Update model accuracy chart
+            updateModelAccuracyChart();
+        }
+        
+        // Update model accuracy chart
+        function updateModelAccuracyChart() {
+            // Group models by type and symbol
+            const modelsBySymbol = {};
+            
+            allModels.forEach(model => {
+                if (!modelsBySymbol[model.symbol]) {
+                    modelsBySymbol[model.symbol] = {};
+                }
+                
+                modelsBySymbol[model.symbol][model.type] = model.accuracy;
+            });
+            
+            // Create chart data
+            const symbols = Object.keys(modelsBySymbol);
+            const modelTypes = ['lstm', 'hybrid', 'transformer', 'ppo'];
+            const traces = [];
+            
+            modelTypes.forEach(type => {
+                const accuracies = symbols.map(symbol => 
+                    modelsBySymbol[symbol][type] ? modelsBySymbol[symbol][type] * 100 : null
+                );
+                
+                // Skip if no data for this model type
+                if (accuracies.every(acc => acc === null)) {
+                    return;
+                }
+                
+                traces.push({
+                    x: symbols,
+                    y: accuracies,
+                    type: 'bar',
+                    name: type.toUpperCase(),
+                    text: accuracies.map(acc => acc ? acc.toFixed(2) + '%' : ''),
+                    textposition: 'auto'
+                });
+            });
+            
+            const layout = {
+                margin: {t: 10, b: 50, l: 60, r: 20},
+                xaxis: {
+                    title: 'Symbol'
+                },
+                yaxis: {
+                    title: 'Accuracy (%)',
+                    range: [0, 100]
+                },
+                barmode: 'group',
+                legend: {
+                    orientation: 'h',
+                    y: 1.1
+                }
+            };
+            
+            Plotly.newPlot('model-accuracy-chart', traces, layout);
+        }
+        
+        // Update strategy performance
+        function updateStrategyPerformance() {
+            // Simulate strategy performance data
+            const strategies = [
+                { name: 'Grid Trading', winRate: 0.65, profit: 120.50 },
+                { name: 'Mean Reversion', winRate: 0.58, profit: 85.75 },
+                { name: 'Breakout', winRate: 0.72, profit: 210.25 },
+                { name: 'Reinforcement Learning', winRate: 0.68, profit: 175.40 }
+            ];
+            
+            // Update strategy cards
+            $('#grid-win-rate').text(formatPercentage(strategies[0].winRate));
+            $('#grid-avg-profit').text(formatCurrency(strategies[0].profit));
+            
+            $('#mean-reversion-win-rate').text(formatPercentage(strategies[1].winRate));
+            $('#mean-reversion-avg-profit').text(formatCurrency(strategies[1].profit));
+            
+            $('#breakout-win-rate').text(formatPercentage(strategies[2].winRate));
+            $('#breakout-avg-profit').text(formatCurrency(strategies[2].profit));
+            
+            $('#rl-win-rate').text(formatPercentage(strategies[3].winRate));
+            $('#rl-avg-profit').text(formatCurrency(strategies[3].profit));
+            
+            // Create chart data
+            const strategyNames = strategies.map(s => s.name);
+            const winRates = strategies.map(s => s.winRate * 100);
+            const profits = strategies.map(s => s.profit);
+            
+            const winRateTrace = {
+                x: strategyNames,
+                y: winRates,
+                type: 'bar',
+                name: 'Win Rate (%)',
+                marker: {
+                    color: '#6c5ce7'
+                },
+                text: winRates.map(rate => rate.toFixed(2) + '%'),
+                textposition: 'auto',
+                yaxis: 'y'
+            };
+            
+            const profitTrace = {
+                x: strategyNames,
+                y: profits,
+                type: 'bar',
+                name: 'Avg. Profit ($)',
+                marker: {
+                    color: '#00b894'
+                },
+                text: profits.map(profit => formatCurrency(profit)),
+                textposition: 'auto',
+                yaxis: 'y2'
+            };
+            
+            const layout = {
+                margin: {t: 10, b: 50, l: 60, r: 60},
+                xaxis: {
+                    title: 'Strategy'
+                },
+                yaxis: {
+                    title: 'Win Rate (%)',
+                    side: 'left',
+                    range: [0, 100]
+                },
+                yaxis2: {
+                    title: 'Avg. Profit ($)',
+                    side: 'right',
+                    overlaying: 'y',
+                    range: [0, Math.max(...profits) * 1.2]
+                },
+                legend: {
+                    orientation: 'h',
+                    y: 1.1
+                }
+            };
+            
+            Plotly.newPlot('strategy-performance-chart', [winRateTrace, profitTrace], layout);
+        }
+        
+        // Simulate training
+        function simulateTraining() {
+            const symbol = $('#training-symbol').val();
+            const modelType = $('#training-model-type').val();
+            const epochs = parseInt($('#training-epochs').val());
+            
+            if (!symbol || !modelType || isNaN(epochs)) {
+                alert('Please select a symbol, model type, and valid number of epochs');
+                return;
+            }
+            
+            // Show training progress
+            isTraining = true;
+            trainingStartTime = new Date();
+            let currentEpoch = 0;
+            let currentAccuracy = 0.5; // Start at 50%
+            let currentLoss = 0.5;
+            
+            $('#training-progress-title').text(`Training ${modelType.toUpperCase()} model for ${symbol}`);
+            $('#training-progress-epoch').text(`Epoch: ${currentEpoch}/${epochs}`);
+            $('#training-progress-accuracy').text(`Accuracy: ${(currentAccuracy * 100).toFixed(2)}%`);
+            $('#training-progress-loss').text(`Loss: ${currentLoss.toFixed(4)}`);
+            $('#training-progress-bar').css('width', '0%');
+            
+            $('#training-status-container').hide();
+            $('#training-progress-container').show();
+            
+            // Update progress every second
+            trainingInterval = setInterval(() => {
+                currentEpoch++;
+                
+                // Simulate increasing accuracy and decreasing loss
+                currentAccuracy = Math.min(0.5 + (currentEpoch / epochs) * 0.4 + Math.random() * 0.05, 0.99);
+                currentLoss = Math.max(0.5 - (currentEpoch / epochs) * 0.45 - Math.random() * 0.05, 0.01);
+                
+                // Update progress
+                const progress = (currentEpoch / epochs) * 100;
+                $('#training-progress-epoch').text(`Epoch: ${currentEpoch}/${epochs}`);
+                $('#training-progress-accuracy').text(`Accuracy: ${(currentAccuracy * 100).toFixed(2)}%`);
+                $('#training-progress-loss').text(`Loss: ${currentLoss.toFixed(4)}`);
+                $('#training-progress-bar').css('width', `${progress}%`);
+                
+                // Update elapsed time
+                const elapsed = new Date() - trainingStartTime;
+                const elapsedHours = Math.floor(elapsed / 3600000);
+                const elapsedMinutes = Math.floor((elapsed % 3600000) / 60000);
+                const elapsedSeconds = Math.floor((elapsed % 60000) / 1000);
+                $('#training-progress-elapsed').text(`Elapsed: ${elapsedHours.toString().padStart(2, '0')}:${elapsedMinutes.toString().padStart(2, '0')}:${elapsedSeconds.toString().padStart(2, '0')}`);
+                
+                // Update ETA
+                if (currentEpoch > 0) {
+                    const timePerEpoch = elapsed / currentEpoch;
+                    const remainingEpochs = epochs - currentEpoch;
+                    const eta = remainingEpochs * timePerEpoch;
+                    
+                    const etaHours = Math.floor(eta / 3600000);
+                    const etaMinutes = Math.floor((eta % 3600000) / 60000);
+                    const etaSeconds = Math.floor((eta % 60000) / 1000);
+                    $('#training-progress-eta').text(`ETA: ${etaHours.toString().padStart(2, '0')}:${etaMinutes.toString().padStart(2, '0')}:${etaSeconds.toString().padStart(2, '0')}`);
+                }
+                
+                // Check if training is complete
+                if (currentEpoch >= epochs) {
+                    clearInterval(trainingInterval);
+                    isTraining = false;
+                    
+                    // Add to training history
+                    const duration = new Date() - trainingStartTime;
+                    const durationMinutes = Math.floor(duration / 60000);
+                    const durationSeconds = Math.floor((duration % 60000) / 1000);
+                    
+                    const historyEntry = {
+                        date: new Date(),
+                        symbol: symbol,
+                        modelType: modelType,
+                        accuracy: currentAccuracy,
+                        duration: `${durationMinutes}m ${durationSeconds}s`
+                    };
+                    
+                    trainingHistory.unshift(historyEntry);
+                    updateTrainingHistory();
+                    
+                    // Add new model to list
+                    const newModel = {
+                        symbol: symbol,
+                        type: modelType,
+                        file: `${modelType}_${symbol.replace('/', '_')}.h5`,
+                        lastModified: new Date(),
+                        accuracy: currentAccuracy,
+                        fileSize: Math.floor(Math.random() * 100) + 10,
+                        status: 'Active'
+                    };
+                    
+                    allModels.push(newModel);
+                    applyModelFilters();
+                    updateModelSummary();
+                    
+                    // Reset training UI
+                    setTimeout(() => {
+                        $('#training-status-container').show();
+                        $('#training-progress-container').hide();
+                        
+                        // Show success message
+                        $('#training-status-container').html(`
+                            <div class="alert alert-success">
+                                <i class="fas fa-check-circle me-2"></i> Training completed successfully!
+                                <ul class="mb-0 mt-2">
+                                    <li>Model: ${modelType.toUpperCase()} for ${symbol}</li>
+                                    <li>Accuracy: ${(currentAccuracy * 100).toFixed(2)}%</li>
+                                    <li>Duration: ${durationMinutes}m ${durationSeconds}s</li>
+                                </ul>
+                            </div>
+                        `);
+                    }, 1000);
+                }
+            }, 1000);
+        }
+        
+        // Update training history table
+        function updateTrainingHistory() {
+            let tableHtml = '';
+            
+            if (trainingHistory.length === 0) {
+                tableHtml = '<tr><td colspan="5" class="text-center">No training history available</td></tr>';
+            } else {
+                trainingHistory.forEach(entry => {
+                    tableHtml += `
+                        <tr>
+                            <td>${entry.date.toLocaleString()}</td>
+                            <td>${entry.symbol}</td>
+                            <td>${entry.modelType.toUpperCase()}</td>
+                            <td>${(entry.accuracy * 100).toFixed(2)}%</td>
+                            <td>${entry.duration}</td>
+                        </tr>
+                    `;
+                });
+            }
+            
+            $('#training-history-table').html(tableHtml);
+        }
+        
+        // Handle model filter changes
+        $('#model-symbol-filter, #model-type-filter, #model-sort').change(function() {
+            applyModelFilters();
+        });
+        
+        // Handle training split slider
+        $('#training-split').on('input', function() {
+            const trainSplit = $(this).val();
+            const testSplit = 100 - trainSplit;
+            $('#training-split-value').text(`${trainSplit}/${testSplit}`);
+        });
+        
+        // Handle training form submission
+        $('#training-settings-form').submit(function(e) {
+            e.preventDefault();
+            
+            if (isTraining) {
+                alert('A training job is already in progress');
+                return;
+            }
+            
+            simulateTraining();
+        });
+        
+        // Handle cancel training button
+        $('#cancel-training-btn').click(function() {
+            if (isTraining && trainingInterval) {
+                clearInterval(trainingInterval);
+                isTraining = false;
+                
+                $('#training-status-container').html(`
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i> Training cancelled by user
+                    </div>
+                `);
+                $('#training-status-container').show();
+                $('#training-progress-container').hide();
+            }
+        });
+        
+        // Handle model action buttons
+        $(document).on('click', '.model-action-btn', function() {
+            const action = $(this).data('action');
+            const modelFile = $(this).data('model-file');
+            
+            switch (action) {
+                case 'view':
+                    alert(`Viewing model details for ${modelFile}`);
+                    break;
+                case 'activate':
+                    alert(`Activating model ${modelFile}`);
+                    break;
+                case 'delete':
+                    if (confirm(`Are you sure you want to delete model ${modelFile}?`)) {
+                        alert(`Deleted model ${modelFile}`);
+                        
+                        // Remove from models list
+                        allModels = allModels.filter(model => model.file !== modelFile);
+                        applyModelFilters();
+                        updateModelSummary();
+                    }
+                    break;
+            }
+        });
+        
+        // Handle strategy toggle switches
+        $('.form-check-input').change(function() {
+            const strategyId = $(this).attr('id').replace('-active', '');
+            const isActive = $(this).prop('checked');
+            
+            console.log(`Strategy ${strategyId} is now ${isActive ? 'active' : 'inactive'}`);
+        });
+        
+        // Initial load
+        loadModels();
+        loadStrategies();
+    });
+</script>
+{% endblock %}

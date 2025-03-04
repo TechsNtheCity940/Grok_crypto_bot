@@ -333,49 +333,34 @@ def detect_market_regime(df, window=20):
     """
     Detect the current market regime (trending, ranging, volatile)
     """
+    # Make a copy to avoid modifying the original
+    df_copy = df.copy()
+    
     # Check if we have the required columns
     required_columns = ['high', 'low', 'close']
-    missing_columns = [col for col in required_columns if col not in df.columns]
+    missing_columns = [col for col in required_columns if col not in df_copy.columns]
     
+    # If any columns are missing, create them from close price
     if missing_columns:
-        # If columns are missing, create a simple regime detection based on just close prices
-        logger.warning(f"Missing columns for full regime detection: {missing_columns}. Using simplified detection.")
-        
-        # Calculate returns and volatility
-        if 'close' in df.columns:
-            returns = df['close'].pct_change()
-            volatility = returns.rolling(window=window).std()
-            
-            # Determine regime based on volatility only
-            is_volatile = volatility > volatility.rolling(window=window*2).mean() * 1.5
-            
-            # Create regime column
-            regimes = []
-            for vol in is_volatile:
-                if vol:
-                    regimes.append('volatile')
-                else:
-                    regimes.append('ranging')  # Default to ranging when not volatile
-            
-            # Create result DataFrame
-            regime_df = pd.DataFrame({
-                'timestamp': df['timestamp'] if 'timestamp' in df.columns else df.index,
-                'regime': regimes,
-                'volatility': volatility,
-                'adx': pd.Series([0] * len(df))  # Placeholder for ADX
-            })
-            
-            return regime_df
-        else:
-            # If even close is missing, return empty DataFrame with expected columns
-            logger.error("Cannot detect market regime: 'close' column missing from DataFrame")
-            return pd.DataFrame(columns=['timestamp', 'regime', 'volatility', 'adx'])
+        logger.warning(f"Missing columns for full regime detection: {missing_columns}. Creating from close price.")
+        for col in missing_columns:
+            if 'close' in df_copy.columns:
+                df_copy[col] = df_copy['close']
+            else:
+                # If even close is missing, return empty DataFrame with expected columns
+                logger.error("Cannot detect market regime: 'close' column missing from DataFrame")
+                return pd.DataFrame(columns=['timestamp', 'regime', 'volatility', 'adx'])
     
-    # If we have all required columns, perform full regime detection
     # Calculate metrics for regime detection
-    returns = df['close'].pct_change()
+    returns = df_copy['close'].pct_change()
     volatility = returns.rolling(window=window).std()
-    adx = talib.ADX(df['high'], df['low'], df['close'], timeperiod=window)
+    
+    # Calculate ADX
+    try:
+        adx = talib.ADX(df_copy['high'], df_copy['low'], df_copy['close'], timeperiod=window)
+    except Exception as e:
+        logger.warning(f"Error calculating ADX: {e}. Using simplified regime detection.")
+        adx = pd.Series([0] * len(df_copy))  # Placeholder for ADX
     
     # Determine regime
     is_volatile = volatility > volatility.rolling(window=window*2).mean() * 1.5
@@ -383,7 +368,10 @@ def detect_market_regime(df, window=20):
     
     # Create regime column
     regimes = []
-    for vol, trend in zip(is_volatile, is_trending):
+    for i in range(len(df_copy)):
+        vol = is_volatile.iloc[i] if i < len(is_volatile) else False
+        trend = is_trending.iloc[i] if i < len(is_trending) else False
+        
         if pd.isna(vol) or pd.isna(trend):
             regimes.append('ranging')  # Default to ranging for NaN values
         elif vol:
@@ -395,7 +383,7 @@ def detect_market_regime(df, window=20):
     
     # Create result DataFrame
     regime_df = pd.DataFrame({
-        'timestamp': df['timestamp'] if 'timestamp' in df.columns else df.index,
+        'timestamp': df_copy['timestamp'] if 'timestamp' in df_copy.columns else df_copy.index,
         'regime': regimes,
         'volatility': volatility,
         'adx': adx

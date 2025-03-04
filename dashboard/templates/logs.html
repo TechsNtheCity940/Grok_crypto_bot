@@ -1,0 +1,490 @@
+{% extends "base.html" %}
+
+{% block title %}Logs - Crypto Trading Bot{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="mb-4">Logs</h1>
+    
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <div>
+                <i class="fas fa-list me-2"></i> Log Entries
+            </div>
+            <div class="d-flex">
+                <div class="input-group me-2" style="width: 300px;">
+                    <input type="text" class="form-control" id="log-search" placeholder="Search logs...">
+                    <button class="btn btn-outline-secondary" type="button" id="log-search-btn">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+                <select class="form-select me-2" id="log-level-filter" style="width: 120px;">
+                    <option value="all" selected>All Levels</option>
+                    <option value="DEBUG">DEBUG</option>
+                    <option value="INFO">INFO</option>
+                    <option value="WARNING">WARNING</option>
+                    <option value="ERROR">ERROR</option>
+                </select>
+                <select class="form-select me-2" id="log-date-filter" style="width: 150px;">
+                    <option value="all" selected>All Time</option>
+                    <option value="today">Today</option>
+                    <option value="yesterday">Yesterday</option>
+                    <option value="week">This Week</option>
+                    <option value="month">This Month</option>
+                </select>
+                <button class="btn btn-primary" id="refresh-logs-btn">
+                    <i class="fas fa-sync-alt me-1"></i> Refresh
+                </button>
+                <div class="dropdown ms-2">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="logActionsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="logActionsDropdown">
+                        <li><a class="dropdown-item" href="#" id="download-logs-btn"><i class="fas fa-download me-2"></i> Download Logs</a></li>
+                        <li><a class="dropdown-item" href="#" id="clear-logs-btn"><i class="fas fa-trash me-2"></i> Clear Logs</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#" id="auto-refresh-toggle">
+                            <i class="fas fa-clock me-2"></i> <span id="auto-refresh-text">Enable Auto-Refresh</span>
+                        </a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0" id="logs-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 180px;">Timestamp</th>
+                            <th style="width: 100px;">Level</th>
+                            <th>Message</th>
+                            <th style="width: 150px;">Component</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logs-table-body">
+                        <tr>
+                            <td colspan="4" class="text-center py-4">Loading logs...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card-footer d-flex justify-content-between align-items-center">
+            <div>
+                <span id="logs-count">0</span> log entries
+            </div>
+            <div>
+                <button class="btn btn-sm btn-outline-primary" id="load-more-logs-btn">
+                    Load More <i class="fas fa-chevron-down ms-1"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Log Details Modal -->
+    <div class="modal fade" id="log-details-modal" tabindex="-1" aria-labelledby="log-details-modal-label" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="log-details-modal-label">Log Entry Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <p><strong>Timestamp:</strong> <span id="detail-timestamp"></span></p>
+                            <p><strong>Level:</strong> <span id="detail-level" class="badge"></span></p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Component:</strong> <span id="detail-component"></span></p>
+                            <p><strong>Thread:</strong> <span id="detail-thread"></span></p>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><strong>Message:</strong></label>
+                        <div class="border rounded p-3 bg-light" id="detail-message" style="white-space: pre-wrap; max-height: 300px; overflow-y: auto;"></div>
+                    </div>
+                    <div id="detail-context-container" style="display: none;">
+                        <label class="form-label"><strong>Context:</strong></label>
+                        <div class="border rounded p-3 bg-light" id="detail-context" style="white-space: pre-wrap; max-height: 200px; overflow-y: auto;"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Clear Logs Confirmation Modal -->
+    <div class="modal fade" id="clear-logs-modal" tabindex="-1" aria-labelledby="clear-logs-modal-label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="clear-logs-modal-label">Clear Logs</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to clear all logs? This action cannot be undone.</p>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="backup-logs-checkbox" checked>
+                        <label class="form-check-label" for="backup-logs-checkbox">
+                            Create a backup before clearing
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirm-clear-logs-btn">Clear Logs</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        // Variables
+        let allLogs = [];
+        let filteredLogs = [];
+        let currentPage = 1;
+        const pageSize = 100;
+        let autoRefreshInterval = null;
+        let isAutoRefreshEnabled = false;
+        
+        // Load logs
+        function loadLogs() {
+            // Show loading indicator
+            $('#logs-table-body').html('<tr><td colspan="4" class="text-center py-4"><div class="loading-spinner"></div> Loading logs...</td></tr>');
+            
+            // Get logs from API
+            $.getJSON('/api/logs/recent?limit=1000', function(data) {
+                allLogs = data;
+                
+                // Parse log entries
+                allLogs = allLogs.map(parseLogEntry);
+                
+                // Apply filters
+                applyFilters();
+                
+                // Update logs count
+                $('#logs-count').text(filteredLogs.length);
+            });
+        }
+        
+        // Parse log entry
+        function parseLogEntry(logLine) {
+            // Example log format: 2023-03-04 12:34:56,789 - INFO - main - Message
+            try {
+                const parts = logLine.split(' - ');
+                const timestampPart = parts[0];
+                const levelPart = parts[1];
+                const componentPart = parts[2];
+                const messagePart = parts.slice(3).join(' - ');
+                
+                return {
+                    timestamp: new Date(timestampPart),
+                    level: levelPart.trim(),
+                    component: componentPart.trim(),
+                    message: messagePart.trim(),
+                    raw: logLine
+                };
+            } catch (e) {
+                // Fallback for unparseable logs
+                return {
+                    timestamp: new Date(),
+                    level: 'UNKNOWN',
+                    component: 'system',
+                    message: logLine,
+                    raw: logLine
+                };
+            }
+        }
+        
+        // Apply filters
+        function applyFilters() {
+            const searchTerm = $('#log-search').val().toLowerCase();
+            const levelFilter = $('#log-level-filter').val();
+            const dateFilter = $('#log-date-filter').val();
+            
+            // Filter logs
+            filteredLogs = allLogs.filter(log => {
+                // Search filter
+                if (searchTerm && !log.raw.toLowerCase().includes(searchTerm)) {
+                    return false;
+                }
+                
+                // Level filter
+                if (levelFilter !== 'all' && log.level !== levelFilter) {
+                    return false;
+                }
+                
+                // Date filter
+                if (dateFilter !== 'all') {
+                    const logDate = new Date(log.timestamp);
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    
+                    if (dateFilter === 'today') {
+                        const tomorrow = new Date(today);
+                        tomorrow.setDate(tomorrow.getDate() + 1);
+                        return logDate >= today && logDate < tomorrow;
+                    } else if (dateFilter === 'yesterday') {
+                        const yesterday = new Date(today);
+                        yesterday.setDate(yesterday.getDate() - 1);
+                        return logDate >= yesterday && logDate < today;
+                    } else if (dateFilter === 'week') {
+                        const weekStart = new Date(today);
+                        weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+                        return logDate >= weekStart;
+                    } else if (dateFilter === 'month') {
+                        const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+                        return logDate >= monthStart;
+                    }
+                }
+                
+                return true;
+            });
+            
+            // Sort by timestamp (newest first)
+            filteredLogs.sort((a, b) => b.timestamp - a.timestamp);
+            
+            // Reset pagination
+            currentPage = 1;
+            
+            // Update table
+            updateLogsTable();
+        }
+        
+        // Update logs table
+        function updateLogsTable() {
+            const startIndex = 0;
+            const endIndex = Math.min(currentPage * pageSize, filteredLogs.length);
+            const displayedLogs = filteredLogs.slice(startIndex, endIndex);
+            
+            let tableHtml = '';
+            
+            if (displayedLogs.length === 0) {
+                tableHtml = '<tr><td colspan="4" class="text-center py-4">No logs found matching the selected filters</td></tr>';
+            } else {
+                displayedLogs.forEach(log => {
+                    // Determine level badge class
+                    let levelClass = 'bg-secondary';
+                    switch (log.level) {
+                        case 'DEBUG':
+                            levelClass = 'bg-info';
+                            break;
+                        case 'INFO':
+                            levelClass = 'bg-success';
+                            break;
+                        case 'WARNING':
+                            levelClass = 'bg-warning';
+                            break;
+                        case 'ERROR':
+                            levelClass = 'bg-danger';
+                            break;
+                    }
+                    
+                    // Format timestamp
+                    const timestamp = log.timestamp.toLocaleString();
+                    
+                    // Truncate message if too long
+                    let message = log.message;
+                    if (message.length > 100) {
+                        message = message.substring(0, 100) + '...';
+                    }
+                    
+                    tableHtml += `
+                        <tr class="log-row" data-log='${JSON.stringify(log).replace(/'/g, "&#39;")}'>
+                            <td>${timestamp}</td>
+                            <td><span class="badge ${levelClass}">${log.level}</span></td>
+                            <td>${message}</td>
+                            <td>${log.component}</td>
+                        </tr>
+                    `;
+                });
+            }
+            
+            $('#logs-table-body').html(tableHtml);
+            
+            // Update load more button
+            $('#load-more-logs-btn').prop('disabled', endIndex >= filteredLogs.length);
+        }
+        
+        // Show log details
+        function showLogDetails(log) {
+            // Set modal content
+            $('#detail-timestamp').text(log.timestamp.toLocaleString());
+            
+            // Set level badge
+            let levelClass = 'bg-secondary';
+            switch (log.level) {
+                case 'DEBUG':
+                    levelClass = 'bg-info';
+                    break;
+                case 'INFO':
+                    levelClass = 'bg-success';
+                    break;
+                case 'WARNING':
+                    levelClass = 'bg-warning';
+                    break;
+                case 'ERROR':
+                    levelClass = 'bg-danger';
+                    break;
+            }
+            $('#detail-level').text(log.level).removeClass().addClass(`badge ${levelClass}`);
+            
+            $('#detail-component').text(log.component);
+            $('#detail-thread').text('main'); // Placeholder, would come from actual log
+            $('#detail-message').text(log.message);
+            
+            // Show context if available
+            if (log.context) {
+                $('#detail-context').text(JSON.stringify(log.context, null, 2));
+                $('#detail-context-container').show();
+            } else {
+                $('#detail-context-container').hide();
+            }
+            
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('log-details-modal'));
+            modal.show();
+        }
+        
+        // Toggle auto-refresh
+        function toggleAutoRefresh() {
+            isAutoRefreshEnabled = !isAutoRefreshEnabled;
+            
+            if (isAutoRefreshEnabled) {
+                // Enable auto-refresh
+                $('#auto-refresh-text').text('Disable Auto-Refresh');
+                autoRefreshInterval = setInterval(loadLogs, 10000); // Refresh every 10 seconds
+            } else {
+                // Disable auto-refresh
+                $('#auto-refresh-text').text('Enable Auto-Refresh');
+                clearInterval(autoRefreshInterval);
+                autoRefreshInterval = null;
+            }
+        }
+        
+        // Download logs
+        function downloadLogs() {
+            // Create CSV content
+            let csvContent = 'Timestamp,Level,Component,Message\n';
+            
+            filteredLogs.forEach(log => {
+                // Format timestamp
+                const timestamp = log.timestamp.toLocaleString();
+                
+                // Escape CSV fields
+                const escapedMessage = log.message.replace(/"/g, '""');
+                
+                csvContent += `"${timestamp}","${log.level}","${log.component}","${escapedMessage}"\n`;
+            });
+            
+            // Create download link
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `crypto_trading_bot_logs_${new Date().toISOString().slice(0, 10)}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        
+        // Clear logs
+        function clearLogs() {
+            const createBackup = $('#backup-logs-checkbox').prop('checked');
+            
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('clear-logs-modal'));
+            modal.hide();
+            
+            // Show loading indicator
+            $('#logs-table-body').html('<tr><td colspan="4" class="text-center py-4"><div class="loading-spinner"></div> Clearing logs...</td></tr>');
+            
+            // Simulate API call to clear logs
+            setTimeout(() => {
+                // In a real implementation, this would be an API call
+                allLogs = [];
+                filteredLogs = [];
+                
+                // Update table
+                updateLogsTable();
+                
+                // Update logs count
+                $('#logs-count').text(0);
+                
+                // Show success message
+                alert('Logs cleared successfully' + (createBackup ? ' (backup created)' : ''));
+            }, 1000);
+        }
+        
+        // Event handlers
+        
+        // Log search
+        $('#log-search-btn').click(function() {
+            applyFilters();
+        });
+        
+        $('#log-search').keypress(function(e) {
+            if (e.which === 13) {
+                applyFilters();
+            }
+        });
+        
+        // Filter changes
+        $('#log-level-filter, #log-date-filter').change(function() {
+            applyFilters();
+        });
+        
+        // Refresh logs
+        $('#refresh-logs-btn').click(function() {
+            loadLogs();
+        });
+        
+        // Load more logs
+        $('#load-more-logs-btn').click(function() {
+            currentPage++;
+            updateLogsTable();
+        });
+        
+        // Log row click
+        $(document).on('click', '.log-row', function() {
+            const logData = JSON.parse($(this).attr('data-log'));
+            logData.timestamp = new Date(logData.timestamp);
+            showLogDetails(logData);
+        });
+        
+        // Auto-refresh toggle
+        $('#auto-refresh-toggle').click(function(e) {
+            e.preventDefault();
+            toggleAutoRefresh();
+        });
+        
+        // Download logs
+        $('#download-logs-btn').click(function(e) {
+            e.preventDefault();
+            downloadLogs();
+        });
+        
+        // Clear logs
+        $('#clear-logs-btn').click(function(e) {
+            e.preventDefault();
+            const modal = new bootstrap.Modal(document.getElementById('clear-logs-modal'));
+            modal.show();
+        });
+        
+        // Confirm clear logs
+        $('#confirm-clear-logs-btn').click(function() {
+            clearLogs();
+        });
+        
+        // Initial load
+        loadLogs();
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,529 @@
+{% extends "base.html" %}
+
+{% block title %}Trades - Crypto Trading Bot{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="mb-4">Trade History</h1>
+    
+    <!-- Trade Statistics -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Win Rate</h5>
+                    <h2 id="win-rate" class="mb-0">0.00%</h2>
+                    <small id="win-rate-count" class="text-muted">0 / 0 trades</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Profit Factor</h5>
+                    <h2 id="profit-factor" class="mb-0">0.00</h2>
+                    <small class="text-muted">Gains / Losses</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Average Profit</h5>
+                    <h2 id="avg-profit" class="mb-0">$0.00</h2>
+                    <small id="avg-profit-percent" class="text-muted">0.00%</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Total Profit</h5>
+                    <h2 id="total-profit" class="mb-0">$0.00</h2>
+                    <small id="total-trades" class="text-muted">0 trades</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Trade Performance Charts -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <i class="fas fa-chart-line me-2"></i> Cumulative Profit
+                    </div>
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-sm btn-outline-primary profit-timeframe-btn active" data-timeframe="week">Week</button>
+                        <button type="button" class="btn btn-sm btn-outline-primary profit-timeframe-btn" data-timeframe="month">Month</button>
+                        <button type="button" class="btn btn-sm btn-outline-primary profit-timeframe-btn" data-timeframe="all">All</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="cumulative-profit-chart" style="height: 300px;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-chart-bar me-2"></i> Performance by Strategy
+                </div>
+                <div class="card-body">
+                    <div id="strategy-performance-chart" style="height: 300px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Trade Filters and Table -->
+    <div class="card">
+        <div class="card-header">
+            <i class="fas fa-exchange-alt me-2"></i> Trade History
+        </div>
+        <div class="card-body">
+            <!-- Filters -->
+            <div class="row mb-3">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="symbol-filter">Symbol</label>
+                        <select class="form-select" id="symbol-filter">
+                            <option value="all" selected>All Symbols</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="strategy-filter">Strategy</label>
+                        <select class="form-select" id="strategy-filter">
+                            <option value="all" selected>All Strategies</option>
+                            <option value="grid_trading">Grid Trading</option>
+                            <option value="mean_reversion">Mean Reversion</option>
+                            <option value="breakout">Breakout</option>
+                            <option value="reinforcement_learning">Reinforcement Learning</option>
+                            <option value="ensemble">Ensemble</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="type-filter">Type</label>
+                        <select class="form-select" id="type-filter">
+                            <option value="all" selected>All Types</option>
+                            <option value="buy">Buy</option>
+                            <option value="sell">Sell</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="date-filter">Date Range</label>
+                        <select class="form-select" id="date-filter">
+                            <option value="day">Today</option>
+                            <option value="week" selected>This Week</option>
+                            <option value="month">This Month</option>
+                            <option value="all">All Time</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Trade Table -->
+            <div class="table-responsive">
+                <table class="table table-hover" id="trades-table">
+                    <thead>
+                        <tr>
+                            <th>Date & Time</th>
+                            <th>Symbol</th>
+                            <th>Type</th>
+                            <th>Price</th>
+                            <th>Amount</th>
+                            <th>Value</th>
+                            <th>Strategy</th>
+                            <th>P&L</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="trades-table-body">
+                        <tr>
+                            <td colspan="9" class="text-center">Loading trades...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Pagination -->
+            <div class="d-flex justify-content-between align-items-center mt-3">
+                <div>
+                    <span id="showing-trades">Showing 0 of 0 trades</span>
+                </div>
+                <div>
+                    <button id="load-more-btn" class="btn btn-primary" disabled>Load More</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        // Variables for pagination
+        let currentPage = 1;
+        const pageSize = 20;
+        let totalTrades = 0;
+        let allTrades = [];
+        let filteredTrades = [];
+        
+        // Get all trades
+        function loadTrades() {
+            $.getJSON('/api/trades/recent?limit=1000', function(data) {
+                allTrades = data;
+                totalTrades = data.length;
+                
+                // Populate symbol filter
+                const symbols = new Set();
+                allTrades.forEach(trade => {
+                    if (trade.pair) {
+                        symbols.add(trade.pair);
+                    }
+                });
+                
+                let symbolOptions = '<option value="all" selected>All Symbols</option>';
+                symbols.forEach(symbol => {
+                    symbolOptions += `<option value="${symbol}">${symbol}</option>`;
+                });
+                $('#symbol-filter').html(symbolOptions);
+                
+                // Apply initial filters
+                applyFilters();
+                
+                // Load trade statistics
+                loadTradeStats();
+            });
+        }
+        
+        // Apply filters to trades
+        function applyFilters() {
+            const symbolFilter = $('#symbol-filter').val();
+            const strategyFilter = $('#strategy-filter').val();
+            const typeFilter = $('#type-filter').val();
+            const dateFilter = $('#date-filter').val();
+            
+            // Filter trades
+            filteredTrades = allTrades.filter(trade => {
+                // Symbol filter
+                if (symbolFilter !== 'all' && trade.pair !== symbolFilter) {
+                    return false;
+                }
+                
+                // Strategy filter
+                if (strategyFilter !== 'all' && trade.strategy !== strategyFilter) {
+                    return false;
+                }
+                
+                // Type filter
+                if (typeFilter !== 'all' && trade.type !== typeFilter) {
+                    return false;
+                }
+                
+                // Date filter
+                if (dateFilter !== 'all') {
+                    const tradeDate = new Date(trade.timestamp);
+                    const now = new Date();
+                    
+                    if (dateFilter === 'day') {
+                        // Today
+                        return tradeDate.toDateString() === now.toDateString();
+                    } else if (dateFilter === 'week') {
+                        // This week
+                        const weekStart = new Date(now);
+                        weekStart.setDate(now.getDate() - now.getDay());
+                        weekStart.setHours(0, 0, 0, 0);
+                        return tradeDate >= weekStart;
+                    } else if (dateFilter === 'month') {
+                        // This month
+                        return tradeDate.getMonth() === now.getMonth() && 
+                               tradeDate.getFullYear() === now.getFullYear();
+                    }
+                }
+                
+                return true;
+            });
+            
+            // Reset pagination
+            currentPage = 1;
+            
+            // Update table
+            updateTradeTable();
+            
+            // Update charts
+            updateCumulativeProfitChart();
+            updateStrategyPerformanceChart();
+        }
+        
+        // Update trade table with filtered trades
+        function updateTradeTable() {
+            const startIndex = (currentPage - 1) * pageSize;
+            const endIndex = Math.min(startIndex + pageSize, filteredTrades.length);
+            const displayedTrades = filteredTrades.slice(startIndex, endIndex);
+            
+            let tableHtml = '';
+            
+            if (displayedTrades.length === 0) {
+                tableHtml = '<tr><td colspan="9" class="text-center">No trades found matching the selected filters</td></tr>';
+            } else {
+                displayedTrades.forEach(trade => {
+                    const tradeDate = new Date(trade.timestamp);
+                    const tradeTypeClass = trade.type === 'buy' ? 'trade-type-buy' : 'trade-type-sell';
+                    const tradeValue = trade.price * trade.amount;
+                    
+                    // Calculate P&L (simulated for this example)
+                    const pnl = trade.pnl || (Math.random() > 0.5 ? 
+                                             (trade.type === 'sell' ? 1 : -1) * Math.random() * tradeValue * 0.05 : 0);
+                    const pnlClass = pnl > 0 ? 'text-success' : (pnl < 0 ? 'text-danger' : '');
+                    
+                    tableHtml += `
+                        <tr>
+                            <td>${tradeDate.toLocaleString()}</td>
+                            <td>${trade.pair}</td>
+                            <td><span class="${tradeTypeClass}">${trade.type.toUpperCase()}</span></td>
+                            <td>${formatCurrency(trade.price)}</td>
+                            <td>${trade.amount.toFixed(6)}</td>
+                            <td>${formatCurrency(tradeValue)}</td>
+                            <td>${trade.strategy || 'N/A'}</td>
+                            <td class="${pnlClass}">${formatCurrency(pnl)}</td>
+                            <td><span class="badge bg-success">Completed</span></td>
+                        </tr>
+                    `;
+                });
+            }
+            
+            $('#trades-table-body').html(tableHtml);
+            
+            // Update pagination info
+            $('#showing-trades').text(`Showing ${Math.min(filteredTrades.length, startIndex + 1)}-${endIndex} of ${filteredTrades.length} trades`);
+            
+            // Update load more button
+            $('#load-more-btn').prop('disabled', endIndex >= filteredTrades.length);
+        }
+        
+        // Load trade statistics
+        function loadTradeStats() {
+            $.getJSON('/api/trades/stats', function(data) {
+                // Update win rate
+                $('#win-rate').text(formatPercentage(data.win_rate || 0));
+                $('#win-rate-count').text(`${data.winning_trades || 0} / ${data.total_trades || 0} trades`);
+                
+                // Update profit factor
+                $('#profit-factor').text((data.profit_factor || 0).toFixed(2));
+                
+                // Update average profit
+                $('#avg-profit').text(formatCurrency(data.avg_profit || 0));
+                $('#avg-profit-percent').text(formatPercentage(data.avg_profit_percent || 0));
+                
+                // Update total profit
+                $('#total-profit').text(formatCurrency(data.total_profit || 0));
+                $('#total-trades').text(`${data.total_trades || 0} trades`);
+                
+                // Add color based on positive/negative
+                if (data.total_profit > 0) {
+                    $('#total-profit').removeClass('text-danger').addClass('text-success');
+                } else if (data.total_profit < 0) {
+                    $('#total-profit').removeClass('text-success').addClass('text-danger');
+                }
+            });
+        }
+        
+        // Update cumulative profit chart
+        function updateCumulativeProfitChart() {
+            const timeframe = $('.profit-timeframe-btn.active').data('timeframe') || 'week';
+            
+            // Filter trades by timeframe
+            let chartTrades = filteredTrades;
+            if (timeframe !== 'all') {
+                const now = new Date();
+                const cutoffDate = new Date(now);
+                
+                if (timeframe === 'week') {
+                    cutoffDate.setDate(now.getDate() - 7);
+                } else if (timeframe === 'month') {
+                    cutoffDate.setMonth(now.getMonth() - 1);
+                }
+                
+                chartTrades = filteredTrades.filter(trade => new Date(trade.timestamp) >= cutoffDate);
+            }
+            
+            // Sort trades by timestamp
+            chartTrades.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+            
+            // Calculate cumulative profit
+            const timestamps = [];
+            const cumulativeProfit = [];
+            let runningTotal = 0;
+            
+            chartTrades.forEach(trade => {
+                timestamps.push(new Date(trade.timestamp));
+                
+                // Calculate P&L (simulated for this example)
+                const tradeValue = trade.price * trade.amount;
+                const pnl = trade.pnl || (Math.random() > 0.5 ? 
+                                         (trade.type === 'sell' ? 1 : -1) * Math.random() * tradeValue * 0.05 : 0);
+                
+                runningTotal += pnl;
+                cumulativeProfit.push(runningTotal);
+            });
+            
+            // Create chart
+            const trace = {
+                x: timestamps,
+                y: cumulativeProfit,
+                type: 'scatter',
+                mode: 'lines',
+                line: {
+                    color: '#6c5ce7',
+                    width: 2
+                },
+                fill: 'tozeroy',
+                fillcolor: 'rgba(108, 92, 231, 0.1)'
+            };
+            
+            const layout = {
+                margin: {t: 10, b: 30, l: 60, r: 20},
+                xaxis: {
+                    title: '',
+                    showgrid: false
+                },
+                yaxis: {
+                    title: 'Cumulative Profit (USD)',
+                    showgrid: true,
+                    gridcolor: 'rgba(0,0,0,0.05)'
+                }
+            };
+            
+            Plotly.newPlot('cumulative-profit-chart', [trace], layout);
+        }
+        
+        // Update strategy performance chart
+        function updateStrategyPerformanceChart() {
+            // Group trades by strategy
+            const strategies = {};
+            
+            filteredTrades.forEach(trade => {
+                const strategy = trade.strategy || 'Unknown';
+                
+                if (!strategies[strategy]) {
+                    strategies[strategy] = {
+                        totalProfit: 0,
+                        tradeCount: 0,
+                        winCount: 0,
+                        lossCount: 0
+                    };
+                }
+                
+                // Calculate P&L (simulated for this example)
+                const tradeValue = trade.price * trade.amount;
+                const pnl = trade.pnl || (Math.random() > 0.5 ? 
+                                         (trade.type === 'sell' ? 1 : -1) * Math.random() * tradeValue * 0.05 : 0);
+                
+                strategies[strategy].totalProfit += pnl;
+                strategies[strategy].tradeCount += 1;
+                
+                if (pnl > 0) {
+                    strategies[strategy].winCount += 1;
+                } else if (pnl < 0) {
+                    strategies[strategy].lossCount += 1;
+                }
+            });
+            
+            // Create chart data
+            const strategyNames = Object.keys(strategies);
+            const profits = strategyNames.map(strategy => strategies[strategy].totalProfit);
+            const winRates = strategyNames.map(strategy => 
+                strategies[strategy].tradeCount > 0 ? 
+                strategies[strategy].winCount / strategies[strategy].tradeCount : 0
+            );
+            
+            // Create chart
+            const profitTrace = {
+                x: strategyNames,
+                y: profits,
+                type: 'bar',
+                name: 'Total Profit',
+                marker: {
+                    color: profits.map(profit => profit >= 0 ? '#00b894' : '#d63031')
+                },
+                text: profits.map(profit => formatCurrency(profit)),
+                textposition: 'auto',
+                yaxis: 'y'
+            };
+            
+            const winRateTrace = {
+                x: strategyNames,
+                y: winRates,
+                type: 'scatter',
+                mode: 'markers',
+                name: 'Win Rate',
+                marker: {
+                    color: '#fdcb6e',
+                    size: 12,
+                    line: {
+                        color: '#f39c12',
+                        width: 2
+                    }
+                },
+                text: winRates.map(rate => formatPercentage(rate)),
+                yaxis: 'y2'
+            };
+            
+            const layout = {
+                margin: {t: 10, b: 50, l: 60, r: 60},
+                xaxis: {
+                    title: 'Strategy'
+                },
+                yaxis: {
+                    title: 'Total Profit (USD)',
+                    side: 'left'
+                },
+                yaxis2: {
+                    title: 'Win Rate',
+                    side: 'right',
+                    overlaying: 'y',
+                    range: [0, 1],
+                    tickformat: '.0%'
+                },
+                legend: {
+                    orientation: 'h',
+                    y: 1.1
+                }
+            };
+            
+            Plotly.newPlot('strategy-performance-chart', [profitTrace, winRateTrace], layout);
+        }
+        
+        // Handle filter changes
+        $('#symbol-filter, #strategy-filter, #type-filter, #date-filter').change(function() {
+            applyFilters();
+        });
+        
+        // Handle load more button
+        $('#load-more-btn').click(function() {
+            currentPage++;
+            updateTradeTable();
+        });
+        
+        // Handle timeframe button clicks
+        $('.profit-timeframe-btn').click(function() {
+            $('.profit-timeframe-btn').removeClass('active');
+            $(this).addClass('active');
+            
+            updateCumulativeProfitChart();
+        });
+        
+        // Initial load
+        loadTrades();
+    });
+</script>
+{% endblock %}

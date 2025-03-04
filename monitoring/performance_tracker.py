@@ -502,3 +502,100 @@ class PerformanceTracker:
             metrics_file = os.path.join(output_dir, 'metrics_history.csv')
             metrics_df.to_csv(metrics_file, index=False)
             logger.info(f"Exported metrics history to {metrics_file}")
+    
+    def load_from_csv(self, input_dir=None):
+        """
+        Load performance data from CSV files
+        
+        Args:
+            input_dir: Directory to load CSV files from (default: data_dir)
+        """
+        input_dir = input_dir or self.data_dir
+        
+        # Load trades
+        trades_file = os.path.join(input_dir, 'trades.csv')
+        if os.path.exists(trades_file):
+            try:
+                trades_df = pd.read_csv(trades_file)
+                self.trades = trades_df.to_dict('records')
+                logger.info(f"Loaded {len(self.trades)} trades from {trades_file}")
+            except Exception as e:
+                logger.error(f"Error loading trades from CSV: {e}")
+        
+        # Load portfolio history
+        portfolio_file = os.path.join(input_dir, 'portfolio_history.csv')
+        if os.path.exists(portfolio_file):
+            try:
+                portfolio_df = pd.read_csv(portfolio_file)
+                self.portfolio_history = portfolio_df.to_dict('records')
+                logger.info(f"Loaded portfolio history from {portfolio_file}")
+            except Exception as e:
+                logger.error(f"Error loading portfolio history from CSV: {e}")
+        
+        # Load metrics history
+        metrics_file = os.path.join(input_dir, 'metrics_history.csv')
+        if os.path.exists(metrics_file):
+            try:
+                metrics_df = pd.read_csv(metrics_file)
+                self.metrics_history = metrics_df.to_dict('records')
+                logger.info(f"Loaded metrics history from {metrics_file}")
+            except Exception as e:
+                logger.error(f"Error loading metrics history from CSV: {e}")
+    
+    def get_portfolio_history(self, timeframe='all'):
+        """
+        Get portfolio value history for a specific timeframe
+        
+        Args:
+            timeframe: 'all', 'day', 'week', 'month', 'year'
+        
+        Returns:
+            dict: Dictionary of {timestamp: value} pairs
+        """
+        # Determine start time based on timeframe
+        if timeframe == 'day':
+            start_time = (datetime.now() - timedelta(days=1)).isoformat()
+        elif timeframe == 'week':
+            start_time = (datetime.now() - timedelta(days=7)).isoformat()
+        elif timeframe == 'month':
+            start_time = (datetime.now() - timedelta(days=30)).isoformat()
+        elif timeframe == 'year':
+            start_time = (datetime.now() - timedelta(days=365)).isoformat()
+        else:
+            start_time = None
+        
+        # Get portfolio history for the timeframe
+        if start_time:
+            history = self.get_portfolio_value_history(start_time)
+        else:
+            history = self.portfolio_history
+        
+        # Convert to dictionary of {timestamp: value} pairs
+        result = {}
+        for entry in history:
+            try:
+                if isinstance(entry['timestamp'], str):
+                    timestamp = datetime.fromisoformat(entry['timestamp'].replace('Z', '+00:00'))
+                else:
+                    timestamp = entry['timestamp']
+                result[timestamp] = entry['value']
+            except Exception as e:
+                logger.error(f"Error parsing portfolio history entry: {e}")
+        
+        return result
+    
+    def get_recent_trades(self, limit=20):
+        """
+        Get the most recent trades
+        
+        Args:
+            limit: Maximum number of trades to return
+        
+        Returns:
+            list: List of recent trades
+        """
+        # Sort trades by timestamp (newest first)
+        sorted_trades = sorted(self.trades, key=lambda t: t['timestamp'], reverse=True)
+        
+        # Return the most recent trades
+        return sorted_trades[:limit]
