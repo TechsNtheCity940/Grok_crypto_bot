@@ -316,22 +316,32 @@ def main(trade_only=False):
                 logger.info(f"Action for {symbol}: {action}, Balance USD: {balance_usd}, Balance {symbol.split('/')[0]}: {balance_asset}")
                 
                 min_trade_size = executor.min_trade_sizes.get(symbol, 10.0)
-                if action == 1:
+                if action == 1 and balance_usd > 0:  # Buy only if USD available
                     amount = min(balance_usd * weights[symbol] / current_price, balance_usd / current_price)
-                else:
+                    if amount * current_price >= min_trade_size:
+                        order, retry = executor.execute(action, symbol, amount)
+                        if order:
+                            logger.info(f"Executed order for {symbol}: {order}")
+                            env.step(action-1)
+                        elif retry:
+                            retry_pairs.append(symbol)
+                            print(f"Added {symbol} to retry list due to execution issue")
+                    else:
+                        print(f"Trade skipped for {symbol}: Amount {amount * current_price} below min size {min_trade_size}")
+                elif action == 2 and balance_asset > 0:  # Sell only if crypto available
                     amount = min(balance_asset * weights[symbol], balance_asset)
-                amount = max(min_trade_size, amount)
-                
-                if risk_manager.is_safe(action, symbol, balance_usd, balance_asset, current_price) and amount >= min_trade_size:
-                    order, retry = executor.execute(action, symbol, amount)
-                    if order:
-                        logger.info(f"Executed order for {symbol}: {order}")
-                        env.step(action-1)
-                    elif retry:
-                        retry_pairs.append(symbol)
-                        print(f"Added {symbol} to retry list due to execution issue")
+                    if amount >= min_trade_size / current_price:
+                        order, retry = executor.execute(action, symbol, amount)
+                        if order:
+                            logger.info(f"Executed order for {symbol}: {order}")
+                            env.step(action-1)
+                        elif retry:
+                            retry_pairs.append(symbol)
+                            print(f"Added {symbol} to retry list due to execution issue")
+                    else:
+                        print(f"Trade skipped for {symbol}: Amount {amount} below min size {min_trade_size / current_price}")
                 else:
-                    print(f"Trade skipped for {symbol}: Amount {amount} not viable or risk not safe")
+                    print(f"Trade skipped for {symbol}: No {['USD', symbol.split('/')[0]][action-1]} to trade")
                 processed_pairs.add(symbol)
             except Exception as e:
                 print(f"Error processing {symbol}: {e}")

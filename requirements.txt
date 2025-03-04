@@ -1,5 +1,5 @@
 ccxt
-numpy
+numpy==1.26
 pandas
 transformers
 praw
@@ -7,7 +7,7 @@ nltk
 mem0ai
 stable-baselines3
 gym
-tensorflow[and-cuda]
+tensorflow
 torch
 torchvision
 torchaudio
