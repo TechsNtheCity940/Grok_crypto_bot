@@ -17,7 +17,7 @@ RUN wget http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz && \
     make install
 
 # Stage 2: Final image
-FROM nvidia/cuda:11.6.2-cudnn8-runtime-ubuntu20.04
+FROM nvidia/cuda:11.6.2-cudnn8-runtime-ubuntu22.04
 
 # Copy TA-Lib from builder stage
 COPY --from=talib-builder /usr/include/ta-lib /usr/include/ta-lib
