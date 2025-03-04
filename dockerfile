@@ -39,7 +39,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gnupg2 curl ca-certificates && \
     curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | apt-key add - && \
-    curl -s -L https://nvidia.github.io/libnvidia-container/ubuntu20.04/libnvidia-container.list | \
+    curl -s -L https://nvidia.github.io/libnvidia-container/ubuntu22.04/libnvidia-container.list | \
     tee /etc/apt/sources.list.d/nvidia-container-toolkit.list && \
     apt-get update && \
     apt-get install -y --no-install-recommends \

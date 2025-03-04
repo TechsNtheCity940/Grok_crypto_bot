@@ -2,7 +2,14 @@ import os
 from transformers import pipeline
 import praw
 from config import REDDIT_CLIENT_ID, REDDIT_CLIENT_SECRET, MEM0_API_KEY
-from mem0 import MemoryClient
+
+# Try to import the real MemoryClient, fall back to mock if it fails
+try:
+    from mem0 import MemoryClient
+    print("Using real MemoryClient from mem0 package")
+except ImportError:
+    print("Failed to import mem0 package, using mock implementation")
+    from mock_mem0 import MemoryClient
 
 class SentimentAnalyzer:
     def __init__(self):
