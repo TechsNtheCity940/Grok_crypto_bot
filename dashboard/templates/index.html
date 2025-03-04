@@ -1,0 +1,299 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Crypto Trading Bot{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="mb-4">Dashboard</h1>
+    
+    <!-- Overview Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Portfolio Value</h5>
+                    <h2 id="portfolio-value" class="mb-0">$0.00</h2>
+                    <small id="portfolio-change" class="text-muted">0.00%</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">USD Balance</h5>
+                    <h2 id="usd-balance" class="mb-0">$0.00</h2>
+                    <small class="text-muted">Available for trading</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Active Pairs</h5>
+                    <h2 id="active-pairs-count" class="mb-0">0</h2>
+                    <small id="active-pairs-list" class="text-muted">None</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Last Update</h5>
+                    <h2 id="last-update-time" class="mb-0">-</h2>
+                    <small id="last-update-ago" class="text-muted">Never</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Portfolio Composition -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-chart-pie me-2"></i> Portfolio Composition
+                </div>
+                <div class="card-body">
+                    <div id="portfolio-composition-chart" class="chart-container"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-chart-line me-2"></i> Portfolio Performance
+                </div>
+                <div class="card-body">
+                    <div id="portfolio-performance-chart" class="chart-container"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Active Strategies and Recent Trades -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-robot me-2"></i> Active Strategies
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Trading Pair</th>
+                                    <th>Strategy</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="active-strategies-table">
+                                <tr>
+                                    <td colspan="3" class="text-center">No active strategies</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-exchange-alt me-2"></i> Recent Trades
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Pair</th>
+                                    <th>Type</th>
+                                    <th>Price</th>
+                                    <th>Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recent-trades-table">
+                                <tr>
+                                    <td colspan="5" class="text-center">No recent trades</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        // Update dashboard data
+        function updateDashboard() {
+            $.getJSON('/api/status', function(data) {
+                // Update portfolio value
+                $('#portfolio-value').text(formatCurrency(data.portfolio_value));
+                
+                // Update USD balance
+                $('#usd-balance').text(formatCurrency(data.balance_usd));
+                
+                // Update active pairs
+                $('#active-pairs-count').text(data.active_pairs.length);
+                $('#active-pairs-list').text(data.active_pairs.join(', ') || 'None');
+                
+                // Update last update time
+                if (data.last_update) {
+                    const lastUpdate = new Date(data.last_update);
+                    $('#last-update-time').text(lastUpdate.toLocaleTimeString());
+                    
+                    const now = new Date();
+                    const diffSeconds = Math.floor((now - lastUpdate) / 1000);
+                    
+                    if (diffSeconds < 60) {
+                        $('#last-update-ago').text(`${diffSeconds} seconds ago`);
+                    } else if (diffSeconds < 3600) {
+                        const minutes = Math.floor(diffSeconds / 60);
+                        $('#last-update-ago').text(`${minutes} minute${minutes > 1 ? 's' : ''} ago`);
+                    } else {
+                        const hours = Math.floor(diffSeconds / 3600);
+                        $('#last-update-ago').text(`${hours} hour${hours > 1 ? 's' : ''} ago`);
+                    }
+                }
+                
+                // Update active strategies table
+                let strategiesHtml = '';
+                if (Object.keys(data.active_strategies).length > 0) {
+                    for (const [pair, strategy] of Object.entries(data.active_strategies)) {
+                        strategiesHtml += `
+                            <tr>
+                                <td>${pair}</td>
+                                <td>${strategy}</td>
+                                <td><span class="badge bg-success">Active</span></td>
+                            </tr>
+                        `;
+                    }
+                } else {
+                    strategiesHtml = '<tr><td colspan="3" class="text-center">No active strategies</td></tr>';
+                }
+                $('#active-strategies-table').html(strategiesHtml);
+                
+                // Update recent trades table
+                let tradesHtml = '';
+                if (data.recent_trades.length > 0) {
+                    for (const trade of data.recent_trades.slice(0, 5)) {
+                        const tradeTime = new Date(trade.timestamp);
+                        const tradeTypeClass = trade.type === 'buy' ? 'trade-type-buy' : 'trade-type-sell';
+                        
+                        tradesHtml += `
+                            <tr>
+                                <td>${tradeTime.toLocaleTimeString()}</td>
+                                <td>${trade.pair}</td>
+                                <td><span class="${tradeTypeClass}">${trade.type.toUpperCase()}</span></td>
+                                <td>${formatCurrency(trade.price)}</td>
+                                <td>${trade.amount.toFixed(6)}</td>
+                            </tr>
+                        `;
+                    }
+                } else {
+                    tradesHtml = '<tr><td colspan="5" class="text-center">No recent trades</td></tr>';
+                }
+                $('#recent-trades-table').html(tradesHtml);
+                
+                // Update portfolio composition chart
+                updatePortfolioCompositionChart(data.balance_assets, data.balance_usd);
+            });
+            
+            // Update portfolio performance chart
+            updatePortfolioPerformanceChart();
+        }
+        
+        // Update portfolio composition chart
+        function updatePortfolioCompositionChart(assets, usdBalance) {
+            const labels = ['USD'];
+            const values = [usdBalance];
+            const colors = ['#fdcb6e'];
+            
+            // Add assets
+            for (const [asset, value] of Object.entries(assets)) {
+                labels.push(asset);
+                values.push(value);
+                
+                // Generate a color based on asset name
+                const hash = asset.split('').reduce((acc, char) => {
+                    return char.charCodeAt(0) + ((acc << 5) - acc);
+                }, 0);
+                const color = `hsl(${Math.abs(hash) % 360}, 70%, 60%)`;
+                colors.push(color);
+            }
+            
+            const data = [{
+                labels: labels,
+                values: values,
+                type: 'pie',
+                marker: {
+                    colors: colors
+                },
+                textinfo: 'label+percent',
+                hoverinfo: 'label+value+percent'
+            }];
+            
+            const layout = {
+                margin: {t: 0, b: 0, l: 0, r: 0},
+                showlegend: false
+            };
+            
+            Plotly.newPlot('portfolio-composition-chart', data, layout);
+        }
+        
+        // Update portfolio performance chart
+        function updatePortfolioPerformanceChart() {
+            $.getJSON('/api/portfolio/history?timeframe=week', function(data) {
+                const timestamps = [];
+                const values = [];
+                
+                for (const point of data) {
+                    timestamps.push(new Date(point.timestamp));
+                    values.push(point.value);
+                }
+                
+                const trace = {
+                    x: timestamps,
+                    y: values,
+                    type: 'scatter',
+                    mode: 'lines',
+                    line: {
+                        color: '#6c5ce7',
+                        width: 2
+                    },
+                    fill: 'tozeroy',
+                    fillcolor: 'rgba(108, 92, 231, 0.1)'
+                };
+                
+                const layout = {
+                    margin: {t: 0, b: 30, l: 50, r: 20},
+                    xaxis: {
+                        title: '',
+                        showgrid: false
+                    },
+                    yaxis: {
+                        title: 'Portfolio Value (USD)',
+                        showgrid: true,
+                        gridcolor: 'rgba(0,0,0,0.05)'
+                    }
+                };
+                
+                Plotly.newPlot('portfolio-performance-chart', [trace], layout);
+            });
+        }
+        
+        // Initial update
+        updateDashboard();
+        
+        // Periodic update
+        setInterval(updateDashboard, 5000);
+    });
+</script>
+{% endblock %}

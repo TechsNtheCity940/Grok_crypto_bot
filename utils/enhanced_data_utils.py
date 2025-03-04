@@ -333,6 +333,45 @@ def detect_market_regime(df, window=20):
     """
     Detect the current market regime (trending, ranging, volatile)
     """
+    # Check if we have the required columns
+    required_columns = ['high', 'low', 'close']
+    missing_columns = [col for col in required_columns if col not in df.columns]
+    
+    if missing_columns:
+        # If columns are missing, create a simple regime detection based on just close prices
+        logger.warning(f"Missing columns for full regime detection: {missing_columns}. Using simplified detection.")
+        
+        # Calculate returns and volatility
+        if 'close' in df.columns:
+            returns = df['close'].pct_change()
+            volatility = returns.rolling(window=window).std()
+            
+            # Determine regime based on volatility only
+            is_volatile = volatility > volatility.rolling(window=window*2).mean() * 1.5
+            
+            # Create regime column
+            regimes = []
+            for vol in is_volatile:
+                if vol:
+                    regimes.append('volatile')
+                else:
+                    regimes.append('ranging')  # Default to ranging when not volatile
+            
+            # Create result DataFrame
+            regime_df = pd.DataFrame({
+                'timestamp': df['timestamp'] if 'timestamp' in df.columns else df.index,
+                'regime': regimes,
+                'volatility': volatility,
+                'adx': pd.Series([0] * len(df))  # Placeholder for ADX
+            })
+            
+            return regime_df
+        else:
+            # If even close is missing, return empty DataFrame with expected columns
+            logger.error("Cannot detect market regime: 'close' column missing from DataFrame")
+            return pd.DataFrame(columns=['timestamp', 'regime', 'volatility', 'adx'])
+    
+    # If we have all required columns, perform full regime detection
     # Calculate metrics for regime detection
     returns = df['close'].pct_change()
     volatility = returns.rolling(window=window).std()
@@ -345,15 +384,18 @@ def detect_market_regime(df, window=20):
     # Create regime column
     regimes = []
     for vol, trend in zip(is_volatile, is_trending):
-        if vol:
+        if pd.isna(vol) or pd.isna(trend):
+            regimes.append('ranging')  # Default to ranging for NaN values
+        elif vol:
             regimes.append('volatile')
         elif trend:
             regimes.append('trending')
         else:
             regimes.append('ranging')
     
+    # Create result DataFrame
     regime_df = pd.DataFrame({
-        'timestamp': df['timestamp'],
+        'timestamp': df['timestamp'] if 'timestamp' in df.columns else df.index,
         'regime': regimes,
         'volatility': volatility,
         'adx': adx

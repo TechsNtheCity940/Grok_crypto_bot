@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Crypto Trading Bot Dashboard{% endblock %}</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --secondary-color: #a29bfe;
+            --success-color: #00b894;
+            --danger-color: #d63031;
+            --warning-color: #fdcb6e;
+            --info-color: #0984e3;
+            --dark-color: #2d3436;
+            --light-color: #dfe6e9;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .sidebar {
+            background-color: var(--dark-color);
+            color: white;
+            height: 100vh;
+            position: fixed;
+            padding-top: 20px;
+        }
+        
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 10px 20px;
+            margin: 5px 0;
+            border-radius: 5px;
+        }
+        
+        .sidebar .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        .sidebar .nav-link.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .sidebar .nav-link i {
+            margin-right: 10px;
+        }
+        
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+        }
+        
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        .card-header {
+            background-color: white;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            font-weight: bold;
+        }
+        
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+        }
+        
+        .status-running {
+            background-color: var(--success-color);
+        }
+        
+        .status-stopped {
+            background-color: var(--danger-color);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-success {
+            background-color: var(--success-color);
+            border-color: var(--success-color);
+        }
+        
+        .btn-danger {
+            background-color: var(--danger-color);
+            border-color: var(--danger-color);
+        }
+        
+        .table th {
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+        
+        .chart-container {
+            width: 100%;
+            height: 400px;
+        }
+        
+        .trade-type-buy {
+            color: var(--success-color);
+        }
+        
+        .trade-type-sell {
+            color: var(--danger-color);
+        }
+        
+        .loading-spinner {
+            display: inline-block;
+            width: 1rem;
+            height: 1rem;
+            border: 0.2em solid currentColor;
+            border-right-color: transparent;
+            border-radius: 50%;
+            animation: spinner-border .75s linear infinite;
+        }
+        
+        @keyframes spinner-border {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-2 sidebar">
+                <h4 class="text-center mb-4">Trading Bot</h4>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="{{ url_for('index') }}">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/portfolio' %}active{% endif %}" href="{{ url_for('portfolio') }}">
+                            <i class="fas fa-chart-line"></i> Portfolio
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/trades' %}active{% endif %}" href="{{ url_for('trades') }}">
+                            <i class="fas fa-exchange-alt"></i> Trades
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/models' %}active{% endif %}" href="{{ url_for('models') }}">
+                            <i class="fas fa-brain"></i> Models
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/settings' %}active{% endif %}" href="{{ url_for('settings') }}">
+                            <i class="fas fa-cog"></i> Settings
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/logs' %}active{% endif %}" href="{{ url_for('logs') }}">
+                            <i class="fas fa-list"></i> Logs
+                        </a>
+                    </li>
+                </ul>
+                
+                <div class="mt-5 p-3">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span>Bot Status:</span>
+                        <span id="bot-status-indicator">
+                            <span class="status-indicator status-stopped"></span>
+                            <span id="bot-status-text">Stopped</span>
+                        </span>
+                    </div>
+                    <button id="start-bot-btn" class="btn btn-success w-100 mb-2">
+                        <i class="fas fa-play"></i> Start Bot
+                    </button>
+                    <button id="stop-bot-btn" class="btn btn-danger w-100" disabled>
+                        <i class="fas fa-stop"></i> Stop Bot
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="col-md-10 main-content">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <!-- Plotly.js -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    
+    <!-- Common JavaScript -->
+    <script>
+        // Bot control
+        $(document).ready(function() {
+            // Update bot status
+            function updateBotStatus() {
+                $.getJSON('/api/status', function(data) {
+                    if (data.running) {
+                        $('#bot-status-indicator .status-indicator')
+                            .removeClass('status-stopped')
+                            .addClass('status-running');
+                        $('#bot-status-text').text('Running');
+                        $('#start-bot-btn').prop('disabled', true);
+                        $('#stop-bot-btn').prop('disabled', false);
+                    } else {
+                        $('#bot-status-indicator .status-indicator')
+                            .removeClass('status-running')
+                            .addClass('status-stopped');
+                        $('#bot-status-text').text('Stopped');
+                        $('#start-bot-btn').prop('disabled', false);
+                        $('#stop-bot-btn').prop('disabled', true);
+                    }
+                });
+            }
+            
+            // Start bot
+            $('#start-bot-btn').click(function() {
+                $.post('/api/start', function(data) {
+                    if (data.success) {
+                        updateBotStatus();
+                    } else {
+                        alert('Failed to start bot: ' + data.message);
+                    }
+                });
+            });
+            
+            // Stop bot
+            $('#stop-bot-btn').click(function() {
+                $.post('/api/stop', function(data) {
+                    if (data.success) {
+                        updateBotStatus();
+                    } else {
+                        alert('Failed to stop bot: ' + data.message);
+                    }
+                });
+            });
+            
+            // Initial status update
+            updateBotStatus();
+            
+            // Periodic status update
+            setInterval(updateBotStatus, 5000);
+        });
+        
+        // Format currency
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD'
+            }).format(value);
+        }
+        
+        // Format percentage
+        function formatPercentage(value) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'percent',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).format(value);
+        }
+        
+        // Format date
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleString();
+        }
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
