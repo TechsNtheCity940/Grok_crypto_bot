@@ -1,0 +1,29 @@
+{
+    "active_exchange": "kraken",
+    "trading_pairs": ["DOGE/USD", "SHIB/USD", "XRP/USD"],
+    
+    "use_enhanced_data": true,
+    "advanced_sentiment": true,
+    "advanced_risk": true,
+    "use_transformer_model": true,
+    "use_ensemble_weighting": true,
+    "use_strategy_selector": true,
+    "use_performance_tracking": true,
+    
+    "model_types": ["hybrid", "lstm", "transformer"],
+    
+    "max_position_size": 0.2,
+    "use_kelly_criterion": true,
+    "kelly_fraction": 0.5,
+    
+    "grid_trading": {
+        "num_grids": 10,
+        "grid_spread": 0.05,
+        "max_position": 1.0,
+        "min_profit": 0.2
+    },
+    
+    "retrain_interval_hours": 24,
+    "update_interval_hours": 1,
+    "log_level": "INFO"
+}
