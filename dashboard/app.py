@@ -202,7 +202,7 @@ def api_settings_update():
         config.set(key, value)
     
     # Save configuration
-    config.save()
+    config.save_to_file()
     
     return jsonify({'success': True, 'message': 'Settings updated successfully'})
 

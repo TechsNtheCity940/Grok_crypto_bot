@@ -36,13 +36,13 @@ class ConfigManager:
             'mem0_api_key': os.getenv('MEM0_API_KEY', ''),
             
             # Feature flags for new enhancements
-            'use_enhanced_data': False,  # Enable multi-exchange and on-chain data
-            'advanced_sentiment': False,  # Enable advanced sentiment analysis
-            'advanced_risk': False,       # Enable advanced risk management
-            'use_transformer_model': False, # Enable transformer model
-            'use_ensemble_weighting': False, # Enable dynamic ensemble weighting
-            'use_strategy_selector': False,  # Enable adaptive strategy selection
-            'use_performance_tracking': False, # Enable advanced performance metrics
+            'use_enhanced_data': True,  # Enable multi-exchange and on-chain data
+            'advanced_sentiment': True,  # Enable advanced sentiment analysis
+            'advanced_risk': True,       # Enable advanced risk management
+            'use_transformer_model': True, # Enable transformer model
+            'use_ensemble_weighting': True, # Enable dynamic ensemble weighting
+            'use_strategy_selector': True,  # Enable adaptive strategy selection
+            'use_performance_tracking': True, # Enable advanced performance metrics
             
             # Model settings
             'model_types': ['hybrid', 'lstm'],  # Default to existing models

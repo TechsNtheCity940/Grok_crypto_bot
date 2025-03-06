@@ -81,6 +81,9 @@ class TradeExecutor:
                 # Log the trade to performance tracker if available
                 self._log_trade_to_performance_tracker(symbol, action, amount, current_price, order)
                 
+                # Sleep to prevent rapid consecutive trades
+                time.sleep(5)
+                
                 return order, False
                 
             elif action == 2:  # Sell
@@ -103,6 +106,9 @@ class TradeExecutor:
                 
                 # Log the trade to performance tracker if available
                 self._log_trade_to_performance_tracker(symbol, action, amount, current_price, order)
+                
+                # Sleep to prevent rapid consecutive trades
+                time.sleep(5)
                 
                 return order, False
         except ccxt.InsufficientFunds as e:

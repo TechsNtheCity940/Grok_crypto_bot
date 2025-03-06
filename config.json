@@ -19,11 +19,17 @@
     "grid_trading": {
         "num_grids": 10,
         "grid_spread": 0.05,
-        "max_position": 1.0,
+        "max_position": 0.3,
         "min_profit": 0.2
     },
     
     "retrain_interval_hours": 24,
     "update_interval_hours": 1,
-    "log_level": "INFO"
+    "log_level": "INFO",
+    
+    "min_trade_sizes": {
+        "DOGE/USD": 5.0, 
+        "SHIB/USD": 5.0, 
+        "XRP/USD": 5.0
+    }
 }

@@ -128,12 +128,17 @@ class TradingEnv(gym.Env):
         current_regime = regime_data['regime'].iloc[-1] if not regime_data.empty else 'ranging'
         logger.info(f"Current market regime: {current_regime}")
         
-        # Select best strategy for current regime
-        self.active_strategy = self.strategy_selector.select_strategy(
+        # Get all available strategies with weights
+        weighted_strategies = self.strategy_selector.get_weighted_strategies(
             self.df.iloc[:self.current_step+1], 
             self.symbol
         )
-        logger.info(f"Selected strategy: {self.active_strategy.__class__.__name__}")
+        
+        # Execute all strategies with positive weights
+        for strategy_name, (strategy, weight) in weighted_strategies.items():
+            if weight > 0.1:  # Only use strategies with significant weight
+                self.active_strategy = strategy
+                logger.info(f"Executing strategy: {strategy_name} with weight {weight:.2f}")
         
         # Execute strategy-specific orders with improved balance tracking
         if hasattr(self.active_strategy, 'get_grid_orders'):
