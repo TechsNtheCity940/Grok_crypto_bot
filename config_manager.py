@@ -125,6 +125,10 @@ class ConfigManager:
     def all(self):
         """Get entire configuration dictionary"""
         return self._config.copy()  # Return a copy to prevent direct modification
+    
+    def get_all(self):
+        """Method to get entire configuration dictionary"""
+        return self._config.copy()  # Return a copy to prevent direct modification
 
 # Create a global instance for easy import
 config = ConfigManager.get_instance()

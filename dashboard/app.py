@@ -367,10 +367,25 @@ def api_chart_performance():
     
     return jsonify({'chart': chart_json})
 
-# Bot simulation function (for testing)
+# Import necessary components from main.py and config.py
+from execution.trade_executor import TradeExecutor
+from risk_management.risk_manager import RiskManager
+from strategies.grid_trading import GridTrader
+from utils.data_utils import fetch_real_time_data, process_data, fetch_historical_data, augment_data
+from models.hybrid_model import HybridCryptoModel
+from models.lstm_model import LSTMModel
+from models.backtest import backtest_model
+from stable_baselines3 import PPO
+import gym
+from gym import spaces
+from config import TRADING_PAIRS, ACTIVE_EXCHANGE
+
+# Real trading function
 def run_bot():
-    """Simulate running the trading bot"""
-    global bot_status
+    """Run the actual trading bot with real money"""
+    global bot_status, performance_tracker
+    
+    logger.info("Starting real trading bot with Kraken API")
     
     # Load trading pairs from config
     trading_pairs = config.get('trading_pairs', ['BTC/USD', 'ETH/USD', 'XRP/USD'])
@@ -379,80 +394,241 @@ def run_bot():
     # Initialize performance tracker
     init_performance_tracker()
     
-    # Simulate trading
+    # Initialize trading components
+    executor = TradeExecutor()
+    risk_manager = RiskManager(max_loss=config.get('max_loss', 0.5))
+    
+    # Initialize models and data
+    dataframes = {}
+    hybrid_models = {}
+    lstm_models = {}
+    ppo_models = {}
+    grid_traders = {}
+    
+    model_dir = 'models/trained_models'
+    if not os.path.exists(model_dir):
+        os.makedirs(model_dir, exist_ok=True)
+    
+    # Initial setup for each trading pair
+    for symbol in trading_pairs:
+        try:
+            # Fetch and process historical data
+            df = fetch_historical_data(symbol)
+            df_augmented = augment_data(df)
+            df_processed = process_data(df_augmented, symbol)
+            dataframes[symbol] = df_processed
+            logger.info(f"Initial historical data fetched and processed for {symbol}: {len(df_processed)} rows")
+            
+            # Load or train models
+            hybrid_path = f'{model_dir}/hybrid_{symbol.replace("/", "_")}.h5'
+            lstm_path = f'{model_dir}/lstm_{symbol.replace("/", "_")}.h5'
+            ppo_path = f'{model_dir}/ppo_{symbol.replace("/", "_")}'
+            
+            # Try to load existing models
+            try:
+                hybrid_model = HybridCryptoModel(sequence_length=50, n_features=9)
+                if os.path.exists(hybrid_path):
+                    hybrid_model.model.load_weights(hybrid_path)
+                    logger.info(f"Loaded existing hybrid model for {symbol}")
+                else:
+                    logger.warning(f"No existing hybrid model found for {symbol}. Using untrained model.")
+                
+                lstm_model = LSTMModel(sequence_length=50, n_features=9)
+                if os.path.exists(lstm_path):
+                    lstm_model.model.load_weights(lstm_path)
+                    logger.info(f"Loaded existing LSTM model for {symbol}")
+                else:
+                    logger.warning(f"No existing LSTM model found for {symbol}. Using untrained model.")
+                
+                hybrid_models[symbol] = hybrid_model
+                lstm_models[symbol] = lstm_model
+                
+                # Initialize grid trader
+                grid_config = {'grid_trading': {'num_grids': 10, 'grid_spread': 0.05, 'max_position': 1.0, 'min_profit': 0.2}}
+                grid_traders[symbol] = GridTrader(grid_config)
+                
+                # Get current balances and prices
+                balance_usd, balance_asset = executor.get_balance(symbol)
+                current_price = executor.fetch_current_price(symbol)
+                
+                # Update bot status with real balances
+                bot_status['balance_usd'] = balance_usd
+                if symbol.split('/')[0] not in bot_status['balance_assets']:
+                    bot_status['balance_assets'][symbol.split('/')[0]] = balance_asset
+                
+                # Calculate portfolio value
+                portfolio_value = balance_usd
+                for asset, amount in bot_status['balance_assets'].items():
+                    asset_price = executor.fetch_current_price(f"{asset}/USD")
+                    portfolio_value += amount * asset_price
+                
+                bot_status['portfolio_value'] = portfolio_value
+                bot_status['last_update'] = datetime.now().isoformat()
+                
+                # Update performance tracker
+                performance_tracker.update_portfolio_value(
+                    portfolio_value,
+                    bot_status['balance_assets']
+                )
+                
+                logger.info(f"Initialized {symbol} with balance USD: {balance_usd}, balance {symbol.split('/')[0]}: {balance_asset}")
+            except Exception as e:
+                logger.error(f"Error initializing models for {symbol}: {e}")
+        except Exception as e:
+            logger.error(f"Error setting up {symbol}: {e}")
+    
+    # Main trading loop
     while bot_status['running']:
-        # Update portfolio value
-        portfolio_value = bot_status.get('portfolio_value', 10000.0)
-        
-        # Simulate price changes
-        price_change = np.random.normal(0, 0.01)  # Random price change
-        portfolio_value *= (1 + price_change)
-        
-        # Update bot status
-        bot_status['portfolio_value'] = portfolio_value
-        bot_status['last_update'] = datetime.now().isoformat()
-        
-        # Simulate balances
-        bot_status['balance_usd'] = portfolio_value * 0.3  # 30% in USD
-        
-        # Simulate asset balances
-        asset_balances = {}
-        for pair in trading_pairs:
-            asset = pair.split('/')[0]
-            asset_balances[asset] = portfolio_value * 0.7 / len(trading_pairs)  # Evenly distribute remaining 70%
-        
-        bot_status['balance_assets'] = asset_balances
-        
-        # Simulate active strategies
-        active_strategies = {}
-        for pair in trading_pairs:
-            # Randomly select a strategy
-            strategies = ['grid_trading', 'mean_reversion', 'breakout']
-            active_strategies[pair] = np.random.choice(strategies)
-        
-        bot_status['active_strategies'] = active_strategies
-        
-        # Simulate trades
-        if np.random.random() < 0.2:  # 20% chance of a trade
-            trade_type = np.random.choice(['buy', 'sell'])
-            pair = np.random.choice(trading_pairs)
-            price = np.random.uniform(100, 50000)
-            amount = np.random.uniform(0.001, 0.1)
+        try:
+            # Update portfolio value and balances
+            total_usd = 0
+            total_assets = {}
             
-            trade = {
-                'timestamp': datetime.now().isoformat(),
-                'pair': pair,
-                'type': trade_type,
-                'price': price,
-                'amount': amount,
-                'value': price * amount,
-                'strategy': active_strategies[pair]
-            }
+            for symbol in trading_pairs:
+                try:
+                    balance_usd, balance_asset = executor.get_balance(symbol)
+                    current_price = executor.fetch_current_price(symbol)
+                    
+                    total_usd += balance_usd
+                    asset = symbol.split('/')[0]
+                    if asset not in total_assets:
+                        total_assets[asset] = 0
+                    total_assets[asset] += balance_asset * current_price
+                    
+                    # Update bot status
+                    bot_status['balance_usd'] = total_usd
+                    bot_status['balance_assets'] = {asset: amount / current_price for asset, amount in total_assets.items()}
+                    
+                    # Get latest data
+                    new_data = fetch_real_time_data(symbol)
+                    df = pd.concat([dataframes[symbol], new_data]).tail(100)
+                    df = process_data(df, symbol)
+                    dataframes[symbol] = df
+                    
+                    # Make prediction
+                    X = df[['momentum', 'rsi', 'macd', 'atr', 'sentiment', 'arbitrage_spread', 'whale_activity', 'bb_upper', 'defi_apr']].iloc[-50:].values
+                    if len(X) < 50:
+                        X = np.pad(X, ((50 - len(X), 0), (0, 0)), mode='edge')
+                    
+                    hybrid_pred = hybrid_models[symbol].predict(np.expand_dims(X, axis=0))[0][0].item()
+                    lstm_pred = lstm_models[symbol].predict(np.expand_dims(X, axis=0))[0][0].item()
+                    ensemble_pred = np.mean([hybrid_pred, lstm_pred])
+                    
+                    # Determine action
+                    action = 1 if ensemble_pred > 0.5 else 2  # 1=buy, 2=sell
+                    
+                    # Log prediction
+                    logger.info(f"Prediction for {symbol}: hybrid={hybrid_pred:.4f}, lstm={lstm_pred:.4f}, ensemble={ensemble_pred:.4f}, action={action}")
+                    
+                    # Execute trade if conditions are met
+                    min_trade_size = executor.min_trade_sizes.get(symbol, 10.0)
+                    
+                    if action == 1 and balance_usd > min_trade_size:  # Buy
+                        amount = min_trade_size / current_price
+                        if risk_manager.is_safe(action, symbol, balance_usd, balance_asset, current_price):
+                            logger.info(f"Executing BUY for {symbol}: {amount} at {current_price}")
+                            order, retry = executor.execute(action, symbol, amount)
+                            
+                            if order:
+                                # Log successful trade
+                                trade = {
+                                    'timestamp': datetime.now().isoformat(),
+                                    'pair': symbol,
+                                    'type': 'buy',
+                                    'price': current_price,
+                                    'amount': amount,
+                                    'value': current_price * amount,
+                                    'strategy': 'ensemble'
+                                }
+                                
+                                # Add to recent trades
+                                bot_status['recent_trades'].insert(0, trade)
+                                
+                                # Keep only the most recent 20 trades
+                                if len(bot_status['recent_trades']) > 20:
+                                    bot_status['recent_trades'] = bot_status['recent_trades'][:20]
+                                
+                                # Log trade in performance tracker
+                                performance_tracker.log_trade(
+                                    symbol, 
+                                    1,  # buy
+                                    amount, 
+                                    current_price, 
+                                    strategy='ensemble'
+                                )
+                                
+                                logger.info(f"Successfully executed BUY for {symbol}: {order}")
+                            else:
+                                logger.warning(f"Failed to execute BUY for {symbol}")
+                        else:
+                            logger.info(f"Risk manager prevented BUY for {symbol}")
+                    
+                    elif action == 2 and balance_asset > 0:  # Sell
+                        amount = min(balance_asset, min_trade_size / current_price)
+                        if amount > 0 and risk_manager.is_safe(action, symbol, balance_usd, balance_asset, current_price):
+                            logger.info(f"Executing SELL for {symbol}: {amount} at {current_price}")
+                            order, retry = executor.execute(action, symbol, amount)
+                            
+                            if order:
+                                # Log successful trade
+                                trade = {
+                                    'timestamp': datetime.now().isoformat(),
+                                    'pair': symbol,
+                                    'type': 'sell',
+                                    'price': current_price,
+                                    'amount': amount,
+                                    'value': current_price * amount,
+                                    'strategy': 'ensemble'
+                                }
+                                
+                                # Add to recent trades
+                                bot_status['recent_trades'].insert(0, trade)
+                                
+                                # Keep only the most recent 20 trades
+                                if len(bot_status['recent_trades']) > 20:
+                                    bot_status['recent_trades'] = bot_status['recent_trades'][:20]
+                                
+                                # Log trade in performance tracker
+                                performance_tracker.log_trade(
+                                    symbol, 
+                                    2,  # sell
+                                    amount, 
+                                    current_price, 
+                                    strategy='ensemble'
+                                )
+                                
+                                logger.info(f"Successfully executed SELL for {symbol}: {order}")
+                            else:
+                                logger.warning(f"Failed to execute SELL for {symbol}")
+                        else:
+                            logger.info(f"Risk manager prevented SELL for {symbol} or amount too small")
+                    
+                    # Update active strategies
+                    if 'active_strategies' not in bot_status:
+                        bot_status['active_strategies'] = {}
+                    bot_status['active_strategies'][symbol] = 'ensemble'
+                    
+                except Exception as e:
+                    logger.error(f"Error processing {symbol}: {e}")
             
-            # Add to recent trades
-            bot_status['recent_trades'].insert(0, trade)
+            # Calculate total portfolio value
+            portfolio_value = total_usd + sum(total_assets.values())
+            bot_status['portfolio_value'] = portfolio_value
+            bot_status['last_update'] = datetime.now().isoformat()
             
-            # Keep only the most recent 20 trades
-            if len(bot_status['recent_trades']) > 20:
-                bot_status['recent_trades'] = bot_status['recent_trades'][:20]
-            
-            # Log trade in performance tracker
-            performance_tracker.log_trade(
-                pair, 
-                1 if trade_type == 'buy' else 2, 
-                amount, 
-                price, 
-                strategy=active_strategies[pair]
-            )
-            
-            # Update portfolio value in performance tracker
+            # Update performance tracker with new portfolio value
             performance_tracker.update_portfolio_value(
                 portfolio_value,
-                {asset: value for asset, value in asset_balances.items()}
+                {asset: amount for asset, amount in bot_status['balance_assets'].items()}
             )
+            
+            logger.info(f"Updated portfolio value: ${portfolio_value:.2f}")
+            
+        except Exception as e:
+            logger.error(f"Error in trading loop: {e}")
         
-        # Sleep for a bit
-        time.sleep(5)
+        # Sleep for a bit before next iteration
+        time.sleep(60)  # Check every minute
 
 # Run the app
 if __name__ == '__main__':

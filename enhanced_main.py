@@ -92,39 +92,76 @@ class TradingEnv(gym.Env):
 
     def reset(self):
         self.current_step = 0
+        
+        # Get fresh balance from exchange
         self.balance_usd, self.balance_asset = self.executor.get_balance(self.symbol)
+        
+        # Store initial value for this episode
+        current_price = self.df.iloc[0]['close'] if not self.df.empty else self.executor.fetch_current_price(self.symbol)
+        self.initial_value = self.balance_usd + (self.balance_asset * current_price)
+        
+        # Log the initial state
+        logger.info(f"TradingEnv reset - Initial USD: {self.balance_usd}, Initial {self.symbol.split('/')[0]}: {self.balance_asset}, Initial value: {self.initial_value}")
+        
         return self._get_observation()
 
     def step(self, action):
         internal_action = action + 1 if action < 2 else 0  # Map to 1: buy, 2: sell, 0: hold
-        price = self.df.iloc[self.current_step]['close']
+        
+        # Get current price from dataframe or fetch from exchange if needed
+        if self.current_step < len(self.df):
+            price = self.df.iloc[self.current_step]['close']
+        else:
+            price = self.executor.fetch_current_price(self.symbol)
+            
         reward = 0
+        
+        # Get fresh balance before any actions
+        self.balance_usd, self.balance_asset = self.executor.get_balance(self.symbol)
+        pre_value = self.balance_usd + (self.balance_asset * price)
+        
+        # Log current state
+        logger.info(f"Step {self.current_step} - USD: {self.balance_usd}, {self.symbol.split('/')[0]}: {self.balance_asset}, Value: {pre_value}")
         
         # Get market regime
         regime_data = detect_market_regime(self.df.iloc[:self.current_step+1])
         current_regime = regime_data['regime'].iloc[-1] if not regime_data.empty else 'ranging'
+        logger.info(f"Current market regime: {current_regime}")
         
         # Select best strategy for current regime
         self.active_strategy = self.strategy_selector.select_strategy(
             self.df.iloc[:self.current_step+1], 
             self.symbol
         )
+        logger.info(f"Selected strategy: {self.active_strategy.__class__.__name__}")
         
-        # Execute strategy-specific orders
+        # Execute strategy-specific orders with improved balance tracking
         if hasattr(self.active_strategy, 'get_grid_orders'):
             # Grid trading strategy
             grid_orders = self.active_strategy.get_grid_orders(price, self.balance_usd + self.balance_asset * price)
+            logger.info(f"Grid strategy generated {len(grid_orders)} orders")
+            
             for order in grid_orders:
                 order_type = 1 if order['type'] == 'buy' else 2
                 
+                # Get fresh balance before each order
+                self.balance_usd, self.balance_asset = self.executor.get_balance(self.symbol)
+                
                 # Check if trade is safe with risk manager
                 if self.risk_manager.is_safe(order_type, self.symbol, self.balance_usd, self.balance_asset, price):
+                    logger.info(f"Executing grid order: {order['type']} {order['amount']} {self.symbol} @ {price}")
                     order_result, retry = self.executor.execute(order_type, self.symbol, order['amount'])
+                    
                     if order_result:
                         self.active_strategy.update_grids(order)
+                        
+                        # Get fresh balance after order
                         self.balance_usd, self.balance_asset = self.executor.get_balance(self.symbol)
                         current_value = self.balance_usd + (self.balance_asset * price)
-                        reward += current_value - self.initial_value
+                        value_change = current_value - pre_value
+                        reward += value_change / pre_value if pre_value > 0 else 0
+                        
+                        logger.info(f"Grid order executed - New USD: {self.balance_usd}, New {self.symbol.split('/')[0]}: {self.balance_asset}, Value change: {value_change}")
                         
                         # Log trade in performance tracker
                         if self.performance_tracker:
@@ -135,6 +172,10 @@ class TradingEnv(gym.Env):
                                 price, 
                                 strategy='grid_trading'
                             )
+                    else:
+                        logger.warning(f"Grid order execution failed: {order['type']} {order['amount']} {self.symbol}")
+                else:
+                    logger.warning(f"Grid order rejected by risk manager: {order['type']} {order['amount']} {self.symbol}")
         
         elif hasattr(self.active_strategy, 'get_signal'):
             # Mean reversion or breakout strategy
@@ -191,8 +232,12 @@ class TradingEnv(gym.Env):
                                     strategy='mean_reversion'
                                 )
         
-        # Execute RL model action if provided
+        # Execute RL model action if provided with improved balance tracking
         if internal_action > 0:
+            # Get fresh balance before RL action
+            self.balance_usd, self.balance_asset = self.executor.get_balance(self.symbol)
+            pre_rl_value = self.balance_usd + (self.balance_asset * price)
+            
             # Calculate position size
             if isinstance(self.risk_manager, AdvancedRiskManager) and self.risk_manager.use_kelly:
                 amount = self.risk_manager.calculate_position_size(
@@ -205,11 +250,22 @@ class TradingEnv(gym.Env):
                 else:  # Sell
                     amount = self.balance_asset * 0.1  # 10% of asset balance
             
+            logger.info(f"RL model action: {internal_action} (1=buy, 2=sell), amount: {amount}")
+            
             # Check if trade is safe
             if amount > 0 and self.risk_manager.is_safe(internal_action, self.symbol, self.balance_usd, self.balance_asset, price):
                 order_result, retry = self.executor.execute(internal_action, self.symbol, amount)
+                
                 if order_result:
+                    # Get fresh balance after RL action
                     self.balance_usd, self.balance_asset = self.executor.get_balance(self.symbol)
+                    post_rl_value = self.balance_usd + (self.balance_asset * price)
+                    rl_value_change = post_rl_value - pre_rl_value
+                    
+                    logger.info(f"RL action executed - New USD: {self.balance_usd}, New {self.symbol.split('/')[0]}: {self.balance_asset}, Value change: {rl_value_change}")
+                    
+                    # Add to reward
+                    reward += rl_value_change / pre_rl_value if pre_rl_value > 0 else 0
                     
                     # Log trade in performance tracker
                     if self.performance_tracker:
@@ -220,6 +276,10 @@ class TradingEnv(gym.Env):
                             price, 
                             strategy='reinforcement_learning'
                         )
+                else:
+                    logger.warning(f"RL action execution failed: {internal_action} {amount} {self.symbol}")
+            else:
+                logger.warning(f"RL action rejected by risk manager: {internal_action} {amount} {self.symbol}")
         
         # Move to next step
         self.current_step += 1
@@ -227,19 +287,29 @@ class TradingEnv(gym.Env):
         if done:
             self.current_step = 0
         
+        # Get fresh balance for final state
+        self.balance_usd, self.balance_asset = self.executor.get_balance(self.symbol)
+        
         # Get new observation
         obs = self._get_observation()
         
-        # Calculate reward based on portfolio value change
+        # Calculate final portfolio value
         current_value = self.balance_usd + (self.balance_asset * price)
+        
+        # Calculate reward based on portfolio value change from initial value
         value_change = current_value - self.initial_value
         reward += value_change / self.initial_value if self.initial_value > 0 else 0
         
+        # Log final state
+        logger.info(f"Step complete - Final USD: {self.balance_usd}, Final {self.symbol.split('/')[0]}: {self.balance_asset}, Final value: {current_value}, Reward: {reward}")
+        
         # Add risk-based penalties
         if current_value < self.initial_value * 0.9:  # More than 10% loss
+            logger.warning(f"Large loss detected: {(current_value - self.initial_value) / self.initial_value:.2%}")
             reward -= 10
             done = True
         elif current_value > self.initial_value * 1.5:  # More than 50% gain
+            logger.info(f"Large gain achieved: {(current_value - self.initial_value) / self.initial_value:.2%}")
             reward += 10
             done = True
         
@@ -249,6 +319,11 @@ class TradingEnv(gym.Env):
                 current_value,
                 {self.symbol.split('/')[0]: self.balance_asset}
             )
+            
+            # Generate periodic performance report
+            if self.current_step % 10 == 0:
+                report = self.performance_tracker.get_latest_metrics()
+                logger.info(f"Performance metrics - Win rate: {report.get('win_rate', 0):.2%}, Profit factor: {report.get('profit_factor', 0):.2f}")
         
         return obs, reward, done, {}
 

@@ -1,0 +1,24 @@
+[
+  {
+    "id": 1,
+    "symbol": "DOGE/USD",
+    "action": "sell",
+    "amount": 48.883596424849294,
+    "price": 0.2045676,
+    "value": 10.0,
+    "timestamp": "2025-03-05T16:59:03.943086",
+    "strategy": "ensemble",
+    "metadata": {}
+  },
+  {
+    "id": 2,
+    "symbol": "SHIB/USD",
+    "action": "sell",
+    "amount": 910837.81528,
+    "price": 1.332e-05,
+    "value": 12.1323596995296,
+    "timestamp": "2025-03-05T18:48:29.239232",
+    "strategy": "ensemble",
+    "metadata": {}
+  }
+]

@@ -138,35 +138,92 @@ class TradingEnv(gym.Env):
 
     def reset(self):
         self.current_step = 0
+        
+        # Get fresh balance from exchange
         self.balance_usd, self.balance_asset = self.executor.get_balance(self.symbol)
+        
+        # Store initial value for this episode
+        current_price = self.df['close'].iloc[0] if len(self.df) > 0 else self.executor.fetch_current_price(self.symbol)
+        self.initial_value = self.balance_usd + (self.balance_asset * current_price)
+        
+        # Log the initial state
+        logger.info(f"TradingEnv reset - Initial USD: {self.balance_usd}, Initial {self.symbol.split('/')[0]}: {self.balance_asset}, Initial value: {self.initial_value}")
+        
         return self._get_observation()
 
     def step(self, action):
         internal_action = action + 1
-        price = self.df.iloc[self.current_step]['close']
+        
+        # Get current price from dataframe or fetch from exchange if needed
+        if self.current_step < len(self.df):
+            price = self.df.iloc[self.current_step]['close']
+        else:
+            price = self.executor.fetch_current_price(self.symbol)
+            
         reward = 0
         
+        # Get fresh balance before any actions
+        self.balance_usd, self.balance_asset = self.executor.get_balance(self.symbol)
+        pre_value = self.balance_usd + (self.balance_asset * price)
+        
+        # Log current state
+        logger.info(f"Step {self.current_step} - USD: {self.balance_usd}, {self.symbol.split('/')[0]}: {self.balance_asset}, Value: {pre_value}")
+        
+        # Execute grid trading orders with improved balance tracking
         grid_orders = self.grid_trader.get_grid_orders(price, self.balance_usd + self.balance_asset * price)
+        logger.info(f"Grid strategy generated {len(grid_orders)} orders")
+        
         for order in grid_orders:
             order_type = 1 if order['type'] == 'buy' else 2
+            
+            # Get fresh balance before each order
+            self.balance_usd, self.balance_asset = self.executor.get_balance(self.symbol)
+            
+            logger.info(f"Executing grid order: {order['type']} {order['amount']} {self.symbol} @ {price}")
             order_result, retry = self.executor.execute(order_type, self.symbol, order['amount'])
+            
             if order_result:
                 self.grid_trader.update_grids(order)
+                
+                # Get fresh balance after order
                 self.balance_usd, self.balance_asset = self.executor.get_balance(self.symbol)
                 current_value = self.balance_usd + (self.balance_asset * price)
-                reward += current_value - self.initial_value
+                value_change = current_value - pre_value
+                reward += value_change / pre_value if pre_value > 0 else 0
+                
+                logger.info(f"Grid order executed - New USD: {self.balance_usd}, New {self.symbol.split('/')[0]}: {self.balance_asset}, Value change: {value_change}")
+            else:
+                logger.warning(f"Grid order execution failed: {order['type']} {order['amount']} {self.symbol}")
         
+        # Move to next step
         self.current_step += 1
         done = self.current_step >= len(self.df) - 1
         if done:
             self.current_step = 0
+        
+        # Get fresh balance for final state
+        self.balance_usd, self.balance_asset = self.executor.get_balance(self.symbol)
+        
+        # Get new observation
         obs = self._get_observation()
         
+        # Calculate final portfolio value
         current_value = self.balance_usd + (self.balance_asset * price)
+        
+        # Calculate reward based on portfolio value change from initial value
+        value_change = current_value - self.initial_value
+        reward += value_change / self.initial_value if self.initial_value > 0 else 0
+        
+        # Log final state
+        logger.info(f"Step complete - Final USD: {self.balance_usd}, Final {self.symbol.split('/')[0]}: {self.balance_asset}, Final value: {current_value}, Reward: {reward}")
+        
+        # Add risk-based penalties
         if current_value < self.initial_value * 0.9:
+            logger.warning(f"Large loss detected: {(current_value - self.initial_value) / self.initial_value:.2%}")
             reward -= 100
             done = True
         elif current_value > self.initial_value * 2:
+            logger.info(f"Large gain achieved: {(current_value - self.initial_value) / self.initial_value:.2%}")
             reward += 200
             done = True
         
