@@ -526,5 +526,60 @@
     "max_drawdown": 0.6976147575165851,
     "avg_profit_per_trade": 0.0,
     "total_profit": 0
+  },
+  {
+    "timestamp": "2025-03-05T22:49:52.547646",
+    "total_trades": 2,
+    "win_rate": 0.0,
+    "profit_factor": Infinity,
+    "sharpe_ratio": 0.2306956351097141,
+    "sortino_ratio": 0.4789996421655189,
+    "max_drawdown": 0.6976147575165851,
+    "avg_profit_per_trade": 0.0,
+    "total_profit": 0
+  },
+  {
+    "timestamp": "2025-03-05T22:50:18.928388",
+    "total_trades": 2,
+    "win_rate": 0.0,
+    "profit_factor": Infinity,
+    "sharpe_ratio": 0.1889632438360333,
+    "sortino_ratio": 0.35097013489845125,
+    "max_drawdown": 0.6976147575165851,
+    "avg_profit_per_trade": 0.0,
+    "total_profit": 0
+  },
+  {
+    "timestamp": "2025-03-05T22:50:47.622267",
+    "total_trades": 2,
+    "win_rate": 0.0,
+    "profit_factor": Infinity,
+    "sharpe_ratio": 0.18667526442604984,
+    "sortino_ratio": 0.3509842004443119,
+    "max_drawdown": 0.6976147575165851,
+    "avg_profit_per_trade": 0.0,
+    "total_profit": 0
+  },
+  {
+    "timestamp": "2025-03-05T22:51:17.139735",
+    "total_trades": 2,
+    "win_rate": 0.0,
+    "profit_factor": Infinity,
+    "sharpe_ratio": 0.18446872833051936,
+    "sortino_ratio": 0.3430072867978503,
+    "max_drawdown": 0.6976147575165851,
+    "avg_profit_per_trade": 0.0,
+    "total_profit": 0
+  },
+  {
+    "timestamp": "2025-03-05T22:56:09.780823",
+    "total_trades": 2,
+    "win_rate": 0.0,
+    "profit_factor": Infinity,
+    "sharpe_ratio": 0.23710273832311912,
+    "sortino_ratio": 0.5047065759862989,
+    "max_drawdown": 0.6976147575165851,
+    "avg_profit_per_trade": 0.0,
+    "total_profit": 0
   }
 ]

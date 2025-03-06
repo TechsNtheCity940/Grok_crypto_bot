@@ -1,6 +1,7 @@
 import os
 import sys
 import json
+import re
 import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
@@ -18,6 +19,7 @@ sys.path.insert(0, os.path.abspath(os.path.dirname(__file__) + '/..'))
 from config_manager import config
 from monitoring.performance_tracker import PerformanceTracker
 from utils.log_setup import logger
+from dashboard.chat_ai import chat_ai
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -80,6 +82,11 @@ def models():
 def logs():
     """Log viewer page"""
     return render_template('logs.html', bot_status=bot_status)
+
+@app.route('/chat')
+def chat():
+    """AI Chat page"""
+    return render_template('chat.html', bot_status=bot_status)
 
 # API endpoints
 @app.route('/api/status')
@@ -258,19 +265,61 @@ def api_logs_recent():
     """Get recent log entries"""
     # Get limit from query parameters
     limit = int(request.args.get('limit', 100))
+    since_id = int(request.args.get('since', 0))
     
     # Get log file path
     log_file = config.get('log_file', 'crypto_trading_bot.log')
     
     # Read log file
     logs = []
+    log_id = since_id
+    
     if os.path.exists(log_file):
         with open(log_file, 'r') as f:
             lines = f.readlines()
-            for line in lines[-limit:]:
-                logs.append(line.strip())
+            
+            # Start from the end if we want recent logs
+            start_idx = max(0, len(lines) - limit) if since_id == 0 else 0
+            
+            for i, line in enumerate(lines[start_idx:], start=start_idx):
+                if i <= since_id:
+                    continue
+                    
+                log_id = i
+                line = line.strip()
+                
+                # Parse log entry
+                try:
+                    # Example format: 2023-03-04 12:34:56,789 - INFO - main - Message
+                    parts = line.split(' - ')
+                    timestamp = parts[0]
+                    level = parts[1].strip() if len(parts) > 1 else 'INFO'
+                    component = parts[2].strip() if len(parts) > 2 else 'system'
+                    message = ' - '.join(parts[3:]) if len(parts) > 3 else line
+                    
+                    logs.append({
+                        'id': log_id,
+                        'timestamp': timestamp,
+                        'level': level,
+                        'component': component,
+                        'message': message,
+                        'raw': line
+                    })
+                    
+                    # Add to chat AI log history
+                    chat_ai.add_log(line)
+                except Exception as e:
+                    # Fallback for unparseable logs
+                    logs.append({
+                        'id': log_id,
+                        'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S,%f')[:-3],
+                        'level': 'UNKNOWN',
+                        'component': 'system',
+                        'message': line,
+                        'raw': line
+                    })
     
-    return jsonify(logs)
+    return jsonify({'logs': logs, 'last_id': log_id})
 
 @app.route('/api/chart/price')
 def api_chart_price():
@@ -366,6 +415,56 @@ def api_chart_performance():
     chart_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     
     return jsonify({'chart': chart_json})
+
+# Chat API endpoints
+@app.route('/api/chat/message')
+def api_chat_message():
+    """Get a message from the AI chat"""
+    force = request.args.get('force', 'false').lower() == 'true'
+    message = chat_ai.get_summary(bot_status, force)
+    return jsonify({'message': message})
+
+@app.route('/api/chat/personality', methods=['POST'])
+def api_chat_personality():
+    """Change the AI chat personality"""
+    personality = request.form.get('personality', 'analytical')
+    success = chat_ai.change_personality(personality)
+    return jsonify({'success': success})
+
+@app.route('/api/chat/query', methods=['POST'])
+def api_chat_query():
+    """Process a user query to the AI chat"""
+    query = request.form.get('query', '')
+    
+    # Simple response generation based on query
+    response = None
+    
+    if re.search(r'(hi|hello|hey)', query.lower()):
+        response = "Hello! How can I help you with your trading bot today?"
+    elif re.search(r'(status|how.+bot|what.+doing)', query.lower()):
+        response = chat_ai.generate_message(bot_status)
+    elif re.search(r'(balance|portfolio|account)', query.lower()):
+        portfolio_value = bot_status.get('portfolio_value', 0)
+        balance_usd = bot_status.get('balance_usd', 0)
+        assets = bot_status.get('balance_assets', {})
+        
+        asset_str = ", ".join([f"{amount} {symbol}" for symbol, amount in assets.items() if amount > 0])
+        
+        response = f"Your current portfolio value is ${portfolio_value:.2f}. You have ${balance_usd:.2f} in USD and {asset_str}."
+    elif re.search(r'(trade|buy|sell)', query.lower()):
+        recent_trades = bot_status.get('recent_trades', [])
+        
+        if recent_trades:
+            trade = recent_trades[0]
+            response = f"The most recent trade was a {trade.get('type')} of {trade.get('amount')} {trade.get('pair').split('/')[0]} at ${trade.get('price')}."
+        else:
+            response = "There haven't been any trades recently."
+    elif re.search(r'(predict|forecast|trend)', query.lower()):
+        response = "Based on current market analysis, our models are showing mixed signals. Some assets appear bullish while others show bearish trends. I recommend monitoring closely before making any major decisions."
+    else:
+        response = "I'm still learning how to respond to that type of question. In the meantime, I can tell you about your portfolio status, recent trades, or market predictions."
+    
+    return jsonify({'response': response})
 
 # Import necessary components from main.py and config.py
 from execution.trade_executor import TradeExecutor
@@ -557,6 +656,9 @@ def run_bot():
                                     strategy='ensemble'
                                 )
                                 
+                                # Force AI to generate a message about this trade
+                                chat_ai.get_summary(bot_status, True)
+                                
                                 logger.info(f"Successfully executed BUY for {symbol}: {order}")
                             else:
                                 logger.warning(f"Failed to execute BUY for {symbol}")
@@ -597,6 +699,9 @@ def run_bot():
                                     strategy='ensemble'
                                 )
                                 
+                                # Force AI to generate a message about this trade
+                                chat_ai.get_summary(bot_status, True)
+                                
                                 logger.info(f"Successfully executed SELL for {symbol}: {order}")
                             else:
                                 logger.warning(f"Failed to execute SELL for {symbol}")
@@ -634,6 +739,23 @@ def run_bot():
 if __name__ == '__main__':
     # Initialize performance tracker
     init_performance_tracker()
+    
+    # Add sidebar link to base.html
+    try:
+        with open('dashboard/templates/base.html', 'r') as f:
+            content = f.read()
+        
+        if '<a class="nav-link {% if request.path == \'/chat\' %}active{% endif %}" href="{{ url_for(\'chat\') }}">' not in content:
+            # Add chat link to sidebar
+            content = content.replace(
+                '<li class="nav-item">\n                        <a class="nav-link {% if request.path == \'/logs\' %}active{% endif %}" href="{{ url_for(\'logs\') }}">\n                            <i class="fas fa-list"></i> Logs\n                        </a>\n                    </li>',
+                '<li class="nav-item">\n                        <a class="nav-link {% if request.path == \'/logs\' %}active{% endif %}" href="{{ url_for(\'logs\') }}">\n                            <i class="fas fa-list"></i> Logs\n                        </a>\n                    </li>\n                    <li class="nav-item">\n                        <a class="nav-link {% if request.path == \'/chat\' %}active{% endif %}" href="{{ url_for(\'chat\') }}">\n                            <i class="fas fa-robot"></i> AI Chat\n                        </a>\n                    </li>'
+            )
+            
+            with open('dashboard/templates/base.html', 'w') as f:
+                f.write(content)
+    except Exception as e:
+        print(f"Error updating base.html: {e}")
     
     # Run Flask app
     app.run(debug=True, host='0.0.0.0', port=5000)

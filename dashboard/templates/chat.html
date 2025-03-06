@@ -1,0 +1,224 @@
+{% extends "base.html" %}
+
+{% block title %}AI Chat - Crypto Trading Bot{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">AI Trading Assistant</h5>
+                    <div class="card-tools">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-sm btn-outline-primary" id="personality-analytical">Analytical</button>
+                            <button type="button" class="btn btn-sm btn-outline-primary" id="personality-friendly">Friendly</button>
+                            <button type="button" class="btn btn-sm btn-outline-primary" id="personality-technical">Technical</button>
+                            <button type="button" class="btn btn-sm btn-outline-primary" id="personality-cautious">Cautious</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="chat-container" id="chat-container">
+                        <div class="chat-messages" id="chat-messages">
+                            <!-- Messages will be added here -->
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="chat-input" placeholder="Ask me about your portfolio, trades, or predictions...">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" id="send-button">
+                                <i class="fas fa-paper-plane"></i> Send
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function() {
+        // Set active personality button
+        function setActivePersonality(personality) {
+            $('.btn-group button').removeClass('active');
+            $(`#personality-${personality}`).addClass('active');
+        }
+
+        // Initialize with analytical personality
+        setActivePersonality('analytical');
+
+        // Add a message to the chat
+        function addMessage(sender, message, timestamp) {
+            const messageDiv = $('<div>').addClass('message');
+            
+            if (sender === 'ai') {
+                messageDiv.addClass('ai-message');
+                messageDiv.html(`
+                    <div class="message-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="message-content">
+                        <div class="message-text">${message}</div>
+                        <div class="message-time">${timestamp}</div>
+                    </div>
+                `);
+            } else {
+                messageDiv.addClass('user-message');
+                messageDiv.html(`
+                    <div class="message-content">
+                        <div class="message-text">${message}</div>
+                        <div class="message-time">${timestamp}</div>
+                    </div>
+                    <div class="message-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                `);
+            }
+            
+            $('#chat-messages').append(messageDiv);
+            
+            // Scroll to bottom
+            const chatContainer = document.getElementById('chat-container');
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        // Format timestamp
+        function formatTimestamp() {
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            return `${hours}:${minutes}`;
+        }
+
+        // Get initial message from AI
+        $.get('/api/chat/message', function(data) {
+            addMessage('ai', data.message, formatTimestamp());
+        });
+
+        // Send message when button is clicked
+        $('#send-button').click(function() {
+            const message = $('#chat-input').val().trim();
+            if (message) {
+                // Add user message to chat
+                addMessage('user', message, formatTimestamp());
+                
+                // Clear input
+                $('#chat-input').val('');
+                
+                // Send message to server
+                $.post('/api/chat/query', { query: message }, function(data) {
+                    // Add AI response to chat
+                    addMessage('ai', data.response, formatTimestamp());
+                });
+            }
+        });
+
+        // Send message when Enter key is pressed
+        $('#chat-input').keypress(function(e) {
+            if (e.which === 13) {
+                $('#send-button').click();
+                return false;
+            }
+        });
+
+        // Change personality when button is clicked
+        $('.btn-group button').click(function() {
+            const personality = $(this).attr('id').split('-')[1];
+            setActivePersonality(personality);
+            
+            // Send personality change to server
+            $.post('/api/chat/personality', { personality: personality }, function(data) {
+                if (data.success) {
+                    // Get new message with updated personality
+                    $.get('/api/chat/message?force=true', function(data) {
+                        addMessage('ai', data.message, formatTimestamp());
+                    });
+                }
+            });
+        });
+
+        // Periodically check for new messages (every 30 seconds)
+        setInterval(function() {
+            $.get('/api/chat/message', function(data) {
+                // Only add if it's a new message (not implemented here, would need server-side tracking)
+                // For now, we'll rely on the force parameter to get new messages
+            });
+        }, 30000);
+    });
+</script>
+
+<style>
+    .chat-container {
+        height: 400px;
+        overflow-y: auto;
+        padding: 10px;
+        background-color: #f8f9fa;
+        border-radius: 5px;
+    }
+    
+    .message {
+        display: flex;
+        margin-bottom: 15px;
+        max-width: 80%;
+    }
+    
+    .ai-message {
+        align-self: flex-start;
+    }
+    
+    .user-message {
+        align-self: flex-end;
+        margin-left: auto;
+    }
+    
+    .message-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: #007bff;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 10px;
+    }
+    
+    .user-message .message-avatar {
+        background-color: #28a745;
+        margin-right: 0;
+        margin-left: 10px;
+    }
+    
+    .message-content {
+        background-color: white;
+        padding: 10px 15px;
+        border-radius: 10px;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
+    
+    .ai-message .message-content {
+        border-top-left-radius: 0;
+    }
+    
+    .user-message .message-content {
+        background-color: #dcf8c6;
+        border-top-right-radius: 0;
+    }
+    
+    .message-text {
+        margin-bottom: 5px;
+    }
+    
+    .message-time {
+        font-size: 0.75rem;
+        color: #6c757d;
+        text-align: right;
+    }
+</style>
+{% endblock %}
